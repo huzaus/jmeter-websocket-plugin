@@ -1,0 +1,30 @@
+group 'com.huzaus'
+version '1.0'
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    compile 'org.eclipse.jetty.websocket:websocket-client:9.1.1.v20140108:hybrid'
+    compile 'org.apache.jmeter:ApacheJMeter:3.1'
+    compile 'org.apache.jmeter:ApacheJMeter_core:3.1'
+    compile 'org.apache.jmeter:ApacheJMeter_http:3.1'
+
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+
+    task copySample(type:Copy,dependsOn:[build]) {
+        copy {
+            from project.buildDir.getPath()+'/target/jmeter-websocket-samplers-1.0.jar'
+            into '/usr/local/Cellar/jmeter/3.1/libexec/lib/ext/'
+        }
+    }
+
+}
