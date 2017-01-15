@@ -22,7 +22,7 @@ dependencies {
 
     task copySample(type:Copy,dependsOn:[build]) {
         copy {
-            from project.buildDir.getPath()+'/target/jmeter-websocket-samplers-1.0.jar'
+            from project.buildDir.getPath()+'/libs/jmeter-websocket-samplers-1.0.jar'
             into '/usr/local/Cellar/jmeter/3.1/libexec/lib/ext/'
         }
     }
