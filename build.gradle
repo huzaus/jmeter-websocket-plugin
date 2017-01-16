@@ -21,9 +21,10 @@ dependencies {
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
 
     task copySample(type: Copy, dependsOn: [build]) {
-        copy {
-            from jar.archivePath
-            into jmeterHome + '/libexec/lib/ext/'
+        from jar.archivePath
+        into jmeterHome + '/libexec/lib/ext/'
+        doLast {
+            println "[INFO] " + jar.archivePath + " copied to " + jmeterHome + '/libexec/lib/ext/'
         }
     }
 
