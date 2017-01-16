@@ -33,3 +33,7 @@ dependencies {
         commandLine jmeterHome + '/bin/jmeter', '-t', './resources/test/sample.jmx'
     }
 }
+
+test {
+    systemProperty 'jmeter.home' , jmeterHome
+}

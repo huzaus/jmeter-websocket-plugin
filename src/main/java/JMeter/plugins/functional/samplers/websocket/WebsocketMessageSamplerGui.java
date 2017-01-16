@@ -46,8 +46,9 @@ public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
     }
 
     @Override
-    public void modifyTestElement(TestElement testElement) {
-        super.configureTestElement(testElement);
+    public void modifyTestElement(TestElement sampler) {
+        sampler.clear();
+        super.configureTestElement(sampler);
     }
 
     @Override
