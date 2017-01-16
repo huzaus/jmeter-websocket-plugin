@@ -15,7 +15,6 @@ public class WebsocketMessageSampler extends AbstractSampler {
     private static final String MESSAGE = "message";
 
     public WebsocketMessageSampler() {
-        super();
         setName("Websocket Message Sampler");
     }
 
