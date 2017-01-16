@@ -26,7 +26,68 @@
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
       <hashTree>
-        <JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler" testname="Websocket Message Sampler" enabled="true"/>
+        <JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler" testname="Websocket Message Sampler" enabled="true">
+          <stringProp name="serverNameOrIp">127.0.0.1</stringProp>
+          <stringProp name="portNumber">808</stringProp>
+          <stringProp name="protocol">ws</stringProp>
+          <stringProp name="connectTimeOut">2000</stringProp>
+          <stringProp name="responseTimeOut">500</stringProp>
+          <stringProp name="path">CONNECT\naccept-version:1.1,1.0\nheart-beat:10000,10000\n\n\u0000</stringProp>
+        </JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler>
+        <hashTree/>
+        <JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler" testname="Websocket Message Sampler" enabled="true">
+          <stringProp name="serverNameOrIp">127.0.0.2</stringProp>
+          <stringProp name="portNumber">808</stringProp>
+          <stringProp name="protocol">ws</stringProp>
+          <stringProp name="connectTimeOut">2000</stringProp>
+          <stringProp name="responseTimeOut">500</stringProp>
+          <stringProp name="path">CONNECT\naccept-version:1.1,1.0\nheart-beat:10000,10000\n\n\u0000</stringProp>
+        </JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler>
+        <hashTree/>
+        <JMeter.plugins.functional.samplers.websocket.WebSocketSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebSocketSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebSocketSampler" testname="WebSocket Sampler" enabled="true">
+          <stringProp name="serverAddress">127.0.0.1</stringProp>
+          <stringProp name="serverPort">80</stringProp>
+          <stringProp name="implementation">RFC6455 (v13)</stringProp>
+          <stringProp name="protocol">ws</stringProp>
+          <stringProp name="contextPath"></stringProp>
+          <stringProp name="contentEncoding">UTF-8</stringProp>
+          <stringProp name="requestPayload"></stringProp>
+          <stringProp name="connectionTimeout">5000</stringProp>
+          <stringProp name="responseTimeout">20000</stringProp>
+          <boolProp name="ignoreSslErrors">false</boolProp>
+          <boolProp name="streamingConnection">false</boolProp>
+          <stringProp name="connectionId"></stringProp>
+          <stringProp name="responsePattern"></stringProp>
+          <stringProp name="closeConncectionPattern"></stringProp>
+          <stringProp name="proxyAddress"></stringProp>
+          <stringProp name="proxyPassword"></stringProp>
+          <stringProp name="proxyPort"></stringProp>
+          <stringProp name="proxyUsername"></stringProp>
+          <stringProp name="messageBacklog">3</stringProp>
+          <elementProp name="queryStringParameters" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+        </JMeter.plugins.functional.samplers.websocket.WebSocketSampler>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">127.0.0.1</stringProp>
+          <stringProp name="HTTPSampler.port">8080</stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">2000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">5000</stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/websocket</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <boolProp name="HTTPSampler.monitor">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+        </HTTPSamplerProxy>
         <hashTree/>
       </hashTree>
     </hashTree>
