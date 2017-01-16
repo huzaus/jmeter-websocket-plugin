@@ -28,19 +28,19 @@
       <hashTree>
         <JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler" testname="Websocket Message Sampler" enabled="true">
           <stringProp name="serverNameOrIp">127.0.0.1</stringProp>
-          <stringProp name="portNumber">808</stringProp>
+          <stringProp name="portNumber">80</stringProp>
           <stringProp name="protocol">ws</stringProp>
           <stringProp name="connectTimeOut">2000</stringProp>
-          <stringProp name="responseTimeOut">500</stringProp>
+          <stringProp name="responseTimeOut">5000</stringProp>
           <stringProp name="path">CONNECT\naccept-version:1.1,1.0\nheart-beat:10000,10000\n\n\u0000</stringProp>
         </JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler>
         <hashTree/>
         <JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler" testname="Websocket Message Sampler" enabled="true">
           <stringProp name="serverNameOrIp">127.0.0.2</stringProp>
-          <stringProp name="portNumber">808</stringProp>
-          <stringProp name="protocol">ws</stringProp>
+          <stringProp name="portNumber">443</stringProp>
+          <stringProp name="protocol">wss</stringProp>
           <stringProp name="connectTimeOut">2000</stringProp>
-          <stringProp name="responseTimeOut">500</stringProp>
+          <stringProp name="responseTimeOut">5000</stringProp>
           <stringProp name="path">CONNECT\naccept-version:1.1,1.0\nheart-beat:10000,10000\n\n\u0000</stringProp>
         </JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler>
         <hashTree/>
