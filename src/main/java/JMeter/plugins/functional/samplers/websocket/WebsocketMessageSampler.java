@@ -4,11 +4,11 @@ import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
 
-public class WebsocketSampler extends AbstractSampler {
+public class WebsocketMessageSampler extends AbstractSampler {
 
-    public WebsocketSampler() {
+    public WebsocketMessageSampler() {
         super();
-        setName("Websocket Sampler");
+        setName("Websocket Message Sampler");
     }
 
     @Override

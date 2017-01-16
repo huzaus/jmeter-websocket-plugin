@@ -19,7 +19,7 @@ import static java.awt.BorderLayout.WEST;
 import static javax.swing.BorderFactory.createEtchedBorder;
 import static javax.swing.BorderFactory.createTitledBorder;
 
-public class WebsocketSamplerGui extends AbstractSamplerGui {
+public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
 
     private JLabeledTextField serverNameOrIp;
     private JLabeledTextField portNumber;
@@ -29,7 +29,7 @@ public class WebsocketSamplerGui extends AbstractSamplerGui {
     private JLabeledTextField path;
     private JLabeledTextArea message;
 
-    public WebsocketSamplerGui() {
+    public WebsocketMessageSamplerGui() {
         init();
     }
 
@@ -40,7 +40,7 @@ public class WebsocketSamplerGui extends AbstractSamplerGui {
 
     @Override
     public TestElement createTestElement() {
-        WebsocketSampler sampler = new WebsocketSampler();
+        WebsocketMessageSampler sampler = new WebsocketMessageSampler();
         modifyTestElement(sampler);
         return sampler;
     }

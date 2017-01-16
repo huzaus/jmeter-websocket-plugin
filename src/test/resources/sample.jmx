@@ -26,7 +26,7 @@
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
       <hashTree>
-        <JMeter.plugins.functional.samplers.websocket.WebsocketSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebsocketSampler" testname="Websocket Message Sampler" enabled="true"/>
+        <JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler" testname="Websocket Message Sampler" enabled="true"/>
         <hashTree/>
       </hashTree>
     </hashTree>
