@@ -1,5 +1,6 @@
 package JMeter.plugins.functional.samplers.websocket;
 
+import JMeter.plugins.functional.samplers.websocket.modifiers.WebsocketMessageSamplerModifier;
 import org.apache.jmeter.gui.util.HorizontalPanel;
 import org.apache.jmeter.gui.util.VerticalPanel;
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
@@ -15,21 +16,30 @@ import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.EAST;
 import static java.awt.BorderLayout.NORTH;
 import static java.awt.BorderLayout.SOUTH;
-import static java.awt.BorderLayout.WEST;
 import static javax.swing.BorderFactory.createEtchedBorder;
 import static javax.swing.BorderFactory.createTitledBorder;
 
 public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
 
-    private JLabeledTextField serverNameOrIp;
-    private JLabeledTextField portNumber;
-    private JLabeledTextField protocol;
-    private JLabeledTextField connectTimeOut;
-    private JLabeledTextField responseTimeOut;
-    private JLabeledTextField path;
-    private JLabeledTextArea message;
+    private final JLabeledTextField serverNameOrIp;
+    private final JLabeledTextField portNumber;
+    private final JLabeledTextField protocol;
+    private final JLabeledTextField connectTimeOut;
+    private final JLabeledTextField responseTimeOut;
+    private final JLabeledTextField path;
+    private final JLabeledTextArea message;
+    private final WebsocketMessageSamplerModifier modifier;
 
     public WebsocketMessageSamplerGui() {
+        serverNameOrIp = new JLabeledTextField("Server Name or IP:", 10);
+        portNumber = new JLabeledTextField("Port Number:", 5);
+        protocol = new JLabeledTextField("Protocol:", 5);
+        connectTimeOut = new JLabeledTextField("Connect:", 5);
+        responseTimeOut = new JLabeledTextField("Response:", 5);
+        path = new JLabeledTextField("Path:", 15);
+        message = new JLabeledTextArea("Message:");
+        modifier = new WebsocketMessageSamplerModifier();
+
         init();
     }
 
@@ -48,6 +58,9 @@ public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
     @Override
     public void modifyTestElement(TestElement sampler) {
         sampler.clear();
+        if (sampler instanceof WebsocketMessageSampler) {
+            modifier.modify(this, (WebsocketMessageSampler) sampler);
+        }
         super.configureTestElement(sampler);
     }
 
@@ -73,9 +86,9 @@ public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
     private JPanel makeWebsocketConnectionPanel() {
         HorizontalPanel websocketServerPanel = new HorizontalPanel();
         websocketServerPanel.setBorder(createTitledBorder(createEtchedBorder(), "Websocket Server"));
-        websocketServerPanel.add(makeServerNameOrIpPanel(), WEST);
-        websocketServerPanel.add(makePortPanel(), CENTER);
-        websocketServerPanel.add(makeProtocolPanel(), EAST);
+        websocketServerPanel.add(makeServerNameOrIpPanel());
+        websocketServerPanel.add(makePortPanel());
+        websocketServerPanel.add(makeProtocolPanel());
 
         HorizontalPanel timeOut = new HorizontalPanel();
         timeOut.setBorder(createTitledBorder(createEtchedBorder(), "Timeouts (milliseconds)"));
@@ -93,53 +106,72 @@ public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
     }
 
     private JPanel makeServerNameOrIpPanel() {
-        serverNameOrIp = new JLabeledTextField("Server Name or IP:", 10);
         JPanel panel = new JPanel(new BorderLayout(5, 0));
         panel.add(serverNameOrIp, CENTER);
         return panel;
     }
 
     private JPanel makePortPanel() {
-        portNumber = new JLabeledTextField("Port Number:", 5);
         JPanel panel = new JPanel(new BorderLayout(5, 0));
         panel.add(portNumber, CENTER);
         return panel;
     }
 
     private JPanel makeProtocolPanel() {
-        protocol = new JLabeledTextField("Protocol:", 5);
         JPanel panel = new JPanel(new BorderLayout(5, 0));
         panel.add(protocol, CENTER);
         return panel;
     }
 
     private JPanel makeConnectTimeOutPanel() {
-        connectTimeOut = new JLabeledTextField("Connect:", 5);
         JPanel panel = new JPanel(new BorderLayout(5, 0));
         panel.add(connectTimeOut, CENTER);
         return panel;
     }
 
     private JPanel makeResponseTimeOutPanel() {
-        responseTimeOut = new JLabeledTextField("Response:", 5);
         JPanel panel = new JPanel(new BorderLayout(5, 0));
         panel.add(responseTimeOut, CENTER);
         return panel;
     }
 
-
     private Component makePathPanel() {
-        path = new JLabeledTextField("Path:", 15);
         JPanel panel = new JPanel(new BorderLayout(5, 0));
         panel.add(path, CENTER);
         return panel;
     }
 
     private Component makeMessageBodyPanel() {
-        message = new JLabeledTextArea("Message:");
         JPanel panel = new JPanel(new BorderLayout(5, 0));
         panel.add(message, CENTER);
         return panel;
     }
 
+    public JLabeledTextField getServerNameOrIp() {
+        return serverNameOrIp;
+    }
+
+    public JLabeledTextField getPortNumber() {
+        return portNumber;
+    }
+
+    public JLabeledTextField getProtocol() {
+        return protocol;
+    }
+
+    public JLabeledTextField getConnectTimeOut() {
+        return connectTimeOut;
+    }
+
+    public JLabeledTextField getResponseTimeOut() {
+        return responseTimeOut;
+    }
+
+    public JLabeledTextField getPath() {
+        return path;
+    }
+
+    public JLabeledTextArea getMessage() {
+        return message;
+    }
 }
