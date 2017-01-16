@@ -20,11 +20,15 @@ dependencies {
 
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
 
-    task copySample(type:Copy,dependsOn:[build]) {
+    task copySample(type: Copy, dependsOn: [build]) {
         copy {
-            from project.buildDir.getPath()+'/libs/jmeter-websocket-samplers-1.0.jar'
-            into '/usr/local/Cellar/jmeter/3.1/libexec/lib/ext/'
+            from jar.archivePath
+            into jmeterHome + '/libexec/lib/ext/'
         }
     }
 
+    task openSampleMac(type: Exec, dependsOn: [copySample]) {
+        workingDir buildDir
+        commandLine jmeterHome + '/bin/jmeter', '-t', './resources/test/sample.jmx'
+    }
 }
