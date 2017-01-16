@@ -1,5 +1,6 @@
 package JMeter.plugins.functional.samplers.websocket;
 
+import JMeter.plugins.functional.samplers.websocket.configurers.WebsocketMessageSamplerConfigurer;
 import JMeter.plugins.functional.samplers.websocket.modifiers.WebsocketMessageSamplerModifier;
 import org.apache.jmeter.gui.util.HorizontalPanel;
 import org.apache.jmeter.gui.util.VerticalPanel;
@@ -29,6 +30,7 @@ public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
     private final JLabeledTextField path;
     private final JLabeledTextArea message;
     private final WebsocketMessageSamplerModifier modifier;
+    private final WebsocketMessageSamplerConfigurer configurer;
 
     public WebsocketMessageSamplerGui() {
         serverNameOrIp = new JLabeledTextField("Server Name or IP:", 10);
@@ -39,6 +41,7 @@ public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
         path = new JLabeledTextField("Path:", 15);
         message = new JLabeledTextArea("Message:");
         modifier = new WebsocketMessageSamplerModifier();
+        configurer = new WebsocketMessageSamplerConfigurer();
 
         init();
     }
@@ -67,6 +70,14 @@ public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
     @Override
     public String getStaticLabel() {
         return "Websocket Message Sampler";
+    }
+
+    @Override
+    public void configure(TestElement sampler) {
+        super.configure(sampler);
+        if (sampler instanceof WebsocketMessageSampler) {
+            configurer.configure((WebsocketMessageSampler) sampler, this);
+        }
     }
 
     private void init() {

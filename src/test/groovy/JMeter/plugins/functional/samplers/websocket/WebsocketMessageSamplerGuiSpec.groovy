@@ -52,4 +52,23 @@ class WebsocketMessageSamplerGuiSpec extends JmeterAbstractSpec {
         'path'            | 'path'            | 'websocket'
         'message'         | 'message'         | 'CONNECT\\naccept-version:1.1,1.0\\nheart-beat:10000,10000\\n\\n\\u0000'
     }
+
+    def "Should configure gui #component component with '#value' value from #property sampler property"() {
+        given:
+        WebsocketMessageSampler sampler = new WebsocketMessageSampler()
+        sampler."$property" = value
+        when:
+        websocketMessageSamplerGui.configure(sampler)
+        then:
+        websocketMessageSamplerGui."$component".text == value
+        where:
+        component         | property          | value
+        'serverNameOrIp'  | 'serverNameOrIp'  | '127.0.0.1'
+        'portNumber'      | 'portNumber'      | '8080'
+        'protocol'        | 'protocol'        | 'ws'
+        'connectTimeOut'  | 'connectTimeOut'  | '2000'
+        'responseTimeOut' | 'responseTimeOut' | '5000'
+        'path'            | 'path'            | 'websocket'
+        'message'         | 'message'         | 'CONNECT\\naccept-version:1.1,1.0\\nheart-beat:10000,10000\\n\\n\\u0000'
+    }
 }
