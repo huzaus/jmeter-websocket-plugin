@@ -9,17 +9,10 @@ import static org.apache.jmeter.util.JMeterUtils.loadJMeterProperties
 import static org.apache.jmeter.util.JMeterUtils.setJMeterHome
 
 @Unroll
-class WebsocketMessageSamplerGuiSpec extends Specification {
+class WebsocketMessageSamplerGuiSpec extends JmeterAbstractSpec {
 
     @Subject
     WebsocketMessageSamplerGui websocketMessageSamplerGui = new WebsocketMessageSamplerGui()
-
-    def setupSpec() {
-        String jmeterHome = System.properties.'jmeter.home'
-        setJMeterHome(jmeterHome)
-        loadJMeterProperties(jmeterHome + '/libexec/bin/jmeter.properties')
-        initLocale()
-    }
 
     def "#field should be initialized in constructor"() {
         expect:
