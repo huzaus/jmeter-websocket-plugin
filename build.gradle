@@ -16,6 +16,7 @@ dependencies {
     compile 'org.apache.jmeter:ApacheJMeter:3.1'
     compile 'org.apache.jmeter:ApacheJMeter_core:3.1'
     compile 'org.apache.jmeter:ApacheJMeter_http:3.1'
+    compile 'com.google.guava:guava:19.0'
 
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
 }
