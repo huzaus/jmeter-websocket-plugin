@@ -61,9 +61,7 @@ public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
     @Override
     public void modifyTestElement(TestElement sampler) {
         sampler.clear();
-        if (sampler instanceof WebsocketMessageSampler) {
-            modifier.modify(this, (WebsocketMessageSampler) sampler);
-        }
+        modifier.modify(this, (WebsocketMessageSampler) sampler);
         super.configureTestElement(sampler);
     }
 
@@ -75,9 +73,7 @@ public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
     @Override
     public void configure(TestElement sampler) {
         super.configure(sampler);
-        if (sampler instanceof WebsocketMessageSampler) {
-            configurer.configure((WebsocketMessageSampler) sampler, this);
-        }
+        configurer.configure((WebsocketMessageSampler) sampler, this);
     }
 
     private void init() {

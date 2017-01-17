@@ -1,5 +1,6 @@
 package JMeter.plugins.functional.samplers.websocket
 
+import org.apache.jmeter.protocol.http.sampler.HTTPSampler
 import spock.lang.Subject
 import spock.lang.Unroll
 
@@ -70,5 +71,19 @@ class WebsocketMessageSamplerGuiSpec extends JmeterAbstractSpec {
         'responseTimeOut' | 'responseTimeOut' | '5000'
         'path'            | 'path'            | 'websocket'
         'message'         | 'message'         | 'CONNECT\\naccept-version:1.1,1.0\\nheart-beat:10000,10000\\n\\n\\u0000'
+    }
+
+    def "Should throw ClassCastException when testElement is not WebsocketMessageSampler on configure"() {
+        when:
+        websocketMessageSamplerGui.configure(new HTTPSampler())
+        then:
+        thrown(ClassCastException)
+    }
+
+    def "Should throw ClassCastException when testElement is not WebsocketMessageSampler on modifyTestElement"() {
+        when:
+        websocketMessageSamplerGui.modifyTestElement(new HTTPSampler())
+        then:
+        thrown(ClassCastException)
     }
 }
