@@ -10,9 +10,12 @@ import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jmeter.testelement.property.TestElementProperty;
+import org.eclipse.jetty.util.HttpCookieStore;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 
+import java.net.CookieStore;
+import java.net.HttpCookie;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
@@ -20,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.base.Throwables.propagate;
 import static java.util.Collections.singletonList;
 
 public class WebsocketMessageSampler extends AbstractSampler {
@@ -151,22 +155,45 @@ public class WebsocketMessageSampler extends AbstractSampler {
     }
 
     public Map<String, List<String>> headers() {
-        return Optional.fromNullable(getHeaderManager()).transform(new Function<HeaderManager, Map<String, List<String>>>() {
-            @Override
-            public Map<String, List<String>> apply(HeaderManager headerManager) {
-                Map<String, List<String>> headers = new HashMap<>();
-                for (int i = 0; i < headerManager.size(); i++) {
-                    Header header = headerManager.get(i);
-                    headers.put(header.getName(), singletonList(header.getValue()));
-                }
-                return headers;
-            }
-        }).or(Collections.<String, List<String>>emptyMap());
+        return Optional.fromNullable(getHeaderManager())
+                .transform(new Function<HeaderManager, Map<String, List<String>>>() {
+                    @Override
+                    public Map<String, List<String>> apply(HeaderManager headerManager) {
+                        Map<String, List<String>> headers = new HashMap<>();
+                        for (int i = 0; i < headerManager.size(); i++) {
+                            Header header = headerManager.get(i);
+                            headers.put(header.getName(), singletonList(header.getValue()));
+                        }
+                        return headers;
+                    }
+                }).or(Collections.<String, List<String>>emptyMap());
     }
 
     public ClientUpgradeRequest upgradeRequest() {
         ClientUpgradeRequest request = new ClientUpgradeRequest();
         request.setHeaders(headers());
         return request;
+    }
+
+    public CookieStore cookies() throws URISyntaxException {
+        return Optional.fromNullable(getCookieManager())
+                .transform(new Function<CookieManager, CookieStore>() {
+                               @Override
+                               public CookieStore apply(CookieManager cookieManager) {
+                                   HttpCookieStore cookieStore = new HttpCookieStore();
+                                   for (int i = 0; i < cookieManager.getCookieCount(); i++) {
+                                       try {
+                                           cookieStore.add(
+                                                   new URI(null, cookieManager.get(i).getDomain(), cookieManager.get(i).getPath(), null),
+                                                   new HttpCookie(cookieManager.get(i).getName(), cookieManager.get(i).getValue())
+                                           );
+                                       } catch (URISyntaxException e) {
+                                           propagate(e);
+                                       }
+                                   }
+                                   return cookieStore;
+                               }
+                           })
+                .or(new HttpCookieStore());
     }
 }
