@@ -1,6 +1,7 @@
 package JMeter.plugins.functional.samplers.websocket
 
 import org.apache.jmeter.protocol.http.control.CookieManager
+import org.apache.jmeter.protocol.http.control.Header
 import org.apache.jmeter.protocol.http.control.HeaderManager
 import org.eclipse.jetty.util.ssl.SslContextFactory
 import spock.lang.Specification
@@ -82,7 +83,7 @@ class WebsocketMessageSamplerSpec extends Specification {
         "headerManager" | null
     }
 
-    def "Url should be equal to be equal to #uri"() {
+    def "Should create new uri equal to #uri"() {
         when:
         sampler.serverNameOrIp = serverNameOrIp
         and:
@@ -93,6 +94,8 @@ class WebsocketMessageSamplerSpec extends Specification {
         sampler.path = '/websocket'
         then:
         sampler.uri() as String == uri
+        and:
+        !uri.is(sampler.uri())
         where:
         serverNameOrIp | portNumber | protocol | path         | uri
         '127.0.0.1'    | '8080'     | 'ws'     | '/websocket' | 'ws://127.0.0.1:8080/websocket'
@@ -102,8 +105,60 @@ class WebsocketMessageSamplerSpec extends Specification {
         when:
         SslContextFactory sslContextFactory = sampler.sslContextFactory()
         then:
-        !sampler.sslContextFactory().is(sslContextFactory)
+        sslContextFactory != sampler.sslContextFactory()
         and:
         sslContextFactory.trustAll
+    }
+
+    def "should create not empty headers map with [#name:#value]header when headerManager is set"() {
+        given:
+        HeaderManager headerManager = new HeaderManager();
+        headerManager.add(new Header(name, value))
+        when:
+        sampler.headerManager = headerManager
+        and:
+        def headers = sampler.headers()
+        then:
+        [(name): [value]] == headers
+        and:
+        !headers.is(sampler.headers())
+        and:
+        headers == sampler.headers()
+        where:
+        name      | value
+        'Session' | '1'
+        'Session' | null
+    }
+
+    def "should create empty map headers when headerManager is not set"() {
+        expect:
+        [:] == sampler.headers()
+    }
+
+    def "Should create new upgrade request with headers when headerManager is set"() {
+        given:
+        HeaderManager headerManager = new HeaderManager();
+        headerManager.add(new Header(name, value))
+        when:
+        sampler.headerManager = headerManager
+        and:
+        def upgradeRequest = sampler.upgradeRequest()
+        then:
+        [(name): [value]] == upgradeRequest.headers
+        and:
+        upgradeRequest != sampler.upgradeRequest()
+        where:
+        name      | value
+        'Session' | '1'
+        'Session' | null
+    }
+
+    def "Should create new upgrade request with headers when headerManager is not set"() {
+        when:
+        def upgradeRequest = sampler.upgradeRequest()
+        then:
+        [:] == upgradeRequest.headers
+        and:
+        upgradeRequest != sampler.upgradeRequest()
     }
 }
