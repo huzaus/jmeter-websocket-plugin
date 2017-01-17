@@ -2,6 +2,7 @@ package JMeter.plugins.functional.samplers.websocket
 
 import org.apache.jmeter.protocol.http.control.CookieManager
 import org.apache.jmeter.protocol.http.control.HeaderManager
+import org.eclipse.jetty.util.ssl.SslContextFactory
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
@@ -68,7 +69,7 @@ class WebsocketMessageSamplerSpec extends Specification {
 
     }
 
-    def "Should return value when #property is set"() {
+    def "Should return value when #property is set to #value"() {
         when:
         sampler."$property" = value
         then:
@@ -79,5 +80,30 @@ class WebsocketMessageSamplerSpec extends Specification {
         "cookieManager" | null
         "headerManager" | new HeaderManager()
         "headerManager" | null
+    }
+
+    def "Url should be equal to be equal to #uri"() {
+        when:
+        sampler.serverNameOrIp = serverNameOrIp
+        and:
+        sampler.portNumber = portNumber
+        and:
+        sampler.protocol = 'ws'
+        and:
+        sampler.path = '/websocket'
+        then:
+        sampler.uri() as String == uri
+        where:
+        serverNameOrIp | portNumber | protocol | path         | uri
+        '127.0.0.1'    | '8080'     | 'ws'     | '/websocket' | 'ws://127.0.0.1:8080/websocket'
+    }
+
+    def "Should create new SSL context factory with trustAll flag"() {
+        when:
+        SslContextFactory sslContextFactory = sampler.sslContextFactory()
+        then:
+        !sampler.sslContextFactory().is(sslContextFactory)
+        and:
+        sslContextFactory.trustAll
     }
 }

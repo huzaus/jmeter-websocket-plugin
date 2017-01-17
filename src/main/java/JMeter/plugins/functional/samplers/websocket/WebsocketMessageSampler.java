@@ -9,6 +9,10 @@ import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jmeter.testelement.property.TestElementProperty;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class WebsocketMessageSampler extends AbstractSampler {
 
@@ -128,5 +132,13 @@ public class WebsocketMessageSampler extends AbstractSampler {
 
     public void setMessage(String message) {
         setProperty(MESSAGE, message, "");
+    }
+
+    public URI uri() throws URISyntaxException {
+        return new URI(getProtocol(), null, getServerNameOrIp(), Integer.valueOf(getPortNumber()), getPath(), null, null);
+    }
+
+    public SslContextFactory sslContextFactory() {
+        return new SslContextFactory(true);
     }
 }
