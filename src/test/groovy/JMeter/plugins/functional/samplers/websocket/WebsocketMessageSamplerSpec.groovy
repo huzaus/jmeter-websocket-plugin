@@ -5,6 +5,7 @@ import org.apache.jmeter.protocol.http.control.CookieManager
 import org.apache.jmeter.protocol.http.control.Header
 import org.apache.jmeter.protocol.http.control.HeaderManager
 import org.eclipse.jetty.util.ssl.SslContextFactory
+import org.eclipse.jetty.websocket.client.WebSocketClient
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
@@ -163,7 +164,7 @@ class WebsocketMessageSamplerSpec extends Specification {
         upgradeRequest != sampler.upgradeRequest()
     }
 
-    def "should create not empty cookies with [#name, #value, #domain, #path, #secure, #expires] value when cookieManager is set"() {
+    def "Should create not empty cookies with [#name, #value, #domain, #path, #secure, #expires] value when cookieManager is set"() {
 
         given:
         CookieManager cookieManager = new CookieManager()
@@ -182,9 +183,20 @@ class WebsocketMessageSamplerSpec extends Specification {
         'Session' | '1'   | '127.0.0.1' | '/websocket' | true   | 0
     }
 
-    def "should create empty cookies when cookieManager is not set"() {
+    def "Should create empty cookies when cookieManager is not set"() {
         expect:
         sampler.cookies().cookies.isEmpty()
+    }
+
+    def "Should create websocket with sslContextFactory, executor and set cookies"() {
+        when:
+        WebSocketClient webSocketClient = sampler.webSocketClient()
+        then:
+        webSocketClient.sslContextFactory != null
+        and:
+        webSocketClient.executor != null
+        and:
+        webSocketClient.cookieStore != null
     }
 }
 

@@ -1,5 +1,6 @@
 package JMeter.plugins.functional.samplers.websocket;
 
+import JMeter.plugins.functional.samplers.websocket.configurations.WebsocketSessionsManager;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import org.apache.jmeter.protocol.http.control.CookieManager;
@@ -10,9 +11,13 @@ import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jmeter.testelement.property.TestElementProperty;
+import org.apache.jorphan.logging.LoggingManager;
+import org.apache.log.Logger;
 import org.eclipse.jetty.util.HttpCookieStore;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
+import org.eclipse.jetty.websocket.client.WebSocketClient;
 
 import java.net.CookieStore;
 import java.net.HttpCookie;
@@ -22,11 +27,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
+import static JMeter.plugins.functional.samplers.websocket.configurations.WebsocketSessionsManager.WEBSOCKET_MANAGER;
 import static com.google.common.base.Throwables.propagate;
 import static java.util.Collections.singletonList;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class WebsocketMessageSampler extends AbstractSampler {
+
+    private static final Logger log = LoggingManager.getLoggerForClass();
 
     private static final String SERVER_NAME_OR_IP = "serverNameOrIp";
     private static final String PORT_NUMBER = "portNumber";
@@ -44,7 +55,38 @@ public class WebsocketMessageSampler extends AbstractSampler {
 
     @Override
     public SampleResult sample(Entry entry) {
-        return new SampleResult();
+        log.info("sample{}" + entry);
+        SampleResult sampleResult = new SampleResult();
+        sampleResult.setSampleLabel(getName());
+        URI uri = null;
+        ClientUpgradeRequest request = null;
+        Future<Session> promise = null;
+        WebsocketEndpoint websocketEndpoint = null;
+        sampleResult.sampleStart();
+        try {
+            uri = uri();
+            request = upgradeRequest();
+            WebSocketClient webSocketClient = webSocketClient();
+            webSocketClient.start();
+            websocketEndpoint = new WebsocketEndpoint();
+            promise = webSocketClient.connect(websocketEndpoint, uri, request, new WebsocketUpgradeListener());
+
+            getWebsocketSessionsManager().setSession(promise.get(Long.valueOf(getConnectTimeOut()), MILLISECONDS));
+            sampleResult.setSuccessful(true);
+        } catch (Exception e) {
+            log.error("Error: ", e);
+            sampleResult.setSuccessful(false);
+        } finally {
+            sampleResult.setResponseMessage(
+                    "\nURI: " + uri + "\n" +
+                            "Upgrade request: " + request + "\n" +
+//                            "Promise :" + promise.isDone() + "\n" +
+//                            "WebsocketEndpoint : " + websocketEndpoint.stringBuilder + "\n" +
+                            "Session manager : " + getWebsocketSessionsManager() + "\n"
+            );
+            sampleResult.sampleEnd();
+        }
+        return sampleResult;
     }
 
     @Override
@@ -53,10 +95,29 @@ public class WebsocketMessageSampler extends AbstractSampler {
             setCookieManager((CookieManager) el);
         } else if (el instanceof HeaderManager) {
             setHeaderManager((HeaderManager) el);
+        } else if (el instanceof WebsocketSessionsManager) {
+            setWebsocketSessionsManager((WebsocketSessionsManager) el);
         } else {
             super.addTestElement(el);
         }
     }
+
+    public WebsocketSessionsManager getWebsocketSessionsManager() {
+        return Optional.fromNullable(getProperty(WEBSOCKET_MANAGER).getObjectValue())
+                .transform(
+                        new Function<Object, WebsocketSessionsManager>() {
+                            @Override
+                            public WebsocketSessionsManager apply(Object property) {
+                                return (WebsocketSessionsManager) property;
+                            }
+                        })
+                .orNull();
+    }
+
+    public void setWebsocketSessionsManager(WebsocketSessionsManager websocketSessionsManager) {
+        setProperty(new TestElementProperty(WEBSOCKET_MANAGER, websocketSessionsManager));
+    }
+
 
     public CookieManager getCookieManager() {
         return Optional.fromNullable(getProperty(COOKIE_MANAGER).getObjectValue())
@@ -178,22 +239,28 @@ public class WebsocketMessageSampler extends AbstractSampler {
     public CookieStore cookies() throws URISyntaxException {
         return Optional.fromNullable(getCookieManager())
                 .transform(new Function<CookieManager, CookieStore>() {
-                               @Override
-                               public CookieStore apply(CookieManager cookieManager) {
-                                   HttpCookieStore cookieStore = new HttpCookieStore();
-                                   for (int i = 0; i < cookieManager.getCookieCount(); i++) {
-                                       try {
-                                           cookieStore.add(
-                                                   new URI(null, cookieManager.get(i).getDomain(), cookieManager.get(i).getPath(), null),
-                                                   new HttpCookie(cookieManager.get(i).getName(), cookieManager.get(i).getValue())
-                                           );
-                                       } catch (URISyntaxException e) {
-                                           propagate(e);
-                                       }
-                                   }
-                                   return cookieStore;
-                               }
-                           })
+                    @Override
+                    public CookieStore apply(CookieManager cookieManager) {
+                        HttpCookieStore cookieStore = new HttpCookieStore();
+                        for (int i = 0; i < cookieManager.getCookieCount(); i++) {
+                            try {
+                                cookieStore.add(
+                                        new URI(null, cookieManager.get(i).getDomain(), cookieManager.get(i).getPath(), null),
+                                        new HttpCookie(cookieManager.get(i).getName(), cookieManager.get(i).getValue())
+                                );
+                            } catch (URISyntaxException e) {
+                                propagate(e);
+                            }
+                        }
+                        return cookieStore;
+                    }
+                })
                 .or(new HttpCookieStore());
+    }
+
+    public WebSocketClient webSocketClient() throws URISyntaxException {
+        WebSocketClient webSocketClient = new WebSocketClient(sslContextFactory(), Executors.newCachedThreadPool());
+        webSocketClient.setCookieStore(cookies());
+        return webSocketClient;
     }
 }
