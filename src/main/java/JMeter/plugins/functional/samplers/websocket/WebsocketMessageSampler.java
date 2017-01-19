@@ -31,6 +31,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import static JMeter.plugins.functional.samplers.websocket.configurations.WebsocketSessionsManager.WEBSOCKET_MANAGER;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -55,35 +56,26 @@ public class WebsocketMessageSampler extends AbstractSampler {
 
     @Override
     public SampleResult sample(Entry entry) {
-        log.info("sample{}" + entry);
         SampleResult sampleResult = new SampleResult();
-        sampleResult.setSampleLabel(getName());
-        URI uri = null;
-        ClientUpgradeRequest request = null;
-        Future<Session> promise = null;
-        WebsocketEndpoint websocketEndpoint = null;
         sampleResult.sampleStart();
+        sampleResult.setSampleLabel(getName());
         try {
-            uri = uri();
-            request = upgradeRequest();
+            checkNotNull(getWebsocketSessionsManager(), "WebsocketSessionManager should be added to test plan");
+
             WebSocketClient webSocketClient = webSocketClient();
             webSocketClient.start();
-            websocketEndpoint = new WebsocketEndpoint();
-            promise = webSocketClient.connect(websocketEndpoint, uri, request, new WebsocketUpgradeListener());
+
+            WebsocketEndpoint websocketEndpoint = new WebsocketEndpoint();
+            getWebsocketSessionsManager().setWebsocketEndpoint(websocketEndpoint);
+
+            Future<Session> promise = webSocketClient.connect(websocketEndpoint, uri(), upgradeRequest(), new WebsocketUpgradeListener(sampleResult));
 
             getWebsocketSessionsManager().setSession(promise.get(Long.valueOf(getConnectTimeOut()), MILLISECONDS));
-            sampleResult.setSuccessful(true);
         } catch (Exception e) {
             log.error("Error: ", e);
+            sampleResult.setResponseMessage(e.getMessage());
             sampleResult.setSuccessful(false);
         } finally {
-            sampleResult.setResponseMessage(
-                    "\nURI: " + uri + "\n" +
-                            "Upgrade request: " + request + "\n" +
-//                            "Promise :" + promise.isDone() + "\n" +
-//                            "WebsocketEndpoint : " + websocketEndpoint.stringBuilder + "\n" +
-                            "Session manager : " + getWebsocketSessionsManager() + "\n"
-            );
             sampleResult.sampleEnd();
         }
         return sampleResult;
