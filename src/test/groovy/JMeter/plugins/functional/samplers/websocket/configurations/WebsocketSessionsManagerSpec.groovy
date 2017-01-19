@@ -11,14 +11,14 @@ class WebsocketSessionsManagerSpec extends Specification {
 
     def "Should print 'WebsocketSessionsManager{session=is not set}' on toString() when session is not set "() {
         expect:
-        manager.toString() == 'WebsocketSessionsManager{session=is not set}'
+        manager.toString() startsWith 'WebsocketSessionsManager{session=is not set'
     }
 
     def "Should print 'WebsocketSessionsManager{session=is set}' on toString() when upgrade request is null "() {
         given:
         manager.session = Mock(Session)
         expect:
-        manager.toString() startsWith 'WebsocketSessionsManager{session=is set}'
+        manager.toString() startsWith 'WebsocketSessionsManager{session=is set'
     }
 
 }

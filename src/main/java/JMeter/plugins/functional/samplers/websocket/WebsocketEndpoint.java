@@ -11,6 +11,8 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.extensions.Frame;
 
+import static com.google.common.base.MoreObjects.toStringHelper;
+
 @WebSocket(maxTextMessageSize = 64 * 1024)
 public class WebsocketEndpoint {
 
@@ -49,5 +51,12 @@ public class WebsocketEndpoint {
         log.debug("OnWebSocketFrame()" +
                 " session: " + session +
                 " frame:" + frame);
+    }
+
+    @Override
+    public String toString() {
+        return toStringHelper(this)
+                .add("stringBuilder", stringBuilder)
+                .toString();
     }
 }

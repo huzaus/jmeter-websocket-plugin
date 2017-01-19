@@ -1,12 +1,11 @@
 package JMeter.plugins.functional.samplers.websocket.configurations;
 
+import JMeter.plugins.functional.samplers.websocket.WebsocketEndpoint;
 import com.google.common.base.Function;
 import org.apache.jmeter.config.ConfigTestElement;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 import org.eclipse.jetty.websocket.api.Session;
-
-import javax.annotation.Nullable;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Optional.fromNullable;
@@ -17,6 +16,8 @@ public class WebsocketSessionsManager extends ConfigTestElement {
 
     private transient Session session;
 
+    private transient WebsocketEndpoint websocketEndpoint;
+
     public static final String WEBSOCKET_MANAGER = "websocket_manager";
 
     public Session getSession() {
@@ -24,8 +25,17 @@ public class WebsocketSessionsManager extends ConfigTestElement {
     }
 
     public void setSession(Session session) {
-        log.error("setSession{}");
+        log.debug("setSession() session: " + session);
         this.session = session;
+    }
+
+    public WebsocketEndpoint getWebsocketEndpoint() {
+        return websocketEndpoint;
+    }
+
+    public void setWebsocketEndpoint(WebsocketEndpoint websocketEndpoint) {
+        log.debug("setWebsocketEndpoint() websocketEndpoint: " + websocketEndpoint);
+        this.websocketEndpoint = websocketEndpoint;
     }
 
     @Override
@@ -33,14 +43,13 @@ public class WebsocketSessionsManager extends ConfigTestElement {
         return toStringHelper(this)
                 .add("session", fromNullable(session)
                         .transform(new Function<Session, String>() {
-                            @Nullable
                             @Override
-                            public String apply(@Nullable Session input) {
+                            public String apply(Session input) {
                                 return "is set";
                             }
                         })
-                        .or("is not set")
-                )
+                        .or("is not set"))
+                .add("websocketEndpoint", websocketEndpoint)
                 .toString();
     }
 }
