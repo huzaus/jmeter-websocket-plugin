@@ -1,12 +1,12 @@
 package JMeter.plugins.functional.samplers.websocket.modifiers;
 
-import JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler;
-import JMeter.plugins.functional.samplers.websocket.WebsocketMessageSamplerGui;
+import JMeter.plugins.functional.samplers.websocket.WebsocketSessionSampler;
+import JMeter.plugins.functional.samplers.websocket.WebsocketSessionSamplerGui;
 
-public class WebsocketMessageSamplerModifier implements Modifier<WebsocketMessageSamplerGui, WebsocketMessageSampler> {
+public class WebsocketSessionSamplerModifier implements Modifier<WebsocketSessionSamplerGui, WebsocketSessionSampler> {
 
     @Override
-    public void modify(WebsocketMessageSamplerGui samplerGui, WebsocketMessageSampler sampler) {
+    public void modify(WebsocketSessionSamplerGui samplerGui, WebsocketSessionSampler sampler) {
         sampler.setServerNameOrIp(samplerGui.getServerNameOrIp().getText());
         sampler.setPortNumber(samplerGui.getPortNumber().getText());
         sampler.setProtocol(samplerGui.getProtocol().getText());

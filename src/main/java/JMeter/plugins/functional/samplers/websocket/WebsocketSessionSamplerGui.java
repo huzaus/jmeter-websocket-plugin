@@ -1,7 +1,7 @@
 package JMeter.plugins.functional.samplers.websocket;
 
-import JMeter.plugins.functional.samplers.websocket.configurers.WebsocketMessageSamplerConfigurer;
-import JMeter.plugins.functional.samplers.websocket.modifiers.WebsocketMessageSamplerModifier;
+import JMeter.plugins.functional.samplers.websocket.configurers.WebsocketSessionSamplerConfigurer;
+import JMeter.plugins.functional.samplers.websocket.modifiers.WebsocketSessionSamplerModifier;
 import org.apache.jmeter.gui.util.HorizontalPanel;
 import org.apache.jmeter.gui.util.VerticalPanel;
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
@@ -20,7 +20,7 @@ import static java.awt.BorderLayout.SOUTH;
 import static javax.swing.BorderFactory.createEtchedBorder;
 import static javax.swing.BorderFactory.createTitledBorder;
 
-public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
+public class WebsocketSessionSamplerGui extends AbstractSamplerGui {
 
     private final JLabeledTextField serverNameOrIp;
     private final JLabeledTextField portNumber;
@@ -29,10 +29,10 @@ public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
     private final JLabeledTextField responseTimeOut;
     private final JLabeledTextField path;
     private final JLabeledTextArea message;
-    private final WebsocketMessageSamplerModifier modifier;
-    private final WebsocketMessageSamplerConfigurer configurer;
+    private final WebsocketSessionSamplerModifier modifier;
+    private final WebsocketSessionSamplerConfigurer configurer;
 
-    public WebsocketMessageSamplerGui() {
+    public WebsocketSessionSamplerGui() {
         serverNameOrIp = new JLabeledTextField("Server Name or IP:", 10);
         portNumber = new JLabeledTextField("Port Number:", 5);
         protocol = new JLabeledTextField("Protocol:", 5);
@@ -40,20 +40,20 @@ public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
         responseTimeOut = new JLabeledTextField("Response:", 5);
         path = new JLabeledTextField("Path:", 15);
         message = new JLabeledTextArea("Message:");
-        modifier = new WebsocketMessageSamplerModifier();
-        configurer = new WebsocketMessageSamplerConfigurer();
+        modifier = new WebsocketSessionSamplerModifier();
+        configurer = new WebsocketSessionSamplerConfigurer();
 
         init();
     }
 
     @Override
     public String getLabelResource() {
-        return "websocket.message.sampler.title";
+        return "websocket.session.sampler.title";
     }
 
     @Override
     public TestElement createTestElement() {
-        WebsocketMessageSampler sampler = new WebsocketMessageSampler();
+        WebsocketSessionSampler sampler = new WebsocketSessionSampler();
         modifyTestElement(sampler);
         return sampler;
     }
@@ -61,19 +61,19 @@ public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
     @Override
     public void modifyTestElement(TestElement sampler) {
         sampler.clear();
-        modifier.modify(this, (WebsocketMessageSampler) sampler);
+        modifier.modify(this, (WebsocketSessionSampler) sampler);
         super.configureTestElement(sampler);
     }
 
     @Override
     public String getStaticLabel() {
-        return "Websocket Message Sampler";
+        return "Websocket Session Sampler";
     }
 
     @Override
     public void configure(TestElement sampler) {
         super.configure(sampler);
-        configurer.configure((WebsocketMessageSampler) sampler, this);
+        configurer.configure((WebsocketSessionSampler) sampler, this);
     }
 
     private void init() {

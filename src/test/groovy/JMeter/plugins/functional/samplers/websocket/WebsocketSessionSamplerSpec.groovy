@@ -10,21 +10,21 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
-import static JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler.CONNECT_TIME_OUT
-import static JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler.COOKIE_MANAGER
-import static JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler.HEADER_MANAGER
-import static JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler.MESSAGE
-import static JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler.PATH
-import static JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler.PORT_NUMBER
-import static JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler.PROTOCOL
-import static JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler.RESPONSE_TIME_OUT
-import static JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler.SERVER_NAME_OR_IP
+import static WebsocketSessionSampler.CONNECT_TIME_OUT
+import static WebsocketSessionSampler.COOKIE_MANAGER
+import static WebsocketSessionSampler.HEADER_MANAGER
+import static WebsocketSessionSampler.MESSAGE
+import static WebsocketSessionSampler.PATH
+import static WebsocketSessionSampler.PORT_NUMBER
+import static WebsocketSessionSampler.PROTOCOL
+import static WebsocketSessionSampler.RESPONSE_TIME_OUT
+import static WebsocketSessionSampler.SERVER_NAME_OR_IP
 
 @Unroll
-class WebsocketMessageSamplerSpec extends Specification {
+class WebsocketSessionSamplerSpec extends Specification {
 
     @Subject
-    WebsocketMessageSampler sampler = new WebsocketMessageSampler()
+    WebsocketSessionSampler sampler = new WebsocketSessionSampler()
 
     def "#field field value should be stored in #property property of #type type"() {
         when:

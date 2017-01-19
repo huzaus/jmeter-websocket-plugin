@@ -5,10 +5,10 @@ import spock.lang.Subject
 import spock.lang.Unroll
 
 @Unroll
-class WebsocketMessageSamplerGuiSpec extends JmeterAbstractSpec {
+class WebsocketSessionSamplerGuiSpec extends JmeterAbstractSpec {
 
     @Subject
-    WebsocketMessageSamplerGui websocketMessageSamplerGui = new WebsocketMessageSamplerGui()
+    WebsocketSessionSamplerGui websocketMessageSamplerGui = new WebsocketSessionSamplerGui()
 
     def "#component should be initialized in constructor with #label"() {
         expect:
@@ -26,7 +26,7 @@ class WebsocketMessageSamplerGuiSpec extends JmeterAbstractSpec {
 
     def "get#field should return #value"() {
         when:
-        websocketMessageSamplerGui = new WebsocketMessageSamplerGui()
+        websocketMessageSamplerGui = new WebsocketSessionSamplerGui()
         then:
         websocketMessageSamplerGui."$field"
         where:
@@ -37,7 +37,7 @@ class WebsocketMessageSamplerGuiSpec extends JmeterAbstractSpec {
 
     def "Should modify #property property with '#value' value from gui #component component"() {
         given:
-        WebsocketMessageSampler sampler = new WebsocketMessageSampler()
+        WebsocketSessionSampler sampler = new WebsocketSessionSampler()
         websocketMessageSamplerGui."$component".text = value
         when:
         websocketMessageSamplerGui.modifyTestElement(sampler)
@@ -56,7 +56,7 @@ class WebsocketMessageSamplerGuiSpec extends JmeterAbstractSpec {
 
     def "Should configure gui #component component with '#value' value from #property sampler property"() {
         given:
-        WebsocketMessageSampler sampler = new WebsocketMessageSampler()
+        WebsocketSessionSampler sampler = new WebsocketSessionSampler()
         sampler."$property" = value
         when:
         websocketMessageSamplerGui.configure(sampler)

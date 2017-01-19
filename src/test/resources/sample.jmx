@@ -26,7 +26,9 @@
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
       <hashTree>
-        <JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler" testname="Websocket Message Sampler" enabled="true">
+        <JMeter.plugins.functional.samplers.websocket.configurations.WebsocketSessionsManager guiclass="JMeter.plugins.functional.samplers.websocket.configurations.WebsocketSessionsManagerGui" testclass="JMeter.plugins.functional.samplers.websocket.configurations.WebsocketSessionsManager" testname="Websocket Session Manager" enabled="true"/>
+        <hashTree/>
+        <JMeter.plugins.functional.samplers.websocket.WebsocketSessionSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebsocketSessionSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebsocketSessionSampler" testname="Websocket Session Sampler Ws" enabled="true">
           <stringProp name="serverNameOrIp">127.0.0.1</stringProp>
           <stringProp name="portNumber">80</stringProp>
           <stringProp name="protocol">ws</stringProp>
@@ -34,9 +36,9 @@
           <stringProp name="responseTimeOut">5000</stringProp>
           <stringProp name="path">/websocket</stringProp>
           <stringProp name="message">CONNECT\naccept-version:1.1,1.0\nheart-beat:10000,10000\n\n\u0000</stringProp>
-        </JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler>
+        </JMeter.plugins.functional.samplers.websocket.WebsocketSessionSampler>
         <hashTree/>
-        <JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler" testname="Websocket Message Sampler" enabled="true">
+        <JMeter.plugins.functional.samplers.websocket.WebsocketSessionSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebsocketSessionSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebsocketSessionSampler" testname="Websocket Session Sampler Wss" enabled="true">
           <stringProp name="serverNameOrIp">127.0.0.2</stringProp>
           <stringProp name="portNumber">443</stringProp>
           <stringProp name="protocol">wss</stringProp>
@@ -44,7 +46,7 @@
           <stringProp name="responseTimeOut">5000</stringProp>
           <stringProp name="path">/websocket</stringProp>
           <stringProp name="message">CONNECT\naccept-version:1.1,1.0\nheart-beat:10000,10000\n\n\u0000</stringProp>
-        </JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler>
+        </JMeter.plugins.functional.samplers.websocket.WebsocketSessionSampler>
         <hashTree/>
         <JMeter.plugins.functional.samplers.websocket.WebSocketSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebSocketSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebSocketSampler" testname="WebSocket Sampler" enabled="true">
           <stringProp name="serverAddress">127.0.0.1</stringProp>

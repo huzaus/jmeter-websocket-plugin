@@ -1,21 +1,21 @@
 package JMeter.plugins.functional.samplers.websocket.configurers
 
 import JMeter.plugins.functional.samplers.websocket.JmeterAbstractSpec
-import JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler
-import JMeter.plugins.functional.samplers.websocket.WebsocketMessageSamplerGui
+import JMeter.plugins.functional.samplers.websocket.WebsocketSessionSampler
+import JMeter.plugins.functional.samplers.websocket.WebsocketSessionSamplerGui
 import spock.lang.Subject
 import spock.lang.Unroll
 
 @Unroll
-class WebsocketMessageSamplerConfigurerSpec extends JmeterAbstractSpec {
+class WebsocketSessionSamplerConfigurerSpec extends JmeterAbstractSpec {
 
     @Subject
-    WebsocketMessageSamplerConfigurer modifier = new WebsocketMessageSamplerConfigurer()
+    WebsocketSessionSamplerConfigurer modifier = new WebsocketSessionSamplerConfigurer()
 
     def "Should set #component gui component value to #value from #property sampler property"() {
         given:
-        WebsocketMessageSamplerGui gui = new WebsocketMessageSamplerGui()
-        WebsocketMessageSampler sampler = new WebsocketMessageSampler()
+        WebsocketSessionSamplerGui gui = new WebsocketSessionSamplerGui()
+        WebsocketSessionSampler sampler = new WebsocketSessionSampler()
         sampler."$property" = value
         when:
         modifier.configure(sampler, gui)

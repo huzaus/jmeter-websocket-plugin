@@ -36,7 +36,7 @@ import static com.google.common.base.Throwables.propagate;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-public class WebsocketMessageSampler extends AbstractSampler {
+public class WebsocketSessionSampler extends AbstractSampler {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
 
@@ -50,7 +50,7 @@ public class WebsocketMessageSampler extends AbstractSampler {
     private static final String COOKIE_MANAGER = "cookie_manager";
     private static final String HEADER_MANAGER = "header_manager";
 
-    public WebsocketMessageSampler() {
+    public WebsocketSessionSampler() {
         setName("Websocket Message Sampler");
     }
 

@@ -1,22 +1,22 @@
 package JMeter.plugins.functional.samplers.websocket.modifiers
 
 import JMeter.plugins.functional.samplers.websocket.JmeterAbstractSpec
-import JMeter.plugins.functional.samplers.websocket.WebsocketMessageSampler
-import JMeter.plugins.functional.samplers.websocket.WebsocketMessageSamplerGui
+import JMeter.plugins.functional.samplers.websocket.WebsocketSessionSampler
+import JMeter.plugins.functional.samplers.websocket.WebsocketSessionSamplerGui
 import spock.lang.Subject
 import spock.lang.Unroll
 
 @Unroll
-class WebsocketMessageSamplerModifierSpec extends JmeterAbstractSpec {
+class WebsocketSessionSamplerModifierSpec extends JmeterAbstractSpec {
 
     @Subject
-    WebsocketMessageSamplerModifier modifier = new WebsocketMessageSamplerModifier()
+    WebsocketSessionSamplerModifier modifier = new WebsocketSessionSamplerModifier()
 
     def "Should set #field sampler field to '#value'(value of #component gui component)"() {
         given:
-        WebsocketMessageSamplerGui gui = new WebsocketMessageSamplerGui()
+        WebsocketSessionSamplerGui gui = new WebsocketSessionSamplerGui()
         gui."$component".text = value
-        WebsocketMessageSampler sampler = new WebsocketMessageSampler()
+        WebsocketSessionSampler sampler = new WebsocketSessionSampler()
         when:
         modifier.modify(gui, sampler)
         then:
