@@ -20,31 +20,34 @@ public class WebsocketEndpoint {
 
     @OnWebSocketConnect
     public void onWebSocketConnect(Session session) {
-        log.debug("onWebSocketConnect{} session=" + session);
-        stringBuilder.append("onWebSocketConnect{} session=" + session + "\n");
+        log.info("onWebSocketConnect()" +
+                " session: " + session);
     }
 
     @OnWebSocketClose
     public void onWebSocketClose(Session session, int closeCode, String closeReason) {
-        log.debug("onWebSocketClose{} session = " + session + ", closeCode=" + closeCode + ", closeReason=" + closeReason);
-        stringBuilder.append("onWebSocketClose{} session = " + session + ", closeCode=" + closeCode + ", closeReason=" + closeReason + "\n");
+        log.info("onWebSocketClose()" +
+                " session: " + session +
+                " closeCode: " + closeCode +
+                " closeReason: " + closeReason);
     }
 
     @OnWebSocketMessage
     public void OnWebSocketMessage(Session session, String text) {
-        log.debug("OnWebSocketMessage{}" + session + " text=" + text);
-        stringBuilder.append("OnWebSocketMessage{} session=" + session + " text=" + text + "\n");
+        log.debug("OnWebSocketMessage()" +
+                " session: " + session +
+                " text:" + text);
     }
 
     @OnWebSocketError
     public void OnWebSocketError(Session session, Throwable cause) {
-        log.error("OnWebSocketError{} session=" + session, cause);
-        stringBuilder.append("OnWebSocketError{} session=" + session + ", cause=" + cause + "\n");
+        log.error("OnWebSocketError() session: " + session, cause);
     }
 
     @OnWebSocketFrame
     public void OnWebSocketFrame(Session session, Frame frame) {
-        log.error("OnWebSocketFrame{} session=" + session + ", frame=" + frame);
-        stringBuilder.append("OnWebSocketFrame{} session=" + session + ", frame=" + frame + "\n");
+        log.debug("OnWebSocketFrame()" +
+                " session: " + session +
+                " frame:" + frame);
     }
 }
