@@ -1,10 +1,11 @@
 package com.jmeter.websocket.plugin.samplers;
 
-import org.apache.jmeter.samplers.AbstractSampler;
+import com.jmeter.websocket.plugin.configurations.WebsocketSessionsManager;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
+import org.apache.jmeter.testelement.TestElement;
 
-public class WebsocketMessageSampler extends AbstractSampler {
+public class WebsocketMessageSampler extends AbstractWebsocketSampler {
 
     private static final String MESSAGE = "websocket.message";
 
@@ -21,4 +22,12 @@ public class WebsocketMessageSampler extends AbstractSampler {
         setProperty(MESSAGE, message, "");
     }
 
+    @Override
+    public void addTestElement(TestElement el) {
+        if (el instanceof WebsocketSessionsManager) {
+            setWebsocketSessionsManager((WebsocketSessionsManager) el);
+        } else {
+            super.addTestElement(el);
+        }
+    }
 }

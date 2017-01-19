@@ -8,7 +8,6 @@ import com.jmeter.websocket.plugin.configurations.WebsocketSessionsManager;
 import org.apache.jmeter.protocol.http.control.CookieManager;
 import org.apache.jmeter.protocol.http.control.Header;
 import org.apache.jmeter.protocol.http.control.HeaderManager;
-import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.testelement.TestElement;
@@ -37,7 +36,7 @@ import static com.google.common.base.Throwables.propagate;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-public class WebsocketSessionSampler extends AbstractSampler {
+public class WebsocketSessionSampler extends AbstractWebsocketSampler {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
 
@@ -93,23 +92,6 @@ public class WebsocketSessionSampler extends AbstractSampler {
             super.addTestElement(el);
         }
     }
-
-    public WebsocketSessionsManager getWebsocketSessionsManager() {
-        return Optional.fromNullable(getProperty(WebsocketSessionsManager.WEBSOCKET_MANAGER).getObjectValue())
-                .transform(
-                        new Function<Object, WebsocketSessionsManager>() {
-                            @Override
-                            public WebsocketSessionsManager apply(Object property) {
-                                return (WebsocketSessionsManager) property;
-                            }
-                        })
-                .orNull();
-    }
-
-    public void setWebsocketSessionsManager(WebsocketSessionsManager websocketSessionsManager) {
-        setProperty(new TestElementProperty(WebsocketSessionsManager.WEBSOCKET_MANAGER, websocketSessionsManager));
-    }
-
 
     public CookieManager getCookieManager() {
         return Optional.fromNullable(getProperty(COOKIE_MANAGER).getObjectValue())
