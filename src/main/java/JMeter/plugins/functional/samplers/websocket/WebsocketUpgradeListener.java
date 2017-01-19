@@ -55,5 +55,14 @@ public class WebsocketUpgradeListener implements UpgradeListener {
     public void onHandshakeResponse(UpgradeResponse response) {
         log.info("onHandshakeResponse() response: " + response);
         checkNotNull(response);
+        checkNotNull(response.getHeaders());
+        sampleResult.setSuccessful(response.isSuccess());
+        sampleResult.setResponseMessage(response.getStatusReason());
+        sampleResult.setResponseCode(String.valueOf(response.getStatusCode()));
+        sampleResult.setResponseHeaders(
+                Joiner.on("\n")
+                        .withKeyValueSeparator("=")
+                        .join(response.getHeaders())
+        );
     }
 }
