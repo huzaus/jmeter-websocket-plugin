@@ -1,8 +1,6 @@
 package com.jmeter.websocket.plugin.samplers
 
 import com.jmeter.websocket.plugin.JmeterAbstractSpec
-import com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler
-import com.jmeter.websocket.plugin.samplers.WebsocketSessionSamplerGui
 import org.apache.jmeter.protocol.http.sampler.HTTPSampler
 import spock.lang.Subject
 import spock.lang.Unroll
@@ -24,7 +22,6 @@ class WebsocketSessionSamplerGuiSpec extends JmeterAbstractSpec {
         'connectTimeOut'  || 'Connect:'
         'responseTimeOut' || 'Response:'
         'path'            || 'Path:'
-        'message'         || 'Message:'
     }
 
     def "get#field should return #value"() {
@@ -54,7 +51,6 @@ class WebsocketSessionSamplerGuiSpec extends JmeterAbstractSpec {
         'connectTimeOut'  | 'connectTimeOut'  | '2000'
         'responseTimeOut' | 'responseTimeOut' | '5000'
         'path'            | 'path'            | 'websocket'
-        'message'         | 'message'         | 'CONNECT\\naccept-version:1.1,1.0\\nheart-beat:10000,10000\\n\\n\\u0000'
     }
 
     def "Should configure gui #component component with '#value' value from #property sampler property"() {
@@ -73,7 +69,6 @@ class WebsocketSessionSamplerGuiSpec extends JmeterAbstractSpec {
         'connectTimeOut'  | 'connectTimeOut'  | '2000'
         'responseTimeOut' | 'responseTimeOut' | '5000'
         'path'            | 'path'            | 'websocket'
-        'message'         | 'message'         | 'CONNECT\\naccept-version:1.1,1.0\\nheart-beat:10000,10000\\n\\n\\u0000'
     }
 
     def "Should throw ClassCastException when testElement is not WebsocketMessageSampler on configure"() {

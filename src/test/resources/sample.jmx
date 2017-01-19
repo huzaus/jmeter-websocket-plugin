@@ -35,7 +35,6 @@
           <stringProp name="connectTimeOut">2000</stringProp>
           <stringProp name="responseTimeOut">5000</stringProp>
           <stringProp name="path">/websocket</stringProp>
-          <stringProp name="message">CONNECT\naccept-version:1.1,1.0\nheart-beat:10000,10000\n\n\u0000</stringProp>
         </com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler>
         <hashTree/>
         <com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler guiclass="com.jmeter.websocket.plugin.samplers.WebsocketSessionSamplerGui" testclass="com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler" testname="Websocket Session Sampler Wss" enabled="true">
@@ -45,7 +44,6 @@
           <stringProp name="connectTimeOut">2000</stringProp>
           <stringProp name="responseTimeOut">5000</stringProp>
           <stringProp name="path">/websocket</stringProp>
-          <stringProp name="message">CONNECT\naccept-version:1.1,1.0\nheart-beat:10000,10000\n\n\u0000</stringProp>
         </com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request" enabled="true">

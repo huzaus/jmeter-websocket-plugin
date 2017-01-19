@@ -6,7 +6,6 @@ import org.apache.jmeter.gui.util.HorizontalPanel;
 import org.apache.jmeter.gui.util.VerticalPanel;
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
 import org.apache.jmeter.testelement.TestElement;
-import org.apache.jorphan.gui.JLabeledTextArea;
 import org.apache.jorphan.gui.JLabeledTextField;
 
 import java.awt.BorderLayout;
@@ -28,7 +27,6 @@ public class WebsocketSessionSamplerGui extends AbstractSamplerGui {
     private final JLabeledTextField connectTimeOut;
     private final JLabeledTextField responseTimeOut;
     private final JLabeledTextField path;
-    private final JLabeledTextArea message;
     private final WebsocketSessionSamplerModifier modifier;
     private final WebsocketSessionSamplerConfigurer configurer;
 
@@ -39,7 +37,6 @@ public class WebsocketSessionSamplerGui extends AbstractSamplerGui {
         connectTimeOut = new JLabeledTextField("Connect:", 5);
         responseTimeOut = new JLabeledTextField("Response:", 5);
         path = new JLabeledTextField("Path:", 15);
-        message = new JLabeledTextArea("Message:");
         modifier = new WebsocketSessionSamplerModifier();
         configurer = new WebsocketSessionSamplerConfigurer();
 
@@ -86,7 +83,6 @@ public class WebsocketSessionSamplerGui extends AbstractSamplerGui {
     private JPanel makeWebsocketPanel() {
         JPanel websocketPanel = new JPanel(new BorderLayout());
         websocketPanel.add(makeWebsocketConnectionPanel(), NORTH);
-        websocketPanel.add(makeMessageBodyPanel(), CENTER);
         return websocketPanel;
     }
 
@@ -148,11 +144,6 @@ public class WebsocketSessionSamplerGui extends AbstractSamplerGui {
         return panel;
     }
 
-    private Component makeMessageBodyPanel() {
-        JPanel panel = new JPanel(new BorderLayout(5, 0));
-        panel.add(message, CENTER);
-        return panel;
-    }
 
     public JLabeledTextField getServerNameOrIp() {
         return serverNameOrIp;
@@ -178,7 +169,4 @@ public class WebsocketSessionSamplerGui extends AbstractSamplerGui {
         return path;
     }
 
-    public JLabeledTextArea getMessage() {
-        return message;
-    }
 }

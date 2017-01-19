@@ -13,6 +13,5 @@ public class WebsocketSessionSamplerModifier implements Modifier<WebsocketSessio
         sampler.setConnectTimeOut(samplerGui.getConnectTimeOut().getText());
         sampler.setResponseTimeOut(samplerGui.getResponseTimeOut().getText());
         sampler.setPath(samplerGui.getPath().getText());
-        sampler.setMessage(samplerGui.getMessage().getText());
     }
 }

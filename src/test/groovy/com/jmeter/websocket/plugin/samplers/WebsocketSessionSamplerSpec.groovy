@@ -1,6 +1,5 @@
 package com.jmeter.websocket.plugin.samplers
 
-import com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler
 import org.apache.jmeter.protocol.http.control.Cookie
 import org.apache.jmeter.protocol.http.control.CookieManager
 import org.apache.jmeter.protocol.http.control.Header
@@ -14,7 +13,6 @@ import spock.lang.Unroll
 import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.CONNECT_TIME_OUT
 import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.COOKIE_MANAGER
 import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.HEADER_MANAGER
-import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.MESSAGE
 import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.PATH
 import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.PORT_NUMBER
 import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.PROTOCOL
@@ -40,7 +38,6 @@ class WebsocketSessionSamplerSpec extends Specification {
         'connectTimeOut'  | CONNECT_TIME_OUT  | 'String' | '2000'
         'responseTimeOut' | RESPONSE_TIME_OUT | 'String' | '5000'
         'path'            | PATH              | 'String' | '/websocket'
-        'message'         | MESSAGE           | 'String' | 'CONNECT\\naccept-version:1.1,1.0\\nheart-beat:10000,10000\\n\\n\\u0000'
     }
 
     def "Should not set #property property via addTestElement method when class type is not matched"() {

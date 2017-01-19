@@ -1,10 +1,10 @@
 package com.jmeter.websocket.plugin.samplers;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.jmeter.websocket.plugin.WebsocketEndpoint;
 import com.jmeter.websocket.plugin.WebsocketUpgradeListener;
 import com.jmeter.websocket.plugin.configurations.WebsocketSessionsManager;
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import org.apache.jmeter.protocol.http.control.CookieManager;
 import org.apache.jmeter.protocol.http.control.Header;
 import org.apache.jmeter.protocol.http.control.HeaderManager;
@@ -47,7 +47,6 @@ public class WebsocketSessionSampler extends AbstractSampler {
     private static final String CONNECT_TIME_OUT = "connectTimeOut";
     private static final String RESPONSE_TIME_OUT = "responseTimeOut";
     private static final String PATH = "path";
-    private static final String MESSAGE = "message";
     private static final String COOKIE_MANAGER = "cookie_manager";
     private static final String HEADER_MANAGER = "header_manager";
 
@@ -190,14 +189,6 @@ public class WebsocketSessionSampler extends AbstractSampler {
 
     public void setPath(String path) {
         setProperty(PATH, path, "");
-    }
-
-    public String getMessage() {
-        return getPropertyAsString(MESSAGE);
-    }
-
-    public void setMessage(String message) {
-        setProperty(MESSAGE, message, "");
     }
 
     public URI uri() throws URISyntaxException {

@@ -29,7 +29,6 @@ class WebsocketSessionSamplerConfigurerSpec extends JmeterAbstractSpec {
         'connectTimeOut'  | 'connectTimeOut'  | '2000'
         'responseTimeOut' | 'responseTimeOut' | '5000'
         'path'            | 'path'            | '/websocket'
-        'message'         | 'message'         | 'CONNECT\\naccept-version:1.1,1.0\\nheart-beat:10000,10000\\n\\n\\u0000'
     }
 
 }

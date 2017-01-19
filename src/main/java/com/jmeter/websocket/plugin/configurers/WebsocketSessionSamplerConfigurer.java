@@ -12,6 +12,5 @@ public class WebsocketSessionSamplerConfigurer implements Configurer<WebsocketSe
         samplerGui.getConnectTimeOut().setText(sampler.getConnectTimeOut());
         samplerGui.getResponseTimeOut().setText(sampler.getResponseTimeOut());
         samplerGui.getPath().setText(sampler.getPath());
-        samplerGui.getMessage().setText(sampler.getMessage());
     }
 }
