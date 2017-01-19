@@ -36,7 +36,7 @@ public class WebsocketEndpoint {
 
     @OnWebSocketMessage
     public void OnWebSocketMessage(Session session, String text) {
-        log.debug("OnWebSocketMessage()" +
+        log.info("OnWebSocketMessage()" +
                 " session: " + session +
                 " text:" + text);
     }
@@ -48,7 +48,7 @@ public class WebsocketEndpoint {
 
     @OnWebSocketFrame
     public void OnWebSocketFrame(Session session, Frame frame) {
-        log.debug("OnWebSocketFrame()" +
+        log.info("OnWebSocketFrame()" +
                 " session: " + session +
                 " frame:" + frame);
     }

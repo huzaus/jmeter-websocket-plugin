@@ -59,17 +59,18 @@ public class WebsocketSessionSampler extends AbstractWebsocketSampler {
         sampleResult.sampleStart();
         sampleResult.setSampleLabel(getName());
         try {
-            checkNotNull(getWebsocketSessionsManager(), "WebsocketSessionManager should be added to test plan");
+            WebsocketSessionsManager websocketSessionsManager = getWebsocketSessionsManager();
+            checkNotNull(websocketSessionsManager, "WebsocketSessionManager should be added to test plan");
 
             WebSocketClient webSocketClient = webSocketClient();
             webSocketClient.start();
 
             WebsocketEndpoint websocketEndpoint = new WebsocketEndpoint();
-            getWebsocketSessionsManager().setWebsocketEndpoint(websocketEndpoint);
+            websocketSessionsManager.setWebsocketEndpoint(websocketEndpoint);
 
             Future<Session> promise = webSocketClient.connect(websocketEndpoint, uri(), upgradeRequest(), new WebsocketUpgradeListener(sampleResult));
 
-            getWebsocketSessionsManager().setSession(promise.get(Long.valueOf(getConnectTimeOut()), MILLISECONDS));
+            websocketSessionsManager.setSession(promise.get(Long.valueOf(getConnectTimeOut()), MILLISECONDS));
         } catch (Exception e) {
             log.error("Error: ", e);
             sampleResult.setResponseMessage(e.getMessage());
