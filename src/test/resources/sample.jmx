@@ -26,9 +26,9 @@
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
       <hashTree>
-        <JMeter.plugins.functional.samplers.websocket.configurations.WebsocketSessionsManager guiclass="JMeter.plugins.functional.samplers.websocket.configurations.WebsocketSessionsManagerGui" testclass="JMeter.plugins.functional.samplers.websocket.configurations.WebsocketSessionsManager" testname="Websocket Session Manager" enabled="true"/>
+        <com.jmeter.websocket.plugin.configurations.WebsocketSessionsManager guiclass="com.jmeter.websocket.plugin.configurations.WebsocketSessionsManagerGui" testclass="com.jmeter.websocket.plugin.configurations.WebsocketSessionsManager" testname="Websocket Session Manager" enabled="true"/>
         <hashTree/>
-        <JMeter.plugins.functional.samplers.websocket.WebsocketSessionSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebsocketSessionSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebsocketSessionSampler" testname="Websocket Session Sampler Ws" enabled="true">
+        <com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler guiclass="com.jmeter.websocket.plugin.samplers.WebsocketSessionSamplerGui" testclass="com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler" testname="Websocket Session Sampler Ws" enabled="true">
           <stringProp name="serverNameOrIp">127.0.0.1</stringProp>
           <stringProp name="portNumber">80</stringProp>
           <stringProp name="protocol">ws</stringProp>
@@ -36,9 +36,9 @@
           <stringProp name="responseTimeOut">5000</stringProp>
           <stringProp name="path">/websocket</stringProp>
           <stringProp name="message">CONNECT\naccept-version:1.1,1.0\nheart-beat:10000,10000\n\n\u0000</stringProp>
-        </JMeter.plugins.functional.samplers.websocket.WebsocketSessionSampler>
+        </com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler>
         <hashTree/>
-        <JMeter.plugins.functional.samplers.websocket.WebsocketSessionSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebsocketSessionSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebsocketSessionSampler" testname="Websocket Session Sampler Wss" enabled="true">
+        <com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler guiclass="com.jmeter.websocket.plugin.samplers.WebsocketSessionSamplerGui" testclass="com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler" testname="Websocket Session Sampler Wss" enabled="true">
           <stringProp name="serverNameOrIp">127.0.0.2</stringProp>
           <stringProp name="portNumber">443</stringProp>
           <stringProp name="protocol">wss</stringProp>
@@ -46,32 +46,7 @@
           <stringProp name="responseTimeOut">5000</stringProp>
           <stringProp name="path">/websocket</stringProp>
           <stringProp name="message">CONNECT\naccept-version:1.1,1.0\nheart-beat:10000,10000\n\n\u0000</stringProp>
-        </JMeter.plugins.functional.samplers.websocket.WebsocketSessionSampler>
-        <hashTree/>
-        <JMeter.plugins.functional.samplers.websocket.WebSocketSampler guiclass="JMeter.plugins.functional.samplers.websocket.WebSocketSamplerGui" testclass="JMeter.plugins.functional.samplers.websocket.WebSocketSampler" testname="WebSocket Sampler" enabled="true">
-          <stringProp name="serverAddress">127.0.0.1</stringProp>
-          <stringProp name="serverPort">80</stringProp>
-          <stringProp name="implementation">RFC6455 (v13)</stringProp>
-          <stringProp name="protocol">ws</stringProp>
-          <stringProp name="contextPath"></stringProp>
-          <stringProp name="contentEncoding">UTF-8</stringProp>
-          <stringProp name="requestPayload"></stringProp>
-          <stringProp name="connectionTimeout">5000</stringProp>
-          <stringProp name="responseTimeout">20000</stringProp>
-          <boolProp name="ignoreSslErrors">false</boolProp>
-          <boolProp name="streamingConnection">false</boolProp>
-          <stringProp name="connectionId"></stringProp>
-          <stringProp name="responsePattern"></stringProp>
-          <stringProp name="closeConncectionPattern"></stringProp>
-          <stringProp name="proxyAddress"></stringProp>
-          <stringProp name="proxyPassword"></stringProp>
-          <stringProp name="proxyPort"></stringProp>
-          <stringProp name="proxyUsername"></stringProp>
-          <stringProp name="messageBacklog">3</stringProp>
-          <elementProp name="queryStringParameters" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-        </JMeter.plugins.functional.samplers.websocket.WebSocketSampler>
+        </com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
