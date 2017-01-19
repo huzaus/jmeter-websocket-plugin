@@ -7,15 +7,16 @@ import org.eclipse.jetty.websocket.api.UpgradeResponse;
 import org.eclipse.jetty.websocket.client.io.UpgradeListener;
 
 public class WebsocketUpgradeListener implements UpgradeListener {
+
     private static final Logger log = LoggingManager.getLoggerForClass();
 
     @Override
     public void onHandshakeRequest(UpgradeRequest request) {
-        log.error("onHandshakeRequest{}" + request);
+        log.info("onHandshakeRequest() request: " + request);
     }
 
     @Override
     public void onHandshakeResponse(UpgradeResponse response) {
-        log.error("onHandshakeResponse{}" + response);
+        log.info("onHandshakeResponse() response: " + response);
     }
 }
