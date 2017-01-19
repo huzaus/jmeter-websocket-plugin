@@ -1,15 +1,14 @@
 package JMeter.plugins.functional.samplers.websocket.configurations;
 
 import com.google.common.base.Function;
-import com.google.common.base.MoreObjects;
 import org.apache.jmeter.config.ConfigTestElement;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.UpgradeRequest;
 
-import java.net.URI;
+import javax.annotation.Nullable;
 
+import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Optional.fromNullable;
 
 public class WebsocketSessionsManager extends ConfigTestElement {
@@ -31,28 +30,16 @@ public class WebsocketSessionsManager extends ConfigTestElement {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("session",
-                        fromNullable(session)
-                                .transform(new Function<Session, UpgradeRequest>() {
-                                    @Override
-                                    public UpgradeRequest apply(Session session) {
-                                        return session.getUpgradeRequest();
-                                    }
-                                })
-                                .transform(new Function<UpgradeRequest, URI>() {
-                                    @Override
-                                    public URI apply(UpgradeRequest request) {
-                                        return request.getRequestURI();
-                                    }
-                                })
-                                .transform(new Function<URI, String>() {
-                                    @Override
-                                    public String apply(URI uri) {
-                                        return uri.toString();
-                                    }
-                                })
-                                .orNull()
+        return toStringHelper(this)
+                .add("session", fromNullable(session)
+                        .transform(new Function<Session, String>() {
+                            @Nullable
+                            @Override
+                            public String apply(@Nullable Session input) {
+                                return "is set";
+                            }
+                        })
+                        .or("is not set")
                 )
                 .toString();
     }

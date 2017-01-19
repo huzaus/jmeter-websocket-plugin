@@ -19,6 +19,8 @@ dependencies {
     compile 'com.google.guava:guava:19.0'
 
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile 'cglib:cglib-nodep:3.2.4'
+    testCompile 'org.objenesis:objenesis:2.5'
 }
 
 task copySample(type: Copy, dependsOn: [build]) {
@@ -35,5 +37,5 @@ task openSampleMac(type: Exec, dependsOn: [copySample]) {
 }
 
 test {
-    systemProperty 'jmeter.home' , jmeterHome
+    systemProperty 'jmeter.home', jmeterHome
 }
