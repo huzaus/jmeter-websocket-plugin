@@ -1,7 +1,7 @@
 package com.jmeter.websocket.plugin.configurations;
 
-import com.jmeter.websocket.plugin.WebsocketEndpoint;
 import com.google.common.base.Function;
+import com.jmeter.websocket.plugin.WebsocketEndpoint;
 import org.apache.jmeter.config.ConfigTestElement;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
@@ -13,12 +13,13 @@ import static com.google.common.base.Optional.fromNullable;
 public class WebsocketSessionsManager extends ConfigTestElement {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
-
-    private transient Session session;
-
-    private transient WebsocketEndpoint websocketEndpoint;
+    private static final String FILE = "websocket.data.output.file";
 
     public static final String WEBSOCKET_MANAGER = "websocket_manager";
+
+    private transient Session session;
+    private transient WebsocketEndpoint websocketEndpoint;
+
 
     public Session getSession() {
         return session;
@@ -38,6 +39,14 @@ public class WebsocketSessionsManager extends ConfigTestElement {
         this.websocketEndpoint = websocketEndpoint;
     }
 
+    public String getFile() {
+        return getPropertyAsString(FILE, "");
+    }
+
+    public void setFile(String filename) {
+        setProperty(FILE, filename);
+    }
+
     @Override
     public String toString() {
         return toStringHelper(this)
@@ -50,6 +59,7 @@ public class WebsocketSessionsManager extends ConfigTestElement {
                         })
                         .or("is not set"))
                 .add("websocketEndpoint", websocketEndpoint)
+                .add("file", getFile())
                 .toString();
     }
 }
