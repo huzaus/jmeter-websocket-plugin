@@ -9,7 +9,10 @@ import java.net.URI;
 
 public interface WebsocketSession {
 
+    void connect(URI uri, CookieStore cookies, ClientUpgradeRequest upgradeRequest, SampleResult result, long timeOut) throws Exception;
+
     void sendMessage(String message) throws IOException;
 
-    void connect(URI uri, CookieStore cookies, ClientUpgradeRequest upgradeRequest, SampleResult result, long timeOut) throws Exception;
+    void onReceiveMessage(String message) throws IOException;
+
 }

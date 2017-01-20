@@ -1,13 +1,16 @@
 package com.jmeter.websocket.plugin.configurations
 
+import com.jmeter.websocket.plugin.endpoint.JettyWebsocketEndpoint
 import org.eclipse.jetty.util.ssl.SslContextFactory
 import org.eclipse.jetty.websocket.client.WebSocketClient
 import spock.lang.Specification
 import spock.lang.Subject
 
+import static java.nio.file.Files.createTempFile
+
 class JettyWebsocketSessionSpock extends Specification {
     @Subject
-    JettyWebsocketSession session = new JettyWebsocketSession()
+    JettyWebsocketEndpoint session = new JettyWebsocketEndpoint(createTempFile("tempfiles-delete-on-close", ".tmp"))
 
     def "Should create new SSL context factory with trustAll flag"() {
         when:
