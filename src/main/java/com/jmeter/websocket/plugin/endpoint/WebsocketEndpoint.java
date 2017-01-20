@@ -1,4 +1,4 @@
-package com.jmeter.websocket.plugin;
+package com.jmeter.websocket.plugin.endpoint;
 
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;

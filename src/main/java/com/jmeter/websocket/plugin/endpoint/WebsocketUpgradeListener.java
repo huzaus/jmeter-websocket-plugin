@@ -1,4 +1,4 @@
-package com.jmeter.websocket.plugin;
+package com.jmeter.websocket.plugin.endpoint;
 
 import com.google.common.base.Joiner;
 import org.apache.jmeter.samplers.SampleResult;

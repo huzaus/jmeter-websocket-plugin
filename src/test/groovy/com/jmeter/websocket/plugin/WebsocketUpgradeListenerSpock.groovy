@@ -1,5 +1,6 @@
 package com.jmeter.websocket.plugin
 
+import com.jmeter.websocket.plugin.endpoint.WebsocketUpgradeListener
 import org.apache.jmeter.samplers.SampleResult
 import org.eclipse.jetty.websocket.api.UpgradeRequest
 import org.eclipse.jetty.websocket.api.UpgradeResponse

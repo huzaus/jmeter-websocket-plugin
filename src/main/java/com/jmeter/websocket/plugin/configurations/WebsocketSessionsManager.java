@@ -1,8 +1,11 @@
 package com.jmeter.websocket.plugin.configurations;
 
 import com.google.common.base.Function;
-import com.jmeter.websocket.plugin.WebsocketEndpoint;
+import com.jmeter.websocket.plugin.endpoint.WebsocketEndpoint;
 import org.apache.jmeter.config.ConfigTestElement;
+import org.apache.jmeter.samplers.SampleEvent;
+import org.apache.jmeter.samplers.SampleListener;
+import org.apache.jmeter.testelement.TestStateListener;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 import org.eclipse.jetty.websocket.api.Session;
@@ -10,7 +13,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Optional.fromNullable;
 
-public class WebsocketSessionsManager extends ConfigTestElement {
+public class WebsocketSessionsManager extends ConfigTestElement implements SampleListener, TestStateListener {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
     private static final String FILE = "websocket.data.output.file";
@@ -20,6 +23,41 @@ public class WebsocketSessionsManager extends ConfigTestElement {
     private transient Session session;
     private transient WebsocketEndpoint websocketEndpoint;
 
+
+    @Override
+    public void sampleOccurred(SampleEvent sampleEvent) {
+
+    }
+
+    @Override
+    public void sampleStarted(SampleEvent sampleEvent) {
+
+    }
+
+    @Override
+    public void sampleStopped(SampleEvent sampleEvent) {
+
+    }
+
+    @Override
+    public void testStarted() {
+
+    }
+
+    @Override
+    public void testStarted(String s) {
+
+    }
+
+    @Override
+    public void testEnded() {
+
+    }
+
+    @Override
+    public void testEnded(String s) {
+
+    }
 
     public Session getSession() {
         return session;

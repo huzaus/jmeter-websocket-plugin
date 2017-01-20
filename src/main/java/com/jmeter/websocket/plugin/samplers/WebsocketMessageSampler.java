@@ -27,7 +27,9 @@ public class WebsocketMessageSampler extends AbstractWebsocketSampler {
             Session session = websocketSessionsManager.getSession();
             checkNotNull(session, "Session should be not null");
             checkArgument(session.isOpen(), "Session should be open");
-            session.getRemote().sendString(getMessage());
+            String message = getMessage();
+            session.getRemote().sendString(message);
+            sampleResult.setResponseMessage(message);
             sampleResult.setSuccessful(true);
         } catch (Exception e) {
             log.error("Error: ", e);

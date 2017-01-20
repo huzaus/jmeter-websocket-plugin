@@ -2,8 +2,8 @@ package com.jmeter.websocket.plugin.samplers;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.jmeter.websocket.plugin.WebsocketEndpoint;
-import com.jmeter.websocket.plugin.WebsocketUpgradeListener;
+import com.jmeter.websocket.plugin.endpoint.WebsocketEndpoint;
+import com.jmeter.websocket.plugin.endpoint.WebsocketUpgradeListener;
 import com.jmeter.websocket.plugin.configurations.WebsocketSessionsManager;
 import org.apache.jmeter.protocol.http.control.CookieManager;
 import org.apache.jmeter.protocol.http.control.Header;
