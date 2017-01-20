@@ -8,9 +8,6 @@ import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -30,8 +27,7 @@ public class WebsocketMessageSampler extends AbstractWebsocketSampler {
             Session session = websocketSessionsManager.getSession();
             checkNotNull(session, "Session should be not null");
             checkArgument(session.isOpen(), "Session should be open");
-            Future promise = session.getRemote().sendStringByFuture(getMessage());
-            promise.get(2000, TimeUnit.MILLISECONDS);
+            session.getRemote().sendString(getMessage());
             sampleResult.setSuccessful(true);
         } catch (Exception e) {
             log.error("Error: ", e);
