@@ -18,17 +18,15 @@ public class WebsocketEndpoint {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
 
-    public final StringBuilder stringBuilder = new StringBuilder();
-
     @OnWebSocketConnect
     public void onWebSocketConnect(Session session) {
-        log.info("onWebSocketConnect()" +
+        log.debug("onWebSocketConnect()" +
                 " session: " + session);
     }
 
     @OnWebSocketClose
     public void onWebSocketClose(Session session, int closeCode, String closeReason) {
-        log.info("onWebSocketClose()" +
+        log.debug("onWebSocketClose()" +
                 " session: " + session +
                 " closeCode: " + closeCode +
                 " closeReason: " + closeReason);
@@ -36,9 +34,10 @@ public class WebsocketEndpoint {
 
     @OnWebSocketMessage
     public void OnWebSocketMessage(Session session, String text) {
-        log.info("OnWebSocketMessage()" +
+        log.debug("OnWebSocketMessage()" +
                 " session: " + session +
                 " text:" + text);
+        log.info("\n\n\n" + text + "\n\n\n");
     }
 
     @OnWebSocketError
@@ -48,7 +47,7 @@ public class WebsocketEndpoint {
 
     @OnWebSocketFrame
     public void OnWebSocketFrame(Session session, Frame frame) {
-        log.info("OnWebSocketFrame()" +
+        log.debug("OnWebSocketFrame()" +
                 " session: " + session +
                 " frame:" + frame);
     }
@@ -56,7 +55,6 @@ public class WebsocketEndpoint {
     @Override
     public String toString() {
         return toStringHelper(this)
-                .add("stringBuilder", stringBuilder)
                 .toString();
     }
 }
