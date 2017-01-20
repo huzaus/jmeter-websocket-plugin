@@ -1,28 +1,21 @@
 package com.jmeter.websocket.plugin.configurations;
 
-import com.google.common.base.Function;
-import com.jmeter.websocket.plugin.endpoint.WebsocketEndpoint;
 import org.apache.jmeter.config.ConfigTestElement;
 import org.apache.jmeter.samplers.SampleEvent;
 import org.apache.jmeter.samplers.SampleListener;
 import org.apache.jmeter.testelement.TestStateListener;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
-import org.eclipse.jetty.websocket.api.Session;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
-import static com.google.common.base.Optional.fromNullable;
 
 public class WebsocketSessionsManager extends ConfigTestElement implements SampleListener, TestStateListener {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
+
     private static final String FILE = "websocket.data.output.file";
 
-    public static final String WEBSOCKET_MANAGER = "websocket_manager";
-
-    private transient Session session;
-    private transient WebsocketEndpoint websocketEndpoint;
-
+    private transient WebsocketSession websocketSession = new JettyWebsocketSession();
 
     @Override
     public void sampleOccurred(SampleEvent sampleEvent) {
@@ -31,7 +24,6 @@ public class WebsocketSessionsManager extends ConfigTestElement implements Sampl
 
     @Override
     public void sampleStarted(SampleEvent sampleEvent) {
-
     }
 
     @Override
@@ -41,40 +33,23 @@ public class WebsocketSessionsManager extends ConfigTestElement implements Sampl
 
     @Override
     public void testStarted() {
-
+        log.info("Test started");
     }
 
     @Override
-    public void testStarted(String s) {
-
+    public void testStarted(String host) {
+        log.info("Test started on " + host + " host.");
     }
 
     @Override
     public void testEnded() {
-
+        log.info("Test ended");
     }
 
     @Override
-    public void testEnded(String s) {
+    public void testEnded(String host) {
+        log.info("Test ended on " + host + " host.");
 
-    }
-
-    public Session getSession() {
-        return session;
-    }
-
-    public void setSession(Session session) {
-        log.debug("setSession() session: " + session);
-        this.session = session;
-    }
-
-    public WebsocketEndpoint getWebsocketEndpoint() {
-        return websocketEndpoint;
-    }
-
-    public void setWebsocketEndpoint(WebsocketEndpoint websocketEndpoint) {
-        log.debug("setWebsocketEndpoint() websocketEndpoint: " + websocketEndpoint);
-        this.websocketEndpoint = websocketEndpoint;
     }
 
     public String getFile() {
@@ -85,18 +60,14 @@ public class WebsocketSessionsManager extends ConfigTestElement implements Sampl
         setProperty(FILE, filename);
     }
 
+    public WebsocketSession getWebsocketSession() {
+        return websocketSession;
+    }
+
     @Override
     public String toString() {
         return toStringHelper(this)
-                .add("session", fromNullable(session)
-                        .transform(new Function<Session, String>() {
-                            @Override
-                            public String apply(Session input) {
-                                return "is set";
-                            }
-                        })
-                        .or("is not set"))
-                .add("websocketEndpoint", websocketEndpoint)
+                .add("websocketSession", websocketSession)
                 .add("file", getFile())
                 .toString();
     }

@@ -2,9 +2,7 @@ package com.jmeter.websocket.plugin.samplers;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.jmeter.websocket.plugin.endpoint.WebsocketEndpoint;
-import com.jmeter.websocket.plugin.endpoint.WebsocketUpgradeListener;
-import com.jmeter.websocket.plugin.configurations.WebsocketSessionsManager;
+import com.jmeter.websocket.plugin.configurations.WebsocketSession;
 import org.apache.jmeter.protocol.http.control.CookieManager;
 import org.apache.jmeter.protocol.http.control.Header;
 import org.apache.jmeter.protocol.http.control.HeaderManager;
@@ -15,10 +13,7 @@ import org.apache.jmeter.testelement.property.TestElementProperty;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 import org.eclipse.jetty.util.HttpCookieStore;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
-import org.eclipse.jetty.websocket.client.WebSocketClient;
 
 import java.net.CookieStore;
 import java.net.HttpCookie;
@@ -28,13 +23,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagate;
 import static java.util.Collections.singletonList;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class WebsocketSessionSampler extends AbstractWebsocketSampler {
 
@@ -59,18 +51,9 @@ public class WebsocketSessionSampler extends AbstractWebsocketSampler {
         sampleResult.sampleStart();
         sampleResult.setSampleLabel(getName());
         try {
-            WebsocketSessionsManager websocketSessionsManager = getWebsocketSessionsManager();
-            checkNotNull(websocketSessionsManager, "WebsocketSessionManager should be added to test plan");
-
-            WebSocketClient webSocketClient = webSocketClient();
-            webSocketClient.start();
-
-            WebsocketEndpoint websocketEndpoint = new WebsocketEndpoint();
-            websocketSessionsManager.setWebsocketEndpoint(websocketEndpoint);
-
-            Future<Session> promise = webSocketClient.connect(websocketEndpoint, uri(), upgradeRequest(), new WebsocketUpgradeListener(sampleResult));
-
-            websocketSessionsManager.setSession(promise.get(Long.valueOf(getConnectTimeOut()), MILLISECONDS));
+            WebsocketSession websocketSession = getWebsocketSession();
+            checkNotNull(websocketSession, "WebsocketSessionManager should be added to test plan");
+            websocketSession.connect(uri(), cookies(), upgradeRequest(), sampleResult, Long.valueOf(getConnectTimeOut()));
         } catch (Exception e) {
             log.error("Error: ", e);
             sampleResult.setResponseMessage(e.getMessage());
@@ -87,42 +70,24 @@ public class WebsocketSessionSampler extends AbstractWebsocketSampler {
             setCookieManager((CookieManager) el);
         } else if (el instanceof HeaderManager) {
             setHeaderManager((HeaderManager) el);
-        } else if (el instanceof WebsocketSessionsManager) {
-            setWebsocketSessionsManager((WebsocketSessionsManager) el);
         } else {
             super.addTestElement(el);
         }
     }
 
-    public CookieManager getCookieManager() {
-        return Optional.fromNullable(getProperty(COOKIE_MANAGER).getObjectValue())
-                .transform(
-                        new Function<Object, CookieManager>() {
-                            @Override
-                            public CookieManager apply(Object property) {
-                                return (CookieManager) property;
-                            }
-                        })
-                .orNull();
+    private CookieManager getCookieManager() {
+        return (CookieManager) getProperty(COOKIE_MANAGER).getObjectValue();
     }
 
-    public void setCookieManager(CookieManager cookieManager) {
+    private void setCookieManager(CookieManager cookieManager) {
         setProperty(new TestElementProperty(COOKIE_MANAGER, cookieManager));
     }
 
-    public HeaderManager getHeaderManager() {
-        return Optional.fromNullable(getProperty(HEADER_MANAGER).getObjectValue())
-                .transform(
-                        new Function<Object, HeaderManager>() {
-                            @Override
-                            public HeaderManager apply(Object property) {
-                                return (HeaderManager) property;
-                            }
-                        })
-                .orNull();
+    private HeaderManager getHeaderManager() {
+        return (HeaderManager) getProperty(HEADER_MANAGER).getObjectValue();
     }
 
-    public void setHeaderManager(HeaderManager headerManager) {
+    private void setHeaderManager(HeaderManager headerManager) {
         setProperty(new TestElementProperty(HEADER_MANAGER, headerManager));
     }
 
@@ -178,10 +143,6 @@ public class WebsocketSessionSampler extends AbstractWebsocketSampler {
         return new URI(getProtocol(), null, getServerNameOrIp(), Integer.valueOf(getPortNumber()), getPath(), null, null);
     }
 
-    public SslContextFactory sslContextFactory() {
-        return new SslContextFactory(true);
-    }
-
     public Map<String, List<String>> headers() {
         return Optional.fromNullable(getHeaderManager())
                 .transform(new Function<HeaderManager, Map<String, List<String>>>() {
@@ -194,7 +155,8 @@ public class WebsocketSessionSampler extends AbstractWebsocketSampler {
                         }
                         return headers;
                     }
-                }).or(Collections.<String, List<String>>emptyMap());
+                })
+                .or(Collections.<String, List<String>>emptyMap());
     }
 
     public ClientUpgradeRequest upgradeRequest() {
@@ -225,9 +187,5 @@ public class WebsocketSessionSampler extends AbstractWebsocketSampler {
                 .or(new HttpCookieStore());
     }
 
-    public WebSocketClient webSocketClient() throws URISyntaxException {
-        WebSocketClient webSocketClient = new WebSocketClient(sslContextFactory(), Executors.newCachedThreadPool());
-        webSocketClient.setCookieStore(cookies());
-        return webSocketClient;
-    }
+
 }

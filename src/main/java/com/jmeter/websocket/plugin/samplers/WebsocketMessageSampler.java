@@ -1,14 +1,11 @@
 package com.jmeter.websocket.plugin.samplers;
 
-import com.jmeter.websocket.plugin.configurations.WebsocketSessionsManager;
+import com.jmeter.websocket.plugin.configurations.WebsocketSession;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
-import org.apache.jmeter.testelement.TestElement;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
-import org.eclipse.jetty.websocket.api.Session;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class WebsocketMessageSampler extends AbstractWebsocketSampler {
@@ -22,14 +19,11 @@ public class WebsocketMessageSampler extends AbstractWebsocketSampler {
         sampleResult.sampleStart();
         sampleResult.setSampleLabel(getName());
         try {
-            WebsocketSessionsManager websocketSessionsManager = getWebsocketSessionsManager();
-            checkNotNull(websocketSessionsManager, "WebsocketSessionManager should be added to test plan");
-            Session session = websocketSessionsManager.getSession();
-            checkNotNull(session, "Session should be not null");
-            checkArgument(session.isOpen(), "Session should be open");
+            WebsocketSession websocketSession = getWebsocketSession();
+            checkNotNull(websocketSession, "WebsocketSessionManager should be added to test plan");
             String message = getMessage();
-            session.getRemote().sendString(message);
             sampleResult.setResponseMessage(message);
+            websocketSession.sendMessage(message);
             sampleResult.setSuccessful(true);
         } catch (Exception e) {
             log.error("Error: ", e);
@@ -49,12 +43,4 @@ public class WebsocketMessageSampler extends AbstractWebsocketSampler {
         setProperty(MESSAGE, message, "");
     }
 
-    @Override
-    public void addTestElement(TestElement el) {
-        if (el instanceof WebsocketSessionsManager) {
-            setWebsocketSessionsManager((WebsocketSessionsManager) el);
-        } else {
-            super.addTestElement(el);
-        }
-    }
 }

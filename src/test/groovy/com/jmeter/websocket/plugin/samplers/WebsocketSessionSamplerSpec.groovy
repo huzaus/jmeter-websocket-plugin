@@ -101,14 +101,6 @@ class WebsocketSessionSamplerSpec extends Specification {
         '127.0.0.1'    | '8080'     | 'ws'     | '/websocket' | 'ws://127.0.0.1:8080/websocket'
     }
 
-    def "Should create new SSL context factory with trustAll flag"() {
-        when:
-        SslContextFactory sslContextFactory = sampler.sslContextFactory()
-        then:
-        sslContextFactory != sampler.sslContextFactory()
-        and:
-        sslContextFactory.trustAll
-    }
 
     def "should create not empty headers map with [#name:#value] headers when headerManager is set"() {
         given:
@@ -186,15 +178,5 @@ class WebsocketSessionSamplerSpec extends Specification {
         sampler.cookies().cookies.isEmpty()
     }
 
-    def "Should create websocket with sslContextFactory, executor and set cookies"() {
-        when:
-        WebSocketClient webSocketClient = sampler.webSocketClient()
-        then:
-        webSocketClient.sslContextFactory != null
-        and:
-        webSocketClient.executor != null
-        and:
-        webSocketClient.cookieStore != null
-    }
 }
 
