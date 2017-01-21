@@ -7,13 +7,10 @@ import org.apache.jmeter.testelement.TestStateListener;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Suppliers.memoize;
-import static com.google.common.base.Throwables.propagate;
 
 public class WebsocketSessionsManager extends ConfigTestElement implements TestStateListener {
 
@@ -51,28 +48,22 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
 
     @Override
     public void testStarted() {
-        log.info("Test started.");
-        try {
-            Files.createFile(Paths.get(getFile()));
-        } catch (IOException e) {
-            log.error("Failed to create " + getFile() + " file.", e);
-            propagate(e);
-        }
+        log.info("Test started: " + this);
     }
 
     @Override
     public void testStarted(String host) {
-        log.info("Test started. Host: " + host + ".");
+        log.info("Test started: " + this + ". Host: " + host + ".");
     }
 
     @Override
     public void testEnded() {
-        log.info("Test ended");
+        log.info("Test ended: " + this);
     }
 
     @Override
     public void testEnded(String host) {
-        log.info("Test ended. Host: " + host + ".");
+        log.info("Test ended: " + this + ". Host: " + host + ".");
 
     }
 }
