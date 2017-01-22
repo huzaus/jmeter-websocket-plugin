@@ -126,57 +126,5 @@ class WebsocketSessionSamplerSpec extends Specification {
         expect:
         [:] == sampler.headers()
     }
-
-    def "Should create new upgrade request with headers when headerManager is set"() {
-        given:
-        HeaderManager headerManager = new HeaderManager();
-        headerManager.add(new Header(name, value))
-        when:
-        sampler.headerManager = headerManager
-        and:
-        def upgradeRequest = sampler.upgradeRequest()
-        then:
-        [(name): [value]] == upgradeRequest.headers
-        and:
-        upgradeRequest != sampler.upgradeRequest()
-        where:
-        name      | value
-        'Session' | '1'
-        'Session' | null
-    }
-
-    def "Should create new upgrade request with headers when headerManager is not set"() {
-        when:
-        def upgradeRequest = sampler.upgradeRequest()
-        then:
-        [:] == upgradeRequest.headers
-        and:
-        upgradeRequest != sampler.upgradeRequest()
-    }
-
-    def "Should create not empty cookies with [#name, #value, #domain, #path, #secure, #expires] value when cookieManager is set"() {
-
-        given:
-        CookieManager cookieManager = new CookieManager()
-        and:
-        cookieManager.add(new Cookie(name, value, domain, path, secure, expires))
-        when:
-        sampler.cookieManager = cookieManager
-        and:
-        CookieStore cookies = sampler.cookies()
-        then:
-        cookies.cookies.contains new HttpCookie(name, domain)
-        and:
-        cookies != sampler.cookies()
-        where:
-        name      | value | domain      | path         | secure | expires
-        'Session' | '1'   | '127.0.0.1' | '/websocket' | true   | 0
-    }
-
-    def "Should create empty cookies when cookieManager is not set"() {
-        expect:
-        sampler.cookies().cookies.isEmpty()
-    }
-
 }
 

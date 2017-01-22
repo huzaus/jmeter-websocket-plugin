@@ -1,6 +1,6 @@
 package com.jmeter.websocket.plugin.samplers;
 
-import com.jmeter.websocket.plugin.configurations.WebsocketSession;
+import com.jmeter.websocket.plugin.endpoint.WebsocketSession;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jorphan.logging.LoggingManager;

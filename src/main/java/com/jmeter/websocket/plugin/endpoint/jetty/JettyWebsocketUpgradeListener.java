@@ -1,4 +1,4 @@
-package com.jmeter.websocket.plugin.endpoint;
+package com.jmeter.websocket.plugin.endpoint.jetty;
 
 import com.google.common.base.Joiner;
 import org.apache.jmeter.samplers.SampleResult;
@@ -14,13 +14,13 @@ import java.net.URL;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class WebsocketUpgradeListener implements UpgradeListener {
+public class JettyWebsocketUpgradeListener implements UpgradeListener {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
 
     private final SampleResult sampleResult;
 
-    public WebsocketUpgradeListener(SampleResult sampleResult) {
+    public JettyWebsocketUpgradeListener(SampleResult sampleResult) {
         checkNotNull(sampleResult);
         this.sampleResult = sampleResult;
     }

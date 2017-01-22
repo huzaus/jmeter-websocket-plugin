@@ -1,4 +1,4 @@
-package com.jmeter.websocket.plugin.endpoint;
+package com.jmeter.websocket.plugin.endpoint.jetty;
 
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
@@ -14,7 +14,7 @@ import org.eclipse.jetty.websocket.api.extensions.Frame;
 import static com.google.common.base.MoreObjects.toStringHelper;
 
 @WebSocket(maxTextMessageSize = 64 * 1024)
-public class WebsocketEndpoint {
+public class LoggingWebsocketEndpoint {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
 

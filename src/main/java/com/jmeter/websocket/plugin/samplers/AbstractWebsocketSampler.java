@@ -2,8 +2,8 @@ package com.jmeter.websocket.plugin.samplers;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.jmeter.websocket.plugin.configurations.WebsocketSession;
 import com.jmeter.websocket.plugin.configurations.WebsocketSessionsManager;
+import com.jmeter.websocket.plugin.endpoint.WebsocketSession;
 import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jmeter.testelement.property.TestElementProperty;

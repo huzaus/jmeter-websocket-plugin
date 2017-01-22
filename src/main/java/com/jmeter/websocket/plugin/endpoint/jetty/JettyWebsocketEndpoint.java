@@ -1,12 +1,16 @@
-package com.jmeter.websocket.plugin.endpoint;
+package com.jmeter.websocket.plugin.endpoint.jetty;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.jmeter.websocket.plugin.configurations.WebsocketSession;
+import com.jmeter.websocket.plugin.endpoint.WebsocketSession;
+import com.jmeter.websocket.plugin.endpoint.jetty.converters.CookieManagerToWebSocketClientConverter;
+import com.jmeter.websocket.plugin.endpoint.jetty.converters.HeadersToClientUpgradeRequestConverter;
+import com.jmeter.websocket.plugin.endpoint.jetty.converters.SampleResultToUpgradeListenerConverter;
+import org.apache.jmeter.protocol.http.control.CookieManager;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketFrame;
@@ -14,24 +18,22 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.extensions.Frame;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
+import org.eclipse.jetty.websocket.client.io.UpgradeListener;
 
 import java.io.IOException;
-import java.net.CookieStore;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.channels.ByteChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Suppliers.memoize;
 import static java.lang.System.lineSeparator;
 import static java.nio.ByteBuffer.wrap;
-import static java.nio.file.Files.isWritable;
 import static java.nio.file.Files.newByteChannel;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
@@ -46,24 +48,29 @@ public class JettyWebsocketEndpoint implements WebsocketSession {
     private final Path file;
     private Session session;
 
+    private Function<CookieManager, WebSocketClient> cookieManagerToWebSocketClientConverter = new CookieManagerToWebSocketClientConverter();
+    private Function<Map<String, List<String>>, ClientUpgradeRequest> headersToClientUpgradeRequestConverter = new HeadersToClientUpgradeRequestConverter();
+    private Function<SampleResult, UpgradeListener> sampleResultToUpgradeListenerConverter = new SampleResultToUpgradeListenerConverter();
+
     public JettyWebsocketEndpoint(Path file) {
         checkNotNull(file, "File should be set");
-        checkArgument(isWritable(file), file + " + file should be writable");
         this.file = file;
     }
 
     @Override
-    public void connect(URI uri, CookieStore cookies, ClientUpgradeRequest upgradeRequest, SampleResult result, long timeOut) throws Exception {
+    public void connect(URI uri, CookieManager cookieManager, Map<String, List<String>> headers, SampleResult result, long timeOut) throws Exception {
         checkArgument(session == null || !session.isOpen(), "Session is already open");
         log.info("Opening " + uri + " connection." +
-                " Cookies: " + cookies +
-                " Request: " + upgradeRequest);
-        WebSocketClient webSocketClient = webSocketClient(cookies);
+                " CookieManager: " + cookieManager +
+                " Headers: " + headers);
+        WebSocketClient webSocketClient = cookieManagerToWebSocketClientConverter.apply(cookieManager);
         webSocketClient.start();
-
-        Future<Session> promise = webSocketClient.connect(this, uri, upgradeRequest, new WebsocketUpgradeListener(result));
-
-        session = promise.get(timeOut, MILLISECONDS);
+        session = webSocketClient
+                .connect(this,
+                        uri,
+                        headersToClientUpgradeRequestConverter.apply(headers),
+                        sampleResultToUpgradeListenerConverter.apply(result))
+                .get(timeOut, MILLISECONDS);
     }
 
     @Override
@@ -131,15 +138,5 @@ public class JettyWebsocketEndpoint implements WebsocketSession {
                 }
             }
         });
-    }
-
-    private WebSocketClient webSocketClient(CookieStore cookies) throws URISyntaxException {
-        WebSocketClient webSocketClient = new WebSocketClient(sslContextFactory(), Executors.newCachedThreadPool());
-        webSocketClient.setCookieStore(cookies);
-        return webSocketClient;
-    }
-
-    private SslContextFactory sslContextFactory() {
-        return new SslContextFactory(true);
     }
 }

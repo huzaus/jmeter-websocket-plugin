@@ -2,7 +2,7 @@ package com.jmeter.websocket.plugin.samplers;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.jmeter.websocket.plugin.configurations.WebsocketSession;
+import com.jmeter.websocket.plugin.endpoint.WebsocketSession;
 import org.apache.jmeter.protocol.http.control.CookieManager;
 import org.apache.jmeter.protocol.http.control.Header;
 import org.apache.jmeter.protocol.http.control.HeaderManager;
@@ -12,11 +12,7 @@ import org.apache.jmeter.testelement.TestElement;
 import org.apache.jmeter.testelement.property.TestElementProperty;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
-import org.eclipse.jetty.util.HttpCookieStore;
-import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 
-import java.net.CookieStore;
-import java.net.HttpCookie;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
@@ -25,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Throwables.propagate;
 import static java.util.Collections.singletonList;
 
 public class WebsocketSessionSampler extends AbstractWebsocketSampler {
@@ -53,7 +48,7 @@ public class WebsocketSessionSampler extends AbstractWebsocketSampler {
         try {
             WebsocketSession websocketSession = getWebsocketSession();
             checkNotNull(websocketSession, "WebsocketSessionManager should be added to test plan");
-            websocketSession.connect(uri(), cookies(), upgradeRequest(), sampleResult, Long.valueOf(getConnectTimeOut()));
+            websocketSession.connect(uri(), getCookieManager(), headers(), sampleResult, Long.valueOf(getConnectTimeOut()));
         } catch (Exception e) {
             log.error("Error: ", e);
             sampleResult.setResponseMessage(e.getMessage());
@@ -158,34 +153,4 @@ public class WebsocketSessionSampler extends AbstractWebsocketSampler {
                 })
                 .or(Collections.<String, List<String>>emptyMap());
     }
-
-    public ClientUpgradeRequest upgradeRequest() {
-        ClientUpgradeRequest request = new ClientUpgradeRequest();
-        request.setHeaders(headers());
-        return request;
-    }
-
-    public CookieStore cookies() throws URISyntaxException {
-        return Optional.fromNullable(getCookieManager())
-                .transform(new Function<CookieManager, CookieStore>() {
-                    @Override
-                    public CookieStore apply(CookieManager cookieManager) {
-                        HttpCookieStore cookieStore = new HttpCookieStore();
-                        for (int i = 0; i < cookieManager.getCookieCount(); i++) {
-                            try {
-                                cookieStore.add(
-                                        new URI(null, cookieManager.get(i).getDomain(), cookieManager.get(i).getPath(), null),
-                                        new HttpCookie(cookieManager.get(i).getName(), cookieManager.get(i).getValue())
-                                );
-                            } catch (URISyntaxException e) {
-                                propagate(e);
-                            }
-                        }
-                        return cookieStore;
-                    }
-                })
-                .or(new HttpCookieStore());
-    }
-
-
 }

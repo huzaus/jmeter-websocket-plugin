@@ -1,7 +1,8 @@
 package com.jmeter.websocket.plugin.configurations;
 
 import com.google.common.base.Supplier;
-import com.jmeter.websocket.plugin.endpoint.JettyWebsocketEndpoint;
+import com.jmeter.websocket.plugin.endpoint.WebsocketSession;
+import com.jmeter.websocket.plugin.endpoint.jetty.JettyWebsocketEndpoint;
 import org.apache.jmeter.config.ConfigTestElement;
 import org.apache.jmeter.testelement.TestStateListener;
 import org.apache.jorphan.logging.LoggingManager;

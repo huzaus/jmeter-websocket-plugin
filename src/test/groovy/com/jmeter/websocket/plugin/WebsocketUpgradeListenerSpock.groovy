@@ -1,6 +1,6 @@
 package com.jmeter.websocket.plugin
 
-import com.jmeter.websocket.plugin.endpoint.WebsocketUpgradeListener
+import com.jmeter.websocket.plugin.endpoint.jetty.JettyWebsocketUpgradeListener
 import org.apache.jmeter.samplers.SampleResult
 import org.eclipse.jetty.websocket.api.UpgradeRequest
 import org.eclipse.jetty.websocket.api.UpgradeResponse
@@ -12,11 +12,11 @@ import spock.lang.Unroll
 class WebsocketUpgradeListenerSpock extends Specification {
 
     @Subject
-    WebsocketUpgradeListener listener = new WebsocketUpgradeListener(new SampleResult())
+    JettyWebsocketUpgradeListener listener = new JettyWebsocketUpgradeListener(new SampleResult())
 
     def "Should throw NullPointerException when result is null"() {
         when:
-        listener = new WebsocketUpgradeListener(null)
+        listener = new JettyWebsocketUpgradeListener(null)
         then:
         thrown(NullPointerException)
     }
