@@ -1,6 +1,7 @@
 package com.jmeter.websocket.plugin.endpoint.jetty;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.jmeter.websocket.plugin.endpoint.WebsocketSession;
@@ -24,6 +25,9 @@ import java.net.URI;
 import java.nio.channels.ByteChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,13 +41,16 @@ import static java.nio.file.Files.newByteChannel;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.joda.time.LocalDate.now;
 
 @WebSocket(maxTextMessageSize = 64 * 1024)
 public class JettyWebsocketEndpoint implements WebsocketSession {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
     private static final Set<StandardOpenOption> OPEN_OPTIONS = ImmutableSet.of(APPEND, CREATE);
+    private static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
+    private static final String SEND = "send";
+    private static final String RECEIVE = "receive";
+    private static final String SEPARATOR = ",";
 
     private final Path file;
     private Session session;
@@ -80,24 +87,15 @@ public class JettyWebsocketEndpoint implements WebsocketSession {
         checkArgument(session.isOpen(), "Session is not open");
         log.debug("sendMessage() message: " + message);
         session.getRemote().sendString(message);
-        write(message);
+        write(SEND, message);
     }
 
     @Override
     @OnWebSocketMessage
     public void onReceiveMessage(String message) throws IOException {
         log.debug("onReceiveMessage() message: " + message);
-        write(message);
+        write(RECEIVE, message);
     }
-
-//    @OnWebSocketFrame
-//    public void onWebSocketFrame(Frame frame) throws IOException {
-//        log.debug("onWebSocketFrame()" +
-//                " session: " + session +
-//                " frame:" + frame);
-//        write(frame.getPayload());
-//
-//    }
 
     @OnWebSocketClose
     public void onWebSocketClose(Session session, int closeCode, String closeReason) {
@@ -115,30 +113,29 @@ public class JettyWebsocketEndpoint implements WebsocketSession {
         }
     }
 
-//    private void write(ByteBuffer byteBuffer) {
-//        ByteChannel byteChannel = getByteChannel();
-//        if (byteChannel != null) {
-//            try {
-//                byteChannel.write(byteBuffer);
-//            } catch (IOException e) {
-//                log.error("Exception thrown on write to byte channel: " + e);
-//            }
-//        } else {
-//            log.info(byteBuffer.asCharBuffer().toString());
-//        }
-//    }
-
-    private void write(String line) {
+    private void write(String action, String message) {
         ByteChannel byteChannel = getByteChannel();
         if (byteChannel != null) {
-            byte data[] = (now() + ":" + line + lineSeparator()).getBytes();
+            DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+            byte data[] = (
+                    Joiner.on(SEPARATOR)
+                            .join(
+                                    dateFormat.format(new Date()),
+                                    Integer.toHexString(session.hashCode()),
+                                    action,
+                                    message
+
+                            )
+                            .concat(lineSeparator())
+                            .getBytes()
+            );
             try {
                 byteChannel.write(wrap(data));
             } catch (IOException e) {
                 log.error("Exception thrown on write to byte channel: " + e);
             }
         } else {
-            log.info(line);
+            log.info(message);
         }
     }
 
@@ -153,7 +150,7 @@ public class JettyWebsocketEndpoint implements WebsocketSession {
                 try {
                     return newByteChannel(file, OPEN_OPTIONS);
                 } catch (IOException e) {
-                    log.error("Exception thrown on write to byte channel: " + e);
+                    log.error("Exception thrown on open byte channel: " + e);
                     return null;
                 }
             }
