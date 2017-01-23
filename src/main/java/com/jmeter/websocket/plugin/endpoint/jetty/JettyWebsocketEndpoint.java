@@ -2,6 +2,7 @@ package com.jmeter.websocket.plugin.endpoint.jetty;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.jmeter.websocket.plugin.endpoint.WebsocketSession;
@@ -155,5 +156,14 @@ public class JettyWebsocketEndpoint implements WebsocketSession {
                 }
             }
         });
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("file", file)
+                .add("session", session)
+                .add("hash", hashCode())
+                .toString();
     }
 }
