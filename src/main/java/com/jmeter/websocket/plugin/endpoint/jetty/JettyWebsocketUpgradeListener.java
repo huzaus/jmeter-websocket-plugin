@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
+import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class JettyWebsocketUpgradeListener implements UpgradeListener {
@@ -27,11 +28,11 @@ public class JettyWebsocketUpgradeListener implements UpgradeListener {
 
     @Override
     public void onHandshakeRequest(UpgradeRequest request) {
-        log.info("onHandshakeRequest() request: " + request);
         checkNotNull(request);
         checkNotNull(request.getHeaders());
         URI requestURI = request.getRequestURI();
         checkNotNull(requestURI);
+        log.debug("onHandshakeRequest() request: " + request);
         sampleResult.setRequestHeaders(
                 Joiner.on("\n")
                         .withKeyValueSeparator("=")
@@ -53,9 +54,16 @@ public class JettyWebsocketUpgradeListener implements UpgradeListener {
 
     @Override
     public void onHandshakeResponse(UpgradeResponse response) {
-        log.info("onHandshakeResponse() response: " + response);
         checkNotNull(response);
         checkNotNull(response.getHeaders());
+        log.debug("onHandshakeResponse() response: "
+                + toStringHelper(response)
+                .add("success", response.isSuccess())
+                .add("statusCode", response.getStatusCode())
+                .add("statusReason", response.getStatusReason())
+                .add("headers", response.getHeaders())
+                .toString()
+        );
         sampleResult.setSuccessful(response.isSuccess());
         sampleResult.setResponseMessage(response.getStatusReason());
         sampleResult.setResponseCode(String.valueOf(response.getStatusCode()));
@@ -64,5 +72,12 @@ public class JettyWebsocketUpgradeListener implements UpgradeListener {
                         .withKeyValueSeparator("=")
                         .join(response.getHeaders())
         );
+    }
+
+    @Override
+    public String toString() {
+        return toStringHelper(this)
+                .add("sampleResult", sampleResult)
+                .toString();
     }
 }
