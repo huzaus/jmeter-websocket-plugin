@@ -6,6 +6,7 @@ import com.jmeter.websocket.plugin.endpoint.WebsocketSession;
 import org.apache.jmeter.protocol.http.control.CookieManager;
 import org.apache.jmeter.protocol.http.control.Header;
 import org.apache.jmeter.protocol.http.control.HeaderManager;
+import org.apache.jmeter.protocol.http.sampler.HTTPSampleResult;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.testelement.TestElement;
@@ -42,8 +43,9 @@ public class WebsocketSessionSampler extends AbstractWebsocketSampler {
 
     @Override
     public SampleResult sample(Entry entry) {
-        SampleResult sampleResult = new SampleResult();
+        HTTPSampleResult sampleResult = new HTTPSampleResult();
         sampleResult.sampleStart();
+        sampleResult.setHTTPMethod("GET");
         sampleResult.setSampleLabel(getName());
         try {
             WebsocketSession websocketSession = getWebsocketSession();
