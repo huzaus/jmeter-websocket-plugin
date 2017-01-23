@@ -18,6 +18,8 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
     private static final String FILE = "websocket.data.output.file";
     private static final Logger log = LoggingManager.getLoggerForClass();
 
+    private Supplier<WebsocketSession> websocketSessionSupplier = websocketSessionSupplier();
+
     public String getFile() {
         return getPropertyAsString(FILE, "");
     }
@@ -27,16 +29,16 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
     }
 
     public WebsocketSession getWebsocketSession() {
-        return memoize(websocketSessionSupplier()).get();
+        return websocketSessionSupplier.get();
     }
 
     private Supplier<WebsocketSession> websocketSessionSupplier() {
-        return new Supplier<WebsocketSession>() {
+        return memoize(new Supplier<WebsocketSession>() {
             @Override
             public WebsocketSession get() {
                 return new JettyWebsocketEndpoint(Paths.get(getFile()));
             }
-        };
+        });
     }
 
     @Override
