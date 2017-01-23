@@ -11,6 +11,7 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
+import java.nio.channels.ByteChannel
 import java.util.concurrent.Future
 
 import static java.nio.file.Files.createTempFile
@@ -26,6 +27,13 @@ class JettyWebsocketSessionSpock extends Specification {
         new JettyWebsocketEndpoint(null)
         then:
         thrown(NullPointerException)
+    }
+
+    def "Should return the same byteChannel " () {
+        when:
+        ByteChannel channel = endpoint.byteChannel
+        then:
+        channel.is(endpoint.byteChannel)
     }
 
     def "Should delegate message sending to remote endpoint"() {

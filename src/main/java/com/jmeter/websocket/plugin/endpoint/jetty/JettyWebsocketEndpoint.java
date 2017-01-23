@@ -13,9 +13,8 @@ import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketFrame;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import org.eclipse.jetty.websocket.api.extensions.Frame;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 import org.eclipse.jetty.websocket.client.io.UpgradeListener;
@@ -38,6 +37,7 @@ import static java.nio.file.Files.newByteChannel;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.joda.time.LocalDate.now;
 
 @WebSocket(maxTextMessageSize = 64 * 1024)
 public class JettyWebsocketEndpoint implements WebsocketSession {
@@ -51,6 +51,7 @@ public class JettyWebsocketEndpoint implements WebsocketSession {
     private Function<CookieManager, WebSocketClient> cookieManagerToWebSocketClientConverter = new CookieManagerToWebSocketClientConverter();
     private Function<Map<String, List<String>>, ClientUpgradeRequest> headersToClientUpgradeRequestConverter = new HeadersToClientUpgradeRequestConverter();
     private Function<SampleResult, UpgradeListener> sampleResultToUpgradeListenerConverter = new SampleResultToUpgradeListenerConverter();
+    private Supplier<ByteChannel> byteChannelSupplier = byteChannelSupplier();
 
     public JettyWebsocketEndpoint(Path file) {
         checkNotNull(file, "File should be set");
@@ -83,18 +84,20 @@ public class JettyWebsocketEndpoint implements WebsocketSession {
     }
 
     @Override
+    @OnWebSocketMessage
     public void onReceiveMessage(String message) throws IOException {
         log.debug("onReceiveMessage() message: " + message);
+        write(message);
     }
 
-    @OnWebSocketFrame
-    public void onWebSocketFrame(Frame frame) throws IOException {
-        log.debug("onWebSocketFrame()" +
-                " session: " + session +
-                " frame:" + frame);
-        write(frame.toString());
-
-    }
+//    @OnWebSocketFrame
+//    public void onWebSocketFrame(Frame frame) throws IOException {
+//        log.debug("onWebSocketFrame()" +
+//                " session: " + session +
+//                " frame:" + frame);
+//        write(frame.getPayload());
+//
+//    }
 
     @OnWebSocketClose
     public void onWebSocketClose(Session session, int closeCode, String closeReason) {
@@ -102,38 +105,55 @@ public class JettyWebsocketEndpoint implements WebsocketSession {
                 " session: " + session +
                 " closeCode: " + closeCode +
                 " closeReason: " + closeReason);
-        ByteChannel byteChannel = byteChannel().get();
+        ByteChannel byteChannel = getByteChannel();
         if (byteChannel != null && byteChannel.isOpen()) {
             try {
                 byteChannel.close();
             } catch (IOException e) {
-                log.error("Exception thrown: " + e);
+                log.error("Exception thrown on close byteChannel: " + e);
             }
         }
     }
 
+//    private void write(ByteBuffer byteBuffer) {
+//        ByteChannel byteChannel = getByteChannel();
+//        if (byteChannel != null) {
+//            try {
+//                byteChannel.write(byteBuffer);
+//            } catch (IOException e) {
+//                log.error("Exception thrown on write to byte channel: " + e);
+//            }
+//        } else {
+//            log.info(byteBuffer.asCharBuffer().toString());
+//        }
+//    }
+
     private void write(String line) {
-        ByteChannel byteChannel = byteChannel().get();
+        ByteChannel byteChannel = getByteChannel();
         if (byteChannel != null) {
-            byte data[] = (line + lineSeparator()).getBytes();
+            byte data[] = (now() + ":" + line + lineSeparator()).getBytes();
             try {
                 byteChannel.write(wrap(data));
             } catch (IOException e) {
-                log.error("Exception thrown: " + e);
+                log.error("Exception thrown on write to byte channel: " + e);
             }
         } else {
             log.info(line);
         }
     }
 
-    private Supplier<ByteChannel> byteChannel() {
+    private ByteChannel getByteChannel() {
+        return byteChannelSupplier.get();
+    }
+
+    private Supplier<ByteChannel> byteChannelSupplier() {
         return memoize(new Supplier<ByteChannel>() {
             @Override
             public ByteChannel get() {
                 try {
                     return newByteChannel(file, OPEN_OPTIONS);
                 } catch (IOException e) {
-                    log.error("Exception thrown: " + e);
+                    log.error("Exception thrown on write to byte channel: " + e);
                     return null;
                 }
             }
