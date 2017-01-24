@@ -1,7 +1,7 @@
 package com.jmeter.websocket.plugin.configurations;
 
 import com.google.common.base.Supplier;
-import com.jmeter.websocket.plugin.endpoint.WebsocketSession;
+import com.jmeter.websocket.plugin.endpoint.WebsocketClient;
 import com.jmeter.websocket.plugin.endpoint.jetty.JettyWebsocketEndpoint;
 import org.apache.jmeter.config.ConfigTestElement;
 import org.apache.jmeter.testelement.TestStateListener;
@@ -18,7 +18,7 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
     private static final String FILE = "websocket.data.output.file";
     private static final Logger log = LoggingManager.getLoggerForClass();
 
-    private Supplier<WebsocketSession> websocketSessionSupplier = websocketSessionSupplier();
+    private Supplier<WebsocketClient> websocketClientSupplier = websocketClientSupplier();
 
     public String getFile() {
         return getPropertyAsString(FILE, "");
@@ -28,14 +28,14 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
         setProperty(FILE, filename);
     }
 
-    public WebsocketSession getWebsocketSession() {
-        return websocketSessionSupplier.get();
+    public WebsocketClient getWebsocketClient() {
+        return websocketClientSupplier.get();
     }
 
-    private Supplier<WebsocketSession> websocketSessionSupplier() {
-        return memoize(new Supplier<WebsocketSession>() {
+    private Supplier<WebsocketClient> websocketClientSupplier() {
+        return memoize(new Supplier<WebsocketClient>() {
             @Override
-            public WebsocketSession get() {
+            public WebsocketClient get() {
                 return new JettyWebsocketEndpoint(Paths.get(getFile()));
             }
         });
@@ -44,13 +44,14 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
     @Override
     public String toString() {
         return toStringHelper(this)
-                .add("websocketSession", getWebsocketSession())
+                .add("websocketClient", getWebsocketClient())
                 .add("file", getFile())
                 .toString();
     }
 
     @Override
     public void testStarted() {
+        getWebsocketClient().start();
         log.info("Test started: " + this);
     }
 
@@ -61,12 +62,13 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
 
     @Override
     public void testEnded() {
+        getWebsocketClient().stop();
         log.info("Test ended: " + this);
     }
 
     @Override
     public void testEnded(String host) {
         log.info("Test ended: " + this + ". Host: " + host + ".");
-
     }
+
 }

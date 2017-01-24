@@ -1,6 +1,6 @@
 package com.jmeter.websocket.plugin.samplers;
 
-import com.jmeter.websocket.plugin.endpoint.WebsocketSession;
+import com.jmeter.websocket.plugin.endpoint.WebsocketClient;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jorphan.logging.LoggingManager;
@@ -19,11 +19,11 @@ public class WebsocketMessageSampler extends AbstractWebsocketSampler {
         sampleResult.sampleStart();
         sampleResult.setSampleLabel(getName());
         try {
-            WebsocketSession websocketSession = getWebsocketSession();
-            checkNotNull(websocketSession, "WebsocketSessionManager should be added to test plan");
+            WebsocketClient websocketClient = getWebsocketClient();
+            checkNotNull(websocketClient, "WebsocketSessionManager should be added to test plan");
             String message = getMessage();
             sampleResult.setResponseMessage(message);
-            websocketSession.sendMessage(message);
+            websocketClient.sendMessage(message);
             sampleResult.setSuccessful(true);
         } catch (Exception e) {
             log.error("Error: ", e);

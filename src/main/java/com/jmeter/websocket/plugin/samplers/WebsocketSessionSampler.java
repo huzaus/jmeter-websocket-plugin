@@ -2,7 +2,7 @@ package com.jmeter.websocket.plugin.samplers;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.jmeter.websocket.plugin.endpoint.WebsocketSession;
+import com.jmeter.websocket.plugin.endpoint.WebsocketClient;
 import org.apache.jmeter.protocol.http.control.CookieManager;
 import org.apache.jmeter.protocol.http.control.Header;
 import org.apache.jmeter.protocol.http.control.HeaderManager;
@@ -48,9 +48,9 @@ public class WebsocketSessionSampler extends AbstractWebsocketSampler {
         sampleResult.setHTTPMethod("GET");
         sampleResult.setSampleLabel(getName());
         try {
-            WebsocketSession websocketSession = getWebsocketSession();
-            checkNotNull(websocketSession, "WebsocketSessionManager should be added to test plan");
-            websocketSession.connect(uri(), getCookieManager(), headers(), sampleResult, Long.valueOf(getConnectTimeOut()));
+            WebsocketClient websocketClient = getWebsocketClient();
+            checkNotNull(websocketClient, "WebsocketSessionManager should be added to test plan");
+            websocketClient.connect(uri(), getCookieManager(), headers(), sampleResult, Long.valueOf(getConnectTimeOut()));
         } catch (Exception e) {
             log.error("Error: ", e);
             sampleResult.setResponseMessage(e.getMessage());

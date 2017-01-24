@@ -8,7 +8,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-public interface WebsocketSession {
+public interface WebsocketClient {
 
     void connect(URI uri, CookieManager cookieManager, Map<String, List<String>> headers, SampleResult result, long timeOut) throws Exception;
 
@@ -16,4 +16,7 @@ public interface WebsocketSession {
 
     void onReceiveMessage(String message) throws IOException;
 
+    void start();
+
+    void stop();
 }
