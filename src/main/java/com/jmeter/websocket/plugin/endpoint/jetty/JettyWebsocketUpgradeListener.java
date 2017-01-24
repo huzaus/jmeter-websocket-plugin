@@ -32,7 +32,14 @@ public class JettyWebsocketUpgradeListener implements UpgradeListener {
         checkNotNull(request.getHeaders());
         URI requestURI = request.getRequestURI();
         checkNotNull(requestURI);
-        log.debug("onHandshakeRequest() request: " + request);
+        log.info("onHandshakeRequest() request: "
+                + toStringHelper(request)
+                .add("uri", request.getRequestURI())
+                .add("headers", request.getHeaders())
+                .add("cookies", request.getCookies())
+                .add("extensions", request.getExtensions())
+                .toString()
+        );
         sampleResult.setRequestHeaders(
                 Joiner.on("\n")
                         .withKeyValueSeparator("=")
@@ -48,7 +55,7 @@ public class JettyWebsocketUpgradeListener implements UpgradeListener {
                     )
             );
         } catch (MalformedURLException e) {
-            log.error("Failed to set url: ", e);
+            log.info("Failed to set url: ", e);
         }
     }
 
@@ -56,7 +63,7 @@ public class JettyWebsocketUpgradeListener implements UpgradeListener {
     public void onHandshakeResponse(UpgradeResponse response) {
         checkNotNull(response);
         checkNotNull(response.getHeaders());
-        log.debug("onHandshakeResponse() response: "
+        log.info("onHandshakeResponse() response: "
                 + toStringHelper(response)
                 .add("success", response.isSuccess())
                 .add("statusCode", response.getStatusCode())

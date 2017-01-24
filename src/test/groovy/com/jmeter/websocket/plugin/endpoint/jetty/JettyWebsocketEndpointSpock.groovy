@@ -1,40 +1,15 @@
 package com.jmeter.websocket.plugin.endpoint.jetty
 
-import com.google.common.base.Function
-import org.apache.jmeter.protocol.http.control.CookieManager
-import org.apache.jmeter.samplers.SampleResult
 import org.eclipse.jetty.websocket.api.RemoteEndpoint
 import org.eclipse.jetty.websocket.api.Session
-import org.eclipse.jetty.websocket.client.ClientUpgradeRequest
-import org.eclipse.jetty.websocket.client.WebSocketClient
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
-import java.nio.channels.ByteChannel
-import java.util.concurrent.Future
-
-import static java.nio.file.Files.createTempFile
-import static java.util.concurrent.TimeUnit.MILLISECONDS
-
 @Unroll
-class JettyWebsocketSessionSpock extends Specification {
+class JettyWebsocketEndpointSpock extends Specification {
     @Subject
-    JettyWebsocketEndpoint endpoint = new JettyWebsocketEndpoint(createTempFile("temp-file-delete-on-close", ".tmp"))
-
-    def "Should throw null pointer exception when file is null"() {
-        when:
-        new JettyWebsocketEndpoint(null)
-        then:
-        thrown(NullPointerException)
-    }
-
-    def "Should return the same byteChannel " () {
-        when:
-        ByteChannel channel = endpoint.byteChannel
-        then:
-        channel.is(endpoint.byteChannel)
-    }
+    JettyWebsocketEndpoint endpoint = new JettyWebsocketEndpoint()
 
     def "Should delegate message sending to remote endpoint"() {
         given:
@@ -43,9 +18,10 @@ class JettyWebsocketSessionSpock extends Specification {
         RemoteEndpoint remote = Mock(RemoteEndpoint)
         session.getRemote() >> remote
         String message = 'message'
-        endpoint.session = session
+        URI uri = URI.create('ws://localhost:8080/websocket')
+        endpoint.sessions.put(uri, session)
         when:
-        endpoint.sendMessage(message)
+        endpoint.sendMessage(uri, message)
         then:
         1 * remote.sendString(message)
     }
@@ -58,9 +34,9 @@ class JettyWebsocketSessionSpock extends Specification {
 //        SampleResult sampleResult = new SampleResult()
 //        long timeout = 2000
 //        and:
-//        WebSocketClient webSocketClient = Mock()
-//        endpoint.cookieManagerToWebSocketClientConverter = Stub(Function) {
-//            apply(cookieManager) >> webSocketClient
+//        CookieStore cookieStore = Mock()
+//        endpoint.cookieManagerToCookieStoreConverter = Stub(Function) {
+//            apply(cookieManager) >> cookieStore
 //        }
 //        and:
 //        ClientUpgradeRequest upgradeRequest = Stub(ClientUpgradeRequest)
@@ -82,9 +58,7 @@ class JettyWebsocketSessionSpock extends Specification {
 //                sampleResult,
 //                timeout)
 //        then:
-//        1 * webSocketClient.start()
-//        and:
-//        1 * webSocketClient.connect(endpoint, uri, upgradeRequest, listener) >> promise
+//        1 * webSocketClient.connect(_, uri, upgradeRequest, listener) >> promise
 //        and:
 //        1 * promise.get(timeout, MILLISECONDS)
 //    }

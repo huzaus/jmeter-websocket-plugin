@@ -19,8 +19,7 @@ class WebsocketSessionSamplerGuiSpec extends JmeterAbstractSpec {
         'serverNameOrIp'  || 'Server Name or IP:'
         'portNumber'      || 'Port Number:'
         'protocol'        || 'Protocol:'
-        'connectTimeOut'  || 'Connect:'
-        'responseTimeOut' || 'Response:'
+        'connectTimeOut'  || 'Timeout:'
         'path'            || 'Path:'
     }
 
@@ -49,7 +48,6 @@ class WebsocketSessionSamplerGuiSpec extends JmeterAbstractSpec {
         'portNumber'      | 'portNumber'      | '8080'
         'protocol'        | 'protocol'        | 'ws'
         'connectTimeOut'  | 'connectTimeOut'  | '2000'
-        'responseTimeOut' | 'responseTimeOut' | '5000'
         'path'            | 'path'            | 'websocket'
     }
 
@@ -67,7 +65,6 @@ class WebsocketSessionSamplerGuiSpec extends JmeterAbstractSpec {
         'portNumber'      | 'portNumber'      | '8080'
         'protocol'        | 'protocol'        | 'ws'
         'connectTimeOut'  | 'connectTimeOut'  | '2000'
-        'responseTimeOut' | 'responseTimeOut' | '5000'
         'path'            | 'path'            | 'websocket'
     }
 

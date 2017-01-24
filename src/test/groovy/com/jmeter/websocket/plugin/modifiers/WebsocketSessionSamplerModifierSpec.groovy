@@ -1,8 +1,8 @@
 package com.jmeter.websocket.plugin.modifiers
 
+import com.jmeter.websocket.plugin.JmeterAbstractSpec
 import com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler
 import com.jmeter.websocket.plugin.samplers.WebsocketSessionSamplerGui
-import com.jmeter.websocket.plugin.JmeterAbstractSpec
 import spock.lang.Subject
 import spock.lang.Unroll
 
@@ -22,13 +22,8 @@ class WebsocketSessionSamplerModifierSpec extends JmeterAbstractSpec {
         then:
         sampler."$field" == value
         where:
-        component         | field             | value
-        'serverNameOrIp'  | 'serverNameOrIp'  | '127.0.0.1'
-        'portNumber'      | 'portNumber'      | '80'
-        'protocol'        | 'protocol'        | 'ws'
-        'connectTimeOut'  | 'connectTimeOut'  | '2000'
-        'responseTimeOut' | 'responseTimeOut' | '5000'
-        'path'            | 'path'            | '/websocket'
+        component        | field            | value
+        'connectTimeOut' | 'connectTimeOut' | '2000'
     }
 
 }

@@ -1,6 +1,6 @@
 package com.jmeter.websocket.plugin.samplers;
 
-import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
+import org.apache.jmeter.gui.util.HorizontalPanel;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jorphan.gui.JLabeledTextArea;
 
@@ -10,8 +10,10 @@ import javax.swing.JPanel;
 
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.NORTH;
+import static javax.swing.BorderFactory.createEtchedBorder;
+import static javax.swing.BorderFactory.createTitledBorder;
 
-public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
+public class WebsocketMessageSamplerGui extends AbstractWebsocketSamplerGui {
 
     private final JLabeledTextArea message;
 
@@ -20,8 +22,7 @@ public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
         setBorder(makeBorder());
         add(makeTitlePanel(), NORTH);
         message = new JLabeledTextArea("Message:");
-        add(makeMessageBodyPanel(), CENTER);
-
+        add(makeWebsocketMessagePanel(), CENTER);
     }
 
     @Override
@@ -43,7 +44,7 @@ public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
 
     @Override
     public void modifyTestElement(TestElement testElement) {
-        testElement.clear();
+        super.modifyTestElement(testElement);
         WebsocketMessageSampler sampler = (WebsocketMessageSampler) testElement;
         sampler.setMessage(message.getText());
         super.configureTestElement(testElement);
@@ -55,9 +56,27 @@ public class WebsocketMessageSamplerGui extends AbstractSamplerGui {
         message.setText(((WebsocketMessageSampler) sampler).getMessage());
     }
 
+    private JPanel makeWebsocketMessagePanel() {
+        JPanel websocketPanel = new JPanel(new BorderLayout());
+        websocketPanel.add(makeWebsocketUriPanel(), NORTH);
+        websocketPanel.add(makeMessageBodyPanel(), CENTER);
+        return websocketPanel;
+    }
+
+    private JPanel makeWebsocketUriPanel() {
+        HorizontalPanel websocketServerPanel = new HorizontalPanel();
+        websocketServerPanel.setBorder(createTitledBorder(createEtchedBorder(), "Websocket Server"));
+        websocketServerPanel.add(makeProtocolPanel());
+        websocketServerPanel.add(makeServerNameOrIpPanel());
+        websocketServerPanel.add(makePortPanel());
+        websocketServerPanel.add(makePathPanel());
+        return websocketServerPanel;
+    }
+
     private Component makeMessageBodyPanel() {
         JPanel panel = new JPanel(new BorderLayout(5, 0));
         panel.add(message, CENTER);
         return panel;
     }
+
 }

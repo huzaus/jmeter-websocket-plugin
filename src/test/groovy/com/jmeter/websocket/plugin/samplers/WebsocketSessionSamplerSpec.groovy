@@ -1,11 +1,8 @@
 package com.jmeter.websocket.plugin.samplers
 
-import org.apache.jmeter.protocol.http.control.Cookie
 import org.apache.jmeter.protocol.http.control.CookieManager
 import org.apache.jmeter.protocol.http.control.Header
 import org.apache.jmeter.protocol.http.control.HeaderManager
-import org.eclipse.jetty.util.ssl.SslContextFactory
-import org.eclipse.jetty.websocket.client.WebSocketClient
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
@@ -16,7 +13,6 @@ import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.HEADE
 import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.PATH
 import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.PORT_NUMBER
 import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.PROTOCOL
-import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.RESPONSE_TIME_OUT
 import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.SERVER_NAME_OR_IP
 
 @Unroll
@@ -36,7 +32,6 @@ class WebsocketSessionSamplerSpec extends Specification {
         'portNumber'      | PORT_NUMBER       | 'String' | '8080'
         'protocol'        | PROTOCOL          | 'String' | 'ws'
         'connectTimeOut'  | CONNECT_TIME_OUT  | 'String' | '2000'
-        'responseTimeOut' | RESPONSE_TIME_OUT | 'String' | '5000'
         'path'            | PATH              | 'String' | '/websocket'
     }
 

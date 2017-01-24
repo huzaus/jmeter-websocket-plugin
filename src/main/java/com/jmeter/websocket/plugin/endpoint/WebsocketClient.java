@@ -1,5 +1,6 @@
 package com.jmeter.websocket.plugin.endpoint;
 
+import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageProcessor;
 import org.apache.jmeter.protocol.http.control.CookieManager;
 import org.apache.jmeter.samplers.SampleResult;
 
@@ -12,9 +13,11 @@ public interface WebsocketClient {
 
     void connect(URI uri, CookieManager cookieManager, Map<String, List<String>> headers, SampleResult result, long timeOut) throws Exception;
 
-    void sendMessage(String message) throws IOException;
+    void sendMessage(URI uri,String message) throws IOException;
 
-    void onReceiveMessage(String message) throws IOException;
+    void registerWebsocketMessageConsumer(WebsocketMessageProcessor processor);
+
+    void unregisterWebsocketMessageConsumer(WebsocketMessageProcessor processor);
 
     void start();
 

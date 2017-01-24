@@ -28,14 +28,7 @@ public class WebsocketSessionSampler extends AbstractWebsocketSampler {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
 
-    private static final String SERVER_NAME_OR_IP = "serverNameOrIp";
-    private static final String PORT_NUMBER = "portNumber";
-    private static final String PROTOCOL = "protocol";
     private static final String CONNECT_TIME_OUT = "connectTimeOut";
-    private static final String RESPONSE_TIME_OUT = "responseTimeOut";
-    private static final String PATH = "path";
-    private static final String COOKIE_MANAGER = "cookie_manager";
-    private static final String HEADER_MANAGER = "header_manager";
 
     public WebsocketSessionSampler() {
         setName("Websocket Message Sampler");
@@ -88,56 +81,12 @@ public class WebsocketSessionSampler extends AbstractWebsocketSampler {
         setProperty(new TestElementProperty(HEADER_MANAGER, headerManager));
     }
 
-    public String getServerNameOrIp() {
-        return getPropertyAsString(SERVER_NAME_OR_IP);
-    }
-
-    public void setServerNameOrIp(String serverNameOrIp) {
-        setProperty(SERVER_NAME_OR_IP, serverNameOrIp, "");
-    }
-
-    public String getPortNumber() {
-        return getPropertyAsString(PORT_NUMBER);
-    }
-
-    public void setPortNumber(String portNumber) {
-        setProperty(PORT_NUMBER, portNumber, "");
-    }
-
-    public String getProtocol() {
-        return getPropertyAsString(PROTOCOL);
-    }
-
-    public void setProtocol(String protocol) {
-        setProperty(PROTOCOL, protocol, "");
-    }
-
     public String getConnectTimeOut() {
         return getPropertyAsString(CONNECT_TIME_OUT);
     }
 
     public void setConnectTimeOut(String connectTimeOut) {
         setProperty(CONNECT_TIME_OUT, connectTimeOut, "");
-    }
-
-    public String getResponseTimeOut() {
-        return getPropertyAsString(RESPONSE_TIME_OUT);
-    }
-
-    public void setResponseTimeOut(String responseTimeOut) {
-        setProperty(RESPONSE_TIME_OUT, responseTimeOut, "");
-    }
-
-    public String getPath() {
-        return getPropertyAsString(PATH);
-    }
-
-    public void setPath(String path) {
-        setProperty(PATH, path, "");
-    }
-
-    public URI uri() throws URISyntaxException {
-        return new URI(getProtocol(), null, getServerNameOrIp(), Integer.valueOf(getPortNumber()), getPath(), null, null);
     }
 
     public Map<String, List<String>> headers() {

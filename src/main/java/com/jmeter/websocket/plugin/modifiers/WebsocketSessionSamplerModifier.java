@@ -7,11 +7,6 @@ public class WebsocketSessionSamplerModifier implements Modifier<WebsocketSessio
 
     @Override
     public void modify(WebsocketSessionSamplerGui samplerGui, WebsocketSessionSampler sampler) {
-        sampler.setServerNameOrIp(samplerGui.getServerNameOrIp().getText());
-        sampler.setPortNumber(samplerGui.getPortNumber().getText());
-        sampler.setProtocol(samplerGui.getProtocol().getText());
         sampler.setConnectTimeOut(samplerGui.getConnectTimeOut().getText());
-        sampler.setResponseTimeOut(samplerGui.getResponseTimeOut().getText());
-        sampler.setPath(samplerGui.getPath().getText());
     }
 }

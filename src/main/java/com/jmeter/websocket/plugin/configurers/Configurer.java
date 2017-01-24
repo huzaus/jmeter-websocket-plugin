@@ -1,5 +1,8 @@
 package com.jmeter.websocket.plugin.configurers;
 
-public interface Configurer <S,T> {
-    void configure(S testElement, T guiElement);
+import org.apache.jmeter.samplers.AbstractSampler;
+import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
+
+public interface Configurer<S extends AbstractSampler, T extends AbstractSamplerGui> {
+    void configure(S sampler, T samplerGui);
 }

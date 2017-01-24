@@ -1,5 +1,6 @@
 package com.jmeter.websocket.plugin.endpoint.jetty;
 
+import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageProcessor;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 import org.eclipse.jetty.websocket.api.Session;
@@ -11,12 +12,18 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.extensions.Frame;
 
-import static com.google.common.base.MoreObjects.toStringHelper;
+import java.util.ArrayList;
+import java.util.Collection;
 
-@WebSocket(maxTextMessageSize = 64 * 1024)
-public class LoggingWebsocketEndpoint {
+import static com.google.common.base.MoreObjects.toStringHelper;
+import static java.lang.Integer.toHexString;
+
+@WebSocket(maxTextMessageSize = 128 * 1024)
+public class JettyWebsocket {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
+
+    private Collection<WebsocketMessageProcessor> websocketMessageProcessors = new ArrayList<>();
 
     @OnWebSocketConnect
     public void onWebSocketConnect(Session session) {
@@ -33,11 +40,13 @@ public class LoggingWebsocketEndpoint {
     }
 
     @OnWebSocketMessage
-    public void OnWebSocketMessage(Session session, String text) {
+    public void OnWebSocketMessage(Session session, String message) {
         log.debug("OnWebSocketMessage()" +
                 " session: " + session +
-                " text:" + text);
-        log.info("\n\n\n" + text + "\n\n\n");
+                " message: " + message);
+        for (WebsocketMessageProcessor processor : websocketMessageProcessors) {
+            processor.onMessageReceive(toHexString(session.hashCode()), message);
+        }
     }
 
     @OnWebSocketError
@@ -50,6 +59,10 @@ public class LoggingWebsocketEndpoint {
         log.debug("OnWebSocketFrame()" +
                 " session: " + session +
                 " frame:" + frame);
+    }
+
+    public void registerWebsocketMessageConsumer(WebsocketMessageProcessor processor) {
+        websocketMessageProcessors.add(processor);
     }
 
     @Override
