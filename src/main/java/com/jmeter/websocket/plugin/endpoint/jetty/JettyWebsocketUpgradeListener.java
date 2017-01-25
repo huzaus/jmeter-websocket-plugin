@@ -1,5 +1,6 @@
 package com.jmeter.websocket.plugin.endpoint.jetty;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jorphan.logging.LoggingManager;
@@ -11,9 +12,13 @@ import org.eclipse.jetty.websocket.client.io.UpgradeListener;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
+import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.System.lineSeparator;
 
 public class JettyWebsocketUpgradeListener implements UpgradeListener {
 
@@ -21,19 +26,10 @@ public class JettyWebsocketUpgradeListener implements UpgradeListener {
 
     private final SampleResult sampleResult;
 
-    public JettyWebsocketUpgradeListener(SampleResult sampleResult) {
-        checkNotNull(sampleResult);
-        this.sampleResult = sampleResult;
-    }
-
     @Override
     public void onHandshakeRequest(UpgradeRequest request) {
         checkNotNull(request);
-        checkNotNull(request.getHeaders());
-        URI requestURI = request.getRequestURI();
-        checkNotNull(requestURI);
-        log.info("onHandshakeRequest() request: "
-                + toStringHelper(request)
+        log.debug("onHandshakeRequest() request: " + toStringHelper(request)
                 .add("uri", request.getRequestURI())
                 .add("headers", request.getHeaders())
                 .add("cookies", request.getCookies())
@@ -41,30 +37,48 @@ public class JettyWebsocketUpgradeListener implements UpgradeListener {
                 .toString()
         );
         sampleResult.setRequestHeaders(
-                Joiner.on("\n")
-                        .withKeyValueSeparator("=")
-                        .join(request.getHeaders())
+                fromNullable(request.getHeaders())
+                        .transform(new Function<Map<String, List<String>>, String>() {
+                            @Override
+                            public String apply(Map<String, List<String>> headers) {
+                                return Joiner.on(lineSeparator())
+                                        .withKeyValueSeparator("=")
+                                        .join(headers);
+                            }
+                        })
+                        .or("")
         );
-        try {
-            sampleResult.setURL(
-                    new URL(
-                            "wss".equals(requestURI.getScheme()) ? "https" : "http",
-                            requestURI.getHost(),
-                            requestURI.getPort(),
-                            requestURI.getPath()
-                    )
-            );
-        } catch (MalformedURLException e) {
-            log.info("Failed to set url: ", e);
-        }
+        sampleResult.setURL(
+                fromNullable(request.getRequestURI())
+                        .transform(new Function<URI, URL>() {
+                            @Override
+                            public URL apply(URI uri) {
+                                try {
+                                    return new URL(
+                                            "wss".equals(uri.getScheme()) ? "https" : "http",
+                                            uri.getHost(),
+                                            uri.getPort(),
+                                            uri.getPath()
+                                    );
+                                } catch (MalformedURLException e) {
+                                    log.info("Failed to set url: ", e);
+                                }
+                                return null;
+                            }
+                        })
+                        .orNull()
+        );
+    }
+
+    public JettyWebsocketUpgradeListener(SampleResult sampleResult) {
+        checkNotNull(sampleResult);
+        this.sampleResult = sampleResult;
     }
 
     @Override
     public void onHandshakeResponse(UpgradeResponse response) {
         checkNotNull(response);
-        checkNotNull(response.getHeaders());
-        log.info("onHandshakeResponse() response: "
-                + toStringHelper(response)
+        log.debug("onHandshakeResponse() response: " + toStringHelper(response)
                 .add("success", response.isSuccess())
                 .add("statusCode", response.getStatusCode())
                 .add("statusReason", response.getStatusReason())
@@ -75,9 +89,16 @@ public class JettyWebsocketUpgradeListener implements UpgradeListener {
         sampleResult.setResponseMessage(response.getStatusReason());
         sampleResult.setResponseCode(String.valueOf(response.getStatusCode()));
         sampleResult.setResponseHeaders(
-                Joiner.on("\n")
-                        .withKeyValueSeparator("=")
-                        .join(response.getHeaders())
+                fromNullable(response.getHeaders())
+                        .transform(new Function<Map<String, List<String>>, String>() {
+                            @Override
+                            public String apply(Map<String, List<String>> headers) {
+                                return Joiner.on(lineSeparator())
+                                        .withKeyValueSeparator("=")
+                                        .join(headers);
+                            }
+                        })
+                        .or("")
         );
     }
 
