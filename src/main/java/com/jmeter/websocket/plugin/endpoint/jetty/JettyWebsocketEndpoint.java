@@ -39,8 +39,9 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
 
-    private static final Supplier<WebSocketClient> webSocketClientSupplier = webSocketClientSupplier();
+    private static Supplier<WebSocketClient> webSocketClientSupplier = webSocketClientSupplier();
 
+    private Supplier<JettyWebsocket> jettyWebsocketSupplier = jettyWebsocketSupplier();
     private Function<CookieManager, CookieStore> cookieManagerToCookieStoreConverter = new CookieManagerToCookieStoreConverter();
     private Function<Map<String, List<String>>, ClientUpgradeRequest> headersToClientUpgradeRequestConverter = new HeadersToClientUpgradeRequestConverter();
     private Function<SampleResult, UpgradeListener> sampleResultToUpgradeListenerConverter = new SampleResultToUpgradeListenerConverter();
@@ -60,7 +61,7 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
         synchronized (webSocketClient) {
             webSocketClient.setCookieStore(cookieManagerToCookieStoreConverter.apply(cookieManager));
             promise = webSocketClient
-                    .connect(jettyWebsocket(),
+                    .connect(jettyWebsocketSupplier.get(),
                             uri,
                             headersToClientUpgradeRequestConverter.apply(headers),
                             sampleResultToUpgradeListenerConverter.apply(result));
@@ -136,20 +137,24 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
                 .toString();
     }
 
-    private JettyWebsocket jettyWebsocket() {
-        JettyWebsocket jettyWebsocket = new JettyWebsocket();
-        for (WebsocketMessageProcessor processor : websocketMessageProcessors) {
-            jettyWebsocket.registerWebsocketMessageConsumer(processor);
-        }
-        return jettyWebsocket;
+    private Supplier<JettyWebsocket> jettyWebsocketSupplier() {
+        return new Supplier<JettyWebsocket>() {
+            @Override
+            public JettyWebsocket get() {
+                JettyWebsocket jettyWebsocket = new JettyWebsocket();
+                for (WebsocketMessageProcessor processor : websocketMessageProcessors) {
+                    jettyWebsocket.registerWebsocketMessageConsumer(processor);
+                }
+                return jettyWebsocket;
+            }
+        };
     }
 
     private static Supplier<WebSocketClient> webSocketClientSupplier() {
         return memoize(new Supplier<WebSocketClient>() {
             @Override
             public WebSocketClient get() {
-                WebSocketClient webSocketClient = new WebSocketClient(sslContextFactory(), newCachedThreadPool());
-                return webSocketClient;
+                return new WebSocketClient(sslContextFactory(), newCachedThreadPool());
             }
         });
     }

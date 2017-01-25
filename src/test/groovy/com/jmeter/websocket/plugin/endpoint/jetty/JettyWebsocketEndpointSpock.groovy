@@ -1,65 +1,122 @@
 package com.jmeter.websocket.plugin.endpoint.jetty
 
+import com.google.common.base.Function
+import com.google.common.base.Supplier
+import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageProcessor
+import org.apache.jmeter.protocol.http.control.CookieManager
+import org.apache.jmeter.samplers.SampleResult
 import org.eclipse.jetty.websocket.api.RemoteEndpoint
 import org.eclipse.jetty.websocket.api.Session
+import org.eclipse.jetty.websocket.client.ClientUpgradeRequest
+import org.eclipse.jetty.websocket.client.WebSocketClient
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
+
+import java.util.concurrent.Future
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 @Unroll
 class JettyWebsocketEndpointSpock extends Specification {
     @Subject
     JettyWebsocketEndpoint endpoint = new JettyWebsocketEndpoint()
 
-    def "Should delegate message sending to remote endpoint"() {
+    def "Should throw NullPointerException when session for uri is null"() {
+        when:
+        endpoint.sendMessage(URI.create('ws://localhost:8080/websocket'), 'message')
+        then:
+        thrown(NullPointerException)
+    }
+
+    def "Should throw IllegalArgumentException when session for #uri is not open"() {
+        given:
+        URI uri = URI.create('ws://localhost:8080/websocket')
+        endpoint.sessions[uri] = Stub(Session) {
+            isOpen() >> false
+        }
+        when:
+        endpoint.sendMessage(uri, 'message')
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def "Should delegate message sending to remote endpoint and notify processors"() {
         given:
         Session session = Stub(Session)
         session.isOpen() >> true
-        RemoteEndpoint remote = Mock(RemoteEndpoint)
+        RemoteEndpoint remote = Mock()
         session.getRemote() >> remote
+        and:
+        WebsocketMessageProcessor processor = Mock()
+        endpoint.registerWebsocketMessageConsumer(processor)
+        and:
         String message = 'message'
         URI uri = URI.create('ws://localhost:8080/websocket')
-        endpoint.sessions.put(uri, session)
+        endpoint.sessions[uri] = session
         when:
         endpoint.sendMessage(uri, message)
         then:
         1 * remote.sendString(message)
+        and:
+        1 * processor.onMessageSend(_, message)
     }
 
-//    def "Should delegate establishing connection to web socket client"() {
-//        given:
-//        URI uri = URI.create('ws://localhost:8080/websocket')
-//        CookieManager cookieManager = new CookieManager()
-//        def headers = [:]
-//        SampleResult sampleResult = new SampleResult()
-//        long timeout = 2000
-//        and:
-//        CookieStore cookieStore = Mock()
-//        endpoint.cookieManagerToCookieStoreConverter = Stub(Function) {
-//            apply(cookieManager) >> cookieStore
-//        }
-//        and:
-//        ClientUpgradeRequest upgradeRequest = Stub(ClientUpgradeRequest)
-//        endpoint.headersToClientUpgradeRequestConverter = Stub(Function) {
-//            apply(headers) >> upgradeRequest
-//        }
-//        and:
-//        JettyWebsocketUpgradeListener listener = Stub(JettyWebsocketUpgradeListener)
-//        endpoint.sampleResultToUpgradeListenerConverter = Stub(Function) {
-//            apply(sampleResult) >> listener
-//        }
-//        and:
-//        Future promise = Mock()
-//        when:
-//        endpoint.connect(
-//                uri,
-//                cookieManager,
-//                headers,
-//                sampleResult,
-//                timeout)
-//        then:
-//        1 * webSocketClient.connect(_, uri, upgradeRequest, listener) >> promise
-//        and:
-//        1 * promise.get(timeout, MILLISECONDS)
-//    }
+    def "Should throw IllegalArgumentException when session for uri is open on connect"() {
+        given:
+        URI uri = URI.create('ws://localhost:8080/websocket')
+        endpoint.sessions[uri] = Stub(Session) {
+            isOpen() >> true
+        }
+        when:
+        endpoint.connect(uri, new CookieManager(), [:], new SampleResult(), 2000)
+        then:
+        thrown(IllegalArgumentException)
+
+    }
+
+    def "Should delegate establishing connection to web socket client and save acquired session in sessions on connect"() {
+        given:
+        URI uri = URI.create('ws://localhost:8080/websocket')
+        CookieManager cookieManager = new CookieManager()
+        def headers = [:]
+        SampleResult sampleResult = new SampleResult()
+        long timeout = 2000
+        and:
+        WebSocketClient webSocketClient = Mock()
+        endpoint.webSocketClientSupplier = Stub(Supplier) {
+            get() >> webSocketClient
+        }
+        and:
+        CookieStore cookieStore = Stub()
+        endpoint.cookieManagerToCookieStoreConverter = Stub(Function) {
+            apply(cookieManager) >> cookieStore
+        }
+        and:
+        ClientUpgradeRequest upgradeRequest = Stub()
+        endpoint.headersToClientUpgradeRequestConverter = Stub(Function) {
+            apply(headers) >> upgradeRequest
+        }
+        and:
+        JettyWebsocketUpgradeListener listener = Stub(JettyWebsocketUpgradeListener)
+        endpoint.sampleResultToUpgradeListenerConverter = Stub(Function) {
+            apply(sampleResult) >> listener
+        }
+        and:
+        Future promise = Mock()
+        Session session = Stub()
+        when:
+        endpoint.connect(
+                uri,
+                cookieManager,
+                headers,
+                sampleResult,
+                timeout)
+        then:
+        1 * webSocketClient.connect(_, uri, upgradeRequest, listener) >> promise
+        and:
+        1 * promise.get(timeout, MILLISECONDS) >> session
+        and:
+        endpoint.sessions[uri] == session
+    }
 }
