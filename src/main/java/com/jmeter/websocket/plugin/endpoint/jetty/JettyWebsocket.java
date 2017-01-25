@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Integer.toHexString;
 
 @WebSocket(maxTextMessageSize = 128 * 1024)
@@ -27,35 +28,36 @@ public class JettyWebsocket {
 
     @OnWebSocketConnect
     public void onWebSocketConnect(Session session) {
-        log.debug("onWebSocketConnect()" +
+        log.info("onWebSocketConnect()" +
                 " session: " + session);
     }
 
     @OnWebSocketClose
     public void onWebSocketClose(Session session, int closeCode, String closeReason) {
-        log.debug("onWebSocketClose()" +
+        log.info("onWebSocketClose()" +
                 " session: " + session +
                 " closeCode: " + closeCode +
                 " closeReason: " + closeReason);
     }
 
     @OnWebSocketMessage
-    public void OnWebSocketMessage(Session session, String message) {
+    public void onWebSocketMessage(Session session, String message) {
         log.debug("OnWebSocketMessage()" +
                 " session: " + session +
                 " message: " + message);
+        checkNotNull(session);
         for (WebsocketMessageProcessor processor : websocketMessageProcessors) {
             processor.onMessageReceive(toHexString(session.hashCode()), message);
         }
     }
 
     @OnWebSocketError
-    public void OnWebSocketError(Session session, Throwable cause) {
+    public void onWebSocketError(Session session, Throwable cause) {
         log.error("OnWebSocketError() session: " + session, cause);
     }
 
     @OnWebSocketFrame
-    public void OnWebSocketFrame(Session session, Frame frame) {
+    public void onWebSocketFrame(Session session, Frame frame) {
         log.debug("OnWebSocketFrame()" +
                 " session: " + session +
                 " frame:" + frame);
@@ -68,6 +70,7 @@ public class JettyWebsocket {
     @Override
     public String toString() {
         return toStringHelper(this)
+                .add("websocketMessageProcessors", websocketMessageProcessors)
                 .toString();
     }
 }
