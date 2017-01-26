@@ -5,18 +5,39 @@ import spock.lang.Specification
 import spock.lang.Subject
 
 import java.nio.channels.ByteChannel
+import java.nio.file.Path
 
+import static com.jmeter.websocket.plugin.endpoint.comsumers.CsvFileWriter.csvFileWriterSupplier
 import static java.nio.file.Files.createTempFile
+import static java.nio.file.Files.delete
 
 class CsvFileWriterSpec extends Specification {
+
+    Path file
     @Subject
-    CsvFileWriter csvWriter = new CsvFileWriter(createTempFile("temp-file-delete-on-close", ".tmp"))
+    CsvFileWriter csvWriter
+
+    def setup() {
+        file = createTempFile("temp-file-delete-on-close", ".tmp")
+        csvWriter = new CsvFileWriter(file)
+    }
+
+    def cleanup() {
+        delete file
+    }
 
     def "Should throw null pointer exception when file is null"() {
         when:
         new CsvFileWriter(null)
         then:
         thrown(NullPointerException)
+    }
+
+    def "Should return the same CsvFileWriter"() {
+        when:
+        Supplier supplier = csvFileWriterSupplier(csvWriter.file)
+        then:
+        supplier.get().is(supplier.get())
     }
 
     def "Should return the same byteChannel "() {

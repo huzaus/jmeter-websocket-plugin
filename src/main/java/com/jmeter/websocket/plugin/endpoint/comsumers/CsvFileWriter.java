@@ -108,12 +108,12 @@ public class CsvFileWriter implements WebsocketMessageProcessor {
     }
 
     public static Supplier<CsvFileWriter> csvFileWriterSupplier(final Path file) {
-        return new Supplier<CsvFileWriter>() {
+        return memoize(new Supplier<CsvFileWriter>() {
             @Override
             public CsvFileWriter get() {
                 return new CsvFileWriter(file);
             }
-        };
+        });
     }
 
 }
