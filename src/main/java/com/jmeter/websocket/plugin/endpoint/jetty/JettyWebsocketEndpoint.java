@@ -2,6 +2,7 @@ package com.jmeter.websocket.plugin.endpoint.jetty;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.jmeter.websocket.plugin.endpoint.SessionsManager;
 import com.jmeter.websocket.plugin.endpoint.WebsocketClient;
 import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageProcessor;
 import com.jmeter.websocket.plugin.endpoint.jetty.converters.CookieManagerToCookieStoreConverter;
@@ -24,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
@@ -47,12 +47,11 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
     private Function<SampleResult, UpgradeListener> sampleResultToUpgradeListenerConverter = new SampleResultToUpgradeListenerConverter();
 
     private Collection<WebsocketMessageProcessor> websocketMessageProcessors = new ArrayList<>();
-    private ConcurrentHashMap<URI, Session> sessions = new ConcurrentHashMap<>();
+    private SessionsManager<Session> sessionsManager = new JettySessionManager();
 
     @Override
     public void connect(URI uri, CookieManager cookieManager, Map<String, List<String>> headers, SampleResult result, long timeOut) throws Exception {
-        Session session = sessions.get(uri);
-        checkArgument(session == null || !session.isOpen(), "Session is already open");
+        checkArgument(!sessionsManager.hasOpenSession(uri), "Session is already open");
         log.info("Opening " + uri + " connection." +
                 " CookieManager: " + cookieManager +
                 " Headers: " + headers);
@@ -66,15 +65,14 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
                             headersToClientUpgradeRequestConverter.apply(headers),
                             sampleResultToUpgradeListenerConverter.apply(result));
         }
-        sessions.put(uri, promise.get(timeOut, MILLISECONDS));
-        log.info("Connected to: " + uri + ". Sessions: " + sessions);
+        sessionsManager.registerSession(uri, promise.get(timeOut, MILLISECONDS));
+        log.info("Connected to: " + uri + ".");
     }
 
     @Override
     public void sendMessage(URI uri, String message) throws IOException {
-        Session session = sessions.get(uri);
-        checkNotNull(session, "Session is null for " + uri);
-        checkArgument(session.isOpen(), "Session is not open for " + uri + ". Session: " + session);
+        Session session = sessionsManager.getOpenSession(uri);
+        checkNotNull(session, "Session is not open for " + uri + ". Session: " + session);
         log.info("sendMessage() message: " + message + " to " + uri + " using session:" + session);
         session.getRemote().sendString(message);
         for (WebsocketMessageProcessor processor : websocketMessageProcessors) {
@@ -108,13 +106,7 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
             log.info("Stopping websocket client.");
             WebSocketClient webSocketClient = webSocketClientSupplier.get();
             synchronized (webSocketClient) {
-                for (Session session : sessions.values()) {
-                    if (session.isOpen()) {
-                        log.info("Closing " + toHexString(session.hashCode()) + " session.");
-                        session.close();
-                    }
-                }
-                sessions.clear();
+                sessionsManager.closeSessions();
                 webSocketClient.stop();
             }
         } catch (Exception e) {
@@ -122,11 +114,13 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
         }
     }
 
+
     @Override
     public String toString() {
         return toStringHelper(this)
                 .add("hash", toHexString(hashCode()))
-                .add("session", sessions)
+                .add("websocketMessageProcessors", websocketMessageProcessors)
+                .add("sessionsManager", sessionsManager)
                 .toString();
     }
 

@@ -2,6 +2,7 @@ package com.jmeter.websocket.plugin.endpoint.jetty
 
 import com.google.common.base.Function
 import com.google.common.base.Supplier
+import com.jmeter.websocket.plugin.endpoint.SessionsManager
 import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageProcessor
 import org.apache.jmeter.protocol.http.control.CookieManager
 import org.apache.jmeter.samplers.SampleResult
@@ -29,31 +30,21 @@ class JettyWebsocketEndpointSpec extends Specification {
         thrown(NullPointerException)
     }
 
-    def "Should throw IllegalArgumentException when session for #uri is not open"() {
-        given:
-        URI uri = URI.create('ws://localhost:8080/websocket')
-        endpoint.sessions[uri] = Stub(Session) {
-            isOpen() >> false
-        }
-        when:
-        endpoint.sendMessage(uri, 'message')
-        then:
-        thrown(IllegalArgumentException)
-    }
-
     def "Should delegate message sending to remote endpoint and notify processors"() {
         given:
-        Session session = Stub(Session)
-        session.isOpen() >> true
         RemoteEndpoint remote = Mock()
-        session.getRemote() >> remote
+        Session session = Stub(Session) {
+            getRemote() >> remote
+        }
         and:
         WebsocketMessageProcessor processor = Mock()
         endpoint.registerWebsocketMessageConsumer(processor)
         and:
         String message = 'message'
         URI uri = URI.create('ws://localhost:8080/websocket')
-        endpoint.sessions[uri] = session
+        endpoint.sessionsManager = Stub(SessionsManager) {
+            getOpenSession(uri) >> session
+        }
         when:
         endpoint.sendMessage(uri, message)
         then:
@@ -65,8 +56,8 @@ class JettyWebsocketEndpointSpec extends Specification {
     def "Should throw IllegalArgumentException when session for uri is open on connect"() {
         given:
         URI uri = URI.create('ws://localhost:8080/websocket')
-        endpoint.sessions[uri] = Stub(Session) {
-            isOpen() >> true
+        endpoint.sessionsManager = Stub(SessionsManager) {
+            hasOpenSession(uri) >> true
         }
         when:
         endpoint.connect(uri, new CookieManager(), [:], new SampleResult(), 2000)
@@ -103,6 +94,8 @@ class JettyWebsocketEndpointSpec extends Specification {
             apply(sampleResult) >> listener
         }
         and:
+        endpoint.sessionsManager = Mock(SessionsManager)
+        and:
         Future promise = Mock()
         Session session = Stub()
         when:
@@ -117,7 +110,7 @@ class JettyWebsocketEndpointSpec extends Specification {
         and:
         1 * promise.get(timeout, MILLISECONDS) >> session
         and:
-        endpoint.sessions[uri] == session
+        1 * endpoint.sessionsManager.registerSession(uri, session)
     }
 
     def "Should not throw exception when webSocketClientSupplier throws exception on start"() {
@@ -142,35 +135,15 @@ class JettyWebsocketEndpointSpec extends Specification {
         noExceptionThrown()
     }
 
-    def "Should clear all sessions on stop"() {
+    def "Should close sessions on stop"() {
         given:
         endpoint.webSocketClientSupplier = Stub(Supplier) {
             get() >> Stub(WebSocketClient)
         }
-        Session session = Mock()
-        endpoint.sessions[URI.create('ws://localhost:8080/websocket')] = session
+        endpoint.sessionsManager = Mock(SessionsManager)
         when:
         endpoint.stop()
         then:
-        1 * session.isOpen() >> false
-        and:
-        endpoint.sessions.isEmpty()
-    }
-
-    def "Should stop all open sessions and clear sessions on stop"() {
-        given:
-        endpoint.webSocketClientSupplier = Stub(Supplier) {
-            get() >> Stub(WebSocketClient)
-        }
-        Session session = Mock()
-        endpoint.sessions[URI.create('ws://localhost:8080/websocket')] = session
-        when:
-        endpoint.stop()
-        then:
-        1 * session.isOpen() >> true
-        and:
-        1 * session.close()
-        and:
-        endpoint.sessions.isEmpty()
+        1 * endpoint.sessionsManager.closeSessions()
     }
 }
