@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="3.1" jmeter="3.1 r1770033">
   <hashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Stomp Websocket Demo Test Plan" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
@@ -19,52 +19,64 @@
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">1</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
-        <longProp name="ThreadGroup.start_time">1484554183000</longProp>
-        <longProp name="ThreadGroup.end_time">1484554183000</longProp>
+        <longProp name="ThreadGroup.start_time">1485446701000</longProp>
+        <longProp name="ThreadGroup.end_time">1485446701000</longProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
       <hashTree>
-        <com.jmeter.websocket.plugin.configurations.WebsocketSessionsManager guiclass="com.jmeter.websocket.plugin.configurations.WebsocketSessionsManagerGui" testclass="com.jmeter.websocket.plugin.configurations.WebsocketSessionsManager" testname="Websocket Session Manager" enabled="true"/>
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+          <stringProp name="ConstantTimer.delay">2000</stringProp>
+        </ConstantTimer>
         <hashTree/>
-        <com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler guiclass="com.jmeter.websocket.plugin.samplers.WebsocketSessionSamplerGui" testclass="com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler" testname="Websocket Session Sampler Ws" enabled="true">
-          <stringProp name="serverNameOrIp">127.0.0.1</stringProp>
+        <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="User generator" enabled="true">
+          <stringProp name="CounterConfig.start">1</stringProp>
+          <stringProp name="CounterConfig.end">1000</stringProp>
+          <stringProp name="CounterConfig.incr">1</stringProp>
+          <stringProp name="CounterConfig.name">user</stringProp>
+          <stringProp name="CounterConfig.format"></stringProp>
+          <boolProp name="CounterConfig.per_user">false</boolProp>
+        </CounterConfig>
+        <hashTree/>
+        <com.jmeter.websocket.plugin.configurations.WebsocketSessionsManager guiclass="com.jmeter.websocket.plugin.configurations.WebsocketSessionsManagerGui" testclass="com.jmeter.websocket.plugin.configurations.WebsocketSessionsManager" testname="Websocket Session Manager" enabled="true">
+          <stringProp name="websocket.data.output.file">websocket.csv</stringProp>
+        </com.jmeter.websocket.plugin.configurations.WebsocketSessionsManager>
+        <hashTree/>
+        <com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler guiclass="com.jmeter.websocket.plugin.samplers.WebsocketSessionSamplerGui" testclass="com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler" testname="[${user}] Open session" enabled="true">
+          <stringProp name="serverNameOrIp">echo.websocket.org</stringProp>
           <stringProp name="portNumber">80</stringProp>
           <stringProp name="protocol">ws</stringProp>
           <stringProp name="connectTimeOut">2000</stringProp>
-          <stringProp name="responseTimeOut">5000</stringProp>
-          <stringProp name="path">/websocket</stringProp>
         </com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler>
         <hashTree/>
-        <com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler guiclass="com.jmeter.websocket.plugin.samplers.WebsocketSessionSamplerGui" testclass="com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler" testname="Websocket Session Sampler Wss" enabled="true">
-          <stringProp name="serverNameOrIp">127.0.0.2</stringProp>
-          <stringProp name="portNumber">443</stringProp>
-          <stringProp name="protocol">wss</stringProp>
-          <stringProp name="connectTimeOut">2000</stringProp>
-          <stringProp name="responseTimeOut">5000</stringProp>
-          <stringProp name="path">/websocket</stringProp>
-        </com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler>
+        <com.jmeter.websocket.plugin.samplers.WebsocketMessageSampler guiclass="com.jmeter.websocket.plugin.samplers.WebsocketMessageSamplerGui" testclass="com.jmeter.websocket.plugin.samplers.WebsocketMessageSampler" testname="[${user}] Connect" enabled="true">
+          <stringProp name="serverNameOrIp">echo.websocket.org</stringProp>
+          <stringProp name="portNumber">80</stringProp>
+          <stringProp name="protocol">ws</stringProp>
+          <stringProp name="websocket.message">[&quot;CONNECT\naccept-version:1.1,1.0\nheart-beat:10000,10000\n\n\u0000&quot;]</stringProp>
+        </com.jmeter.websocket.plugin.samplers.WebsocketMessageSampler>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain">127.0.0.1</stringProp>
-          <stringProp name="HTTPSampler.port">8080</stringProp>
-          <stringProp name="HTTPSampler.connect_timeout">2000</stringProp>
-          <stringProp name="HTTPSampler.response_timeout">5000</stringProp>
-          <stringProp name="HTTPSampler.protocol"></stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">/websocket</stringProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <boolProp name="HTTPSampler.monitor">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-        </HTTPSamplerProxy>
+        <com.jmeter.websocket.plugin.samplers.WebsocketMessageSampler guiclass="com.jmeter.websocket.plugin.samplers.WebsocketMessageSamplerGui" testclass="com.jmeter.websocket.plugin.samplers.WebsocketMessageSampler" testname="[${user}] Topic subscribtion" enabled="true">
+          <stringProp name="serverNameOrIp">echo.websocket.org</stringProp>
+          <stringProp name="portNumber">80</stringProp>
+          <stringProp name="protocol">ws</stringProp>
+          <stringProp name="websocket.message">[&quot;SUBSCRIBE\nid:sub-1\ndestination:/topic/${user}\n\n\u0000&quot;]</stringProp>
+        </com.jmeter.websocket.plugin.samplers.WebsocketMessageSampler>
+        <hashTree/>
+        <com.jmeter.websocket.plugin.samplers.WebsocketMessageSampler guiclass="com.jmeter.websocket.plugin.samplers.WebsocketMessageSamplerGui" testclass="com.jmeter.websocket.plugin.samplers.WebsocketMessageSampler" testname="[${user}] Queue subscribtion" enabled="true">
+          <stringProp name="serverNameOrIp">echo.websocket.org</stringProp>
+          <stringProp name="portNumber">80</stringProp>
+          <stringProp name="protocol">ws</stringProp>
+          <stringProp name="websocket.message">[&quot;SUBSCRIBE\nid:sub-1\ndestination:/queue/${user}\n\n\u0000&quot;]</stringProp>
+        </com.jmeter.websocket.plugin.samplers.WebsocketMessageSampler>
+        <hashTree/>
+        <com.jmeter.websocket.plugin.samplers.WebsocketMessageSampler guiclass="com.jmeter.websocket.plugin.samplers.WebsocketMessageSamplerGui" testclass="com.jmeter.websocket.plugin.samplers.WebsocketMessageSampler" testname="[${user}] Disconnect" enabled="true">
+          <stringProp name="serverNameOrIp">echo.websocket.org</stringProp>
+          <stringProp name="portNumber">80</stringProp>
+          <stringProp name="protocol">ws</stringProp>
+          <stringProp name="websocket.message">[&quot;DISCONNECT\nreceipt:${user}\n\n\u0000&quot;]</stringProp>
+        </com.jmeter.websocket.plugin.samplers.WebsocketMessageSampler>
         <hashTree/>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
