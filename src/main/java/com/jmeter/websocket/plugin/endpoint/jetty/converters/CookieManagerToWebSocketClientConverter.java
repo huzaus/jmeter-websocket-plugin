@@ -11,7 +11,7 @@ import static java.util.concurrent.Executors.newCachedThreadPool;
 
 public class CookieManagerToWebSocketClientConverter implements Function<CookieManager, WebSocketClient> {
 
-    private Function<CookieManager, CookieStore> cookieManagerCookieStoreConverter = new CookieManagerToCookieStoreConverter();
+    private final Function<CookieManager, CookieStore> cookieManagerCookieStoreConverter = new CookieManagerToCookieStoreConverter();
 
     @Override
     public WebSocketClient apply(CookieManager cookieManager) {
