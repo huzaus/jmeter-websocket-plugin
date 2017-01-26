@@ -16,12 +16,15 @@ class SampleResultToUpgradeListenerConverterSpec extends Specification {
     }
 
     def "Should return JettyWebsocketUpgradeListener when sample result is not null"() {
+        given:
+        SampleResult sampleResult = new SampleResult()
         when:
-        UpgradeListener listener = converter.apply(new SampleResult())
+        UpgradeListener listener = converter.apply(sampleResult)
         then:
         listener != null
         and:
         listener instanceof JettyWebsocketUpgradeListener
+        and:
+        listener.sampleResult.is(sampleResult)
     }
-
 }
