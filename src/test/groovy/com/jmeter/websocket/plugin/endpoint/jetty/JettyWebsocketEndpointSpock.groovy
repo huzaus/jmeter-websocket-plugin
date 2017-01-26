@@ -119,4 +119,58 @@ class JettyWebsocketEndpointSpock extends Specification {
         and:
         endpoint.sessions[uri] == session
     }
+
+    def "Should not throw exception when webSocketClientSupplier throws exception on start"() {
+        given:
+        endpoint.webSocketClientSupplier = Mock(Supplier)
+        when:
+        endpoint.start()
+        then:
+        1 * endpoint.webSocketClientSupplier.get() >> { throw new NullPointerException() }
+        and:
+        noExceptionThrown()
+    }
+
+    def "Should not throw exception when webSocketClientSupplier throws exception on stop"() {
+        given:
+        endpoint.webSocketClientSupplier = Mock(Supplier)
+        when:
+        endpoint.stop()
+        then:
+        1 * endpoint.webSocketClientSupplier.get() >> { throw new NullPointerException() }
+        and:
+        noExceptionThrown()
+    }
+
+    def "Should clear all sessions on stop"() {
+        given:
+        endpoint.webSocketClientSupplier = Stub(Supplier) {
+            get() >> Stub(WebSocketClient)
+        }
+        Session session = Mock()
+        endpoint.sessions[URI.create('ws://localhost:8080/websocket')] = session
+        when:
+        endpoint.stop()
+        then:
+        1 * session.isOpen() >> false
+        and:
+        endpoint.sessions.isEmpty()
+    }
+
+    def "Should stop all open sessions and clear sessions on stop"() {
+        given:
+        endpoint.webSocketClientSupplier = Stub(Supplier) {
+            get() >> Stub(WebSocketClient)
+        }
+        Session session = Mock()
+        endpoint.sessions[URI.create('ws://localhost:8080/websocket')] = session
+        when:
+        endpoint.stop()
+        then:
+        1 * session.isOpen() >> true
+        and:
+        1 * session.close()
+        and:
+        endpoint.sessions.isEmpty()
+    }
 }

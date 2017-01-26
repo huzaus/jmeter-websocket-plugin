@@ -96,12 +96,7 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
     public void start() {
         try {
             log.info("Starting websocket client.");
-            WebSocketClient webSocketClient = webSocketClientSupplier.get();
-            synchronized (webSocketClient) {
-                if (!webSocketClient.isStarted() || !webSocketClient.isStarting()) {
-                    webSocketClient.start();
-                }
-            }
+            webSocketClientSupplier.get().start();
         } catch (Exception e) {
             log.error("Failed to start WebSocketClient: " + e);
         }
@@ -120,9 +115,7 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
                     }
                 }
                 sessions.clear();
-                if (!webSocketClient.isStopped() || !webSocketClient.isStopping()) {
-                    webSocketClient.stop();
-                }
+                webSocketClient.stop();
             }
         } catch (Exception e) {
             log.error("Failed to start WebSocketClient: " + e);
