@@ -24,7 +24,7 @@ public class JettyWebsocket {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
 
-    private Collection<WebsocketMessageProcessor> websocketMessageProcessors = new ArrayList<>();
+    private final Collection<WebsocketMessageProcessor> websocketMessageProcessors = new ArrayList<>();
 
     @OnWebSocketConnect
     public void onWebSocketConnect(Session session) {
