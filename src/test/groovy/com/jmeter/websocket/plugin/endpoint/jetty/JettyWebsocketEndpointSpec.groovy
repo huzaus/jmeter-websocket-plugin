@@ -18,7 +18,7 @@ import java.util.concurrent.Future
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 @Unroll
-class JettyWebsocketEndpointSpock extends Specification {
+class JettyWebsocketEndpointSpec extends Specification {
     @Subject
     JettyWebsocketEndpoint endpoint = new JettyWebsocketEndpoint()
 
