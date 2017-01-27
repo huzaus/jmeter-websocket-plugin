@@ -25,7 +25,7 @@ class JettyWebsocketEndpointSpec extends Specification {
     
     def "Should throw NullPointerException when session for uri is null"() {
         when:
-            endpoint.sendMessage(URI.create('ws://localhost:8080/websocket'), 'message')
+            endpoint.sendMessage('user1Session', 'message')
         then:
             thrown(NullPointerException)
     }
@@ -41,12 +41,12 @@ class JettyWebsocketEndpointSpec extends Specification {
             endpoint.registerMessageConsumer(consumer)
         and:
             String message = 'message'
-            URI uri = URI.create('ws://localhost:8080/websocket')
+            String sessionId = 'user1Session'
             endpoint.sessionsManager = Stub(SessionsManager) {
-                getOpenSession(uri) >> session
+                getOpenSession(sessionId) >> session
             }
         when:
-            endpoint.sendMessage(uri, message)
+            endpoint.sendMessage(sessionId, message)
         then:
             1 * remote.sendString(message)
         and:
@@ -55,12 +55,12 @@ class JettyWebsocketEndpointSpec extends Specification {
     
     def "Should throw IllegalArgumentException when session for uri is open on connect"() {
         given:
-            URI uri = URI.create('ws://localhost:8080/websocket')
+            String sessionId = 'user1Session'
             endpoint.sessionsManager = Stub(SessionsManager) {
-                hasOpenSession(uri) >> true
+                hasOpenSession(sessionId) >> true
             }
         when:
-            endpoint.connect(uri, new CookieManager(), [:], new SampleResult(), 2000)
+            endpoint.connect(URI.create('ws://localhost:8080/websocket'), sessionId, new CookieManager(), [:], new SampleResult(), 2000)
         then:
             thrown(IllegalArgumentException)
         
@@ -69,6 +69,7 @@ class JettyWebsocketEndpointSpec extends Specification {
     def "Should delegate establishing connection to web socket client and save acquired session in sessions on connect"() {
         given:
             URI uri = URI.create('ws://localhost:8080/websocket')
+            String sessionId = 'user1Session'
             CookieManager cookieManager = new CookieManager()
             def headers = [:]
             SampleResult sampleResult = new SampleResult()
@@ -101,6 +102,7 @@ class JettyWebsocketEndpointSpec extends Specification {
         when:
             endpoint.connect(
                     uri,
+                    sessionId,
                     cookieManager,
                     headers,
                     sampleResult,
@@ -110,7 +112,7 @@ class JettyWebsocketEndpointSpec extends Specification {
         and:
             1 * promise.get(timeout, MILLISECONDS) >> session
         and:
-            1 * endpoint.sessionsManager.registerSession(uri, session)
+            1 * endpoint.sessionsManager.registerSession(sessionId, session)
     }
     
     def "Should not throw exception when webSocketClientSupplier throws exception on start"() {

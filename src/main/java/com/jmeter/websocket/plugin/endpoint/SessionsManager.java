@@ -1,14 +1,13 @@
 package com.jmeter.websocket.plugin.endpoint;
 
-import java.net.URI;
 
-public interface SessionsManager<S> {
+public interface SessionsManager<K, S> {
 
-    boolean hasOpenSession(URI uri);
+    boolean hasOpenSession(K key);
 
-    S getOpenSession(URI uri);
+    S getOpenSession(K key);
 
-    void registerSession(URI uri, S session);
+    void registerSession(K key, S session);
 
     void closeSessions();
 }

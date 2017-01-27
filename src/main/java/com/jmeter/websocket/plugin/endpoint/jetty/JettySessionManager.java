@@ -5,18 +5,17 @@ import com.google.common.base.MoreObjects;
 import com.jmeter.websocket.plugin.endpoint.SessionsManager;
 import org.eclipse.jetty.websocket.api.Session;
 
-import java.net.URI;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.google.common.base.Optional.fromNullable;
 
-public class JettySessionManager implements SessionsManager<Session> {
+public class JettySessionManager implements SessionsManager<String, Session> {
 
-    private final ConcurrentHashMap<URI, Session> sessions = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Session> sessions = new ConcurrentHashMap<>();
 
     @Override
-    public boolean hasOpenSession(URI uri) {
-        return fromNullable(sessions.get(uri))
+    public boolean hasOpenSession(String id) {
+        return fromNullable(sessions.get(id))
                 .transform(new Function<Session, Boolean>() {
                     @Override
                     public Boolean apply(Session session) {
@@ -27,8 +26,8 @@ public class JettySessionManager implements SessionsManager<Session> {
     }
 
     @Override
-    public Session getOpenSession(URI uri) {
-        Session session = sessions.get(uri);
+    public Session getOpenSession(String id) {
+        Session session = sessions.get(id);
         if (session != null && session.isOpen()) {
             return session;
         } else {
@@ -37,8 +36,8 @@ public class JettySessionManager implements SessionsManager<Session> {
     }
 
     @Override
-    public void registerSession(URI uri, Session session) {
-        sessions.put(uri, session);
+    public void registerSession(String id, Session session) {
+        sessions.put(id, session);
     }
 
     @Override

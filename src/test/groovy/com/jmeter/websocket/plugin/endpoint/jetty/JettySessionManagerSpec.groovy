@@ -13,58 +13,58 @@ class JettySessionManagerSpec extends Specification {
     
     def "Should return false when zero session is registered on hasOpenSession"() {
         expect:
-            !manager.hasOpenSession(URI.create('ws://localhost:8080/ws'))
+            !manager.hasOpenSession('user1Session')
     }
     
-    def "Should return '#value' if '#registeredUri' session is registered and it isOpen()='#isOpen' on hasOpenSession('#uri')"() {
+    def "Should return '#value' if '#registeredSessionId' session is registered and it isOpen()='#open' on hasOpenSession('#sessionId')"() {
         given:
-            manager.registerSession(registeredUri,
+            manager.registerSession(registeredSessionId,
                     Stub(Session) {
                         isOpen() >> open
                     }
             )
         expect:
-            manager.hasOpenSession(uri) == value
+            manager.hasOpenSession(sessionId) == value
         where:
-            uri                                         | registeredUri                               | open  || value
-            URI.create('ws://localhost:8080/websocket') | URI.create('ws://localhost:8080/websocket') | false || false
-            URI.create('ws://localhost:8080/websocket') | URI.create('ws://localhost:8080/websocket') | true  || true
-            URI.create('ws://localhost:8081/websocket') | URI.create('ws://localhost:8080/websocket') | true  || false
+            sessionId      | registeredSessionId | open  || value
+            'user1Session' | 'user1Session'      | false || false
+            'user1Session' | 'user1Session'      | true  || true
+            'user1Session' | 'user2Session'      | true  || false
     }
     
-    def "Should return null if '#registeredUri' session is registered and it isOpen()='#open' on getOpenSession('#uri')"() {
+    def "Should return null if '#registeredSessionId' session is registered and it isOpen()='#open' on getOpenSession('#sessionId')"() {
         given:
-            manager.registerSession(registeredUri,
+            manager.registerSession(registeredSessionId,
                     Stub(Session) {
                         isOpen() >> open
                     }
             )
         expect:
-            manager.getOpenSession(uri) == null
+            manager.getOpenSession(sessionId) == null
         where:
-            uri                                         | registeredUri                               | open
-            URI.create('ws://localhost:8080/websocket') | URI.create('ws://localhost:8080/websocket') | false
-            URI.create('ws://localhost:8081/websocket') | URI.create('ws://localhost:8080/websocket') | true
+            sessionId      | registeredSessionId | open
+            'user1Session' | 'user1Session'      | false
+            'user1Session' | 'user2Session'      | true
     }
     
-    def "Should return not null if '#registeredUri' session is registered and it isOpen()='#open' on getOpenSession('#uri')"() {
+    def "Should return not null if '#registeredSessionId' session is registered and it isOpen()='#open' on getOpenSession('#sessionId')"() {
         given:
-            manager.registerSession(URI.create('ws://localhost:8080/websocket'),
+            manager.registerSession(registeredSessionId,
                     Stub(Session) {
                         isOpen() >> open
                     }
             )
         expect:
-            manager.hasOpenSession(uri) != null
+            manager.hasOpenSession(sessionId) != null
         where:
-            uri                                         | registeredUri                               | open
-            URI.create('ws://localhost:8080/websocket') | URI.create('ws://localhost:8080/websocket') | true
+            sessionId      | registeredSessionId | open
+            'user1Session' | 'user1Session'      | true
     }
     
     def "Should close all open sessions and clear sessions map on closeSessions()"() {
         given:
             Session session = Mock(Session)
-            manager.registerSession(URI.create('ws://localhost:8080/websocket'), session)
+            manager.registerSession('user1Session', session)
         expect:
             !manager.sessions.isEmpty()
         when:
@@ -80,7 +80,7 @@ class JettySessionManagerSpec extends Specification {
     def "Should clear sessions map on closeSessions()"() {
         given:
             Session session = Mock(Session)
-            manager.registerSession(URI.create('ws://localhost:8080/websocket'), session)
+            manager.registerSession('user1Session', session)
         expect:
             !manager.sessions.isEmpty()
         when:

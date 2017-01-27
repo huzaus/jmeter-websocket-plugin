@@ -11,9 +11,9 @@ import java.util.Map;
 
 public interface WebsocketClient {
 
-    void connect(URI uri, CookieManager cookieManager, Map<String, List<String>> headers, SampleResult result, long timeOut) throws Exception;
+    void connect(URI uri, String sessionId, CookieManager cookieManager, Map<String, List<String>> headers, SampleResult result, long timeOut) throws Exception;
 
-    void sendMessage(URI uri, String message) throws IOException;
+    void sendMessage(String sessionId, String message) throws IOException;
 
     void registerMessageConsumer(WebsocketMessageConsumer consumer);
 
