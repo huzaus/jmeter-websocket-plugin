@@ -20,7 +20,7 @@ class HeadersToClientUpgradeRequestConverterSpec extends Specification {
 
     def "Should create new upgrade request with provided [#name:#values] headers on apply"() {
         given:
-        def headers = [(name): values]
+        Map headers = [(name): values]
         when:
         ClientUpgradeRequest request = converter.apply(headers)
         then:

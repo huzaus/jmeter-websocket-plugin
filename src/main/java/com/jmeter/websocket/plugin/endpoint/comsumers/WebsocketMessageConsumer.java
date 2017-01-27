@@ -1,6 +1,6 @@
 package com.jmeter.websocket.plugin.endpoint.comsumers;
 
-public interface WebsocketMessageProcessor {
+public interface WebsocketMessageConsumer {
 
     void onMessageReceive(String sessionId, String message);
 

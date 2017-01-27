@@ -1,6 +1,6 @@
 package com.jmeter.websocket.plugin.endpoint.jetty
 
-import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageProcessor
+import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageConsumer
 import org.eclipse.jetty.websocket.api.Session
 import spock.lang.Specification
 import spock.lang.Subject
@@ -18,15 +18,15 @@ class JettyWebsocketSpec extends Specification {
         thrown(NullPointerException)
     }
 
-    def "Should notify WebsocketMessageProcessor about message with session hashCode as hexString on onWebSocketMessage"() {
+    def "Should notify WebsocketMessageConsumer about message with session hashCode as hexString on onWebSocketMessage"() {
         given:
-        WebsocketMessageProcessor processor = Mock()
+        WebsocketMessageConsumer consumer = Mock()
         Session session = Stub(Session)
-        websocket.registerWebsocketMessageConsumer(processor)
+        websocket.registerWebsocketMessageConsumer(consumer)
         when:
         websocket.onWebSocketMessage(session, message)
         then:
-        1 * processor.onMessageReceive(toHexString(session.hashCode()), message)
+        1 * consumer.onMessageReceive(toHexString(session.hashCode()), message)
         where:
         message = 'message'
     }

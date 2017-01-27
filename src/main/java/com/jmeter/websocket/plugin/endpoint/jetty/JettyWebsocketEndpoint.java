@@ -4,7 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.jmeter.websocket.plugin.endpoint.SessionsManager;
 import com.jmeter.websocket.plugin.endpoint.WebsocketClient;
-import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageProcessor;
+import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageConsumer;
 import com.jmeter.websocket.plugin.endpoint.jetty.converters.CookieManagerToCookieStoreConverter;
 import com.jmeter.websocket.plugin.endpoint.jetty.converters.HeadersToClientUpgradeRequestConverter;
 import com.jmeter.websocket.plugin.endpoint.jetty.converters.SampleResultToUpgradeListenerConverter;
@@ -46,7 +46,7 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
     private Function<Map<String, List<String>>, ClientUpgradeRequest> headersToClientUpgradeRequestConverter = new HeadersToClientUpgradeRequestConverter();
     private Function<SampleResult, UpgradeListener> sampleResultToUpgradeListenerConverter = new SampleResultToUpgradeListenerConverter();
 
-    private Collection<WebsocketMessageProcessor> websocketMessageProcessors = new ArrayList<>();
+    private Collection<WebsocketMessageConsumer> websocketMessageConsumers = new ArrayList<>();
     private SessionsManager<Session> sessionsManager = new JettySessionManager();
 
     @Override
@@ -75,19 +75,19 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
         checkNotNull(session, "Session is not open for " + uri + ". Session: " + session);
         log.info("sendMessage() message: " + message + " to " + uri + " using session:" + session);
         session.getRemote().sendString(message);
-        for (WebsocketMessageProcessor processor : websocketMessageProcessors) {
-            processor.onMessageSend(toHexString(session.hashCode()), message);
+        for (WebsocketMessageConsumer consumer : websocketMessageConsumers) {
+            consumer.onMessageSend(toHexString(session.hashCode()), message);
         }
     }
 
     @Override
-    public void registerWebsocketMessageConsumer(WebsocketMessageProcessor processor) {
-        websocketMessageProcessors.add(processor);
+    public void registerMessageConsumer(WebsocketMessageConsumer consumer) {
+        websocketMessageConsumers.add(consumer);
     }
 
     @Override
-    public void unregisterWebsocketMessageConsumer(WebsocketMessageProcessor processor) {
-        websocketMessageProcessors.remove(processor);
+    public void unregisterMessageConsumer(WebsocketMessageConsumer consumer) {
+        websocketMessageConsumers.remove(consumer);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
     public String toString() {
         return toStringHelper(this)
                 .add("hash", toHexString(hashCode()))
-                .add("websocketMessageProcessors", websocketMessageProcessors)
+                .add("websocketMessageConsumers", websocketMessageConsumers)
                 .add("sessionsManager", sessionsManager)
                 .toString();
     }
@@ -129,8 +129,8 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
             @Override
             public JettyWebsocket get() {
                 JettyWebsocket jettyWebsocket = new JettyWebsocket();
-                for (WebsocketMessageProcessor processor : websocketMessageProcessors) {
-                    jettyWebsocket.registerWebsocketMessageConsumer(processor);
+                for (WebsocketMessageConsumer consumer : websocketMessageConsumers) {
+                    jettyWebsocket.registerWebsocketMessageConsumer(consumer);
                 }
                 return jettyWebsocket;
             }

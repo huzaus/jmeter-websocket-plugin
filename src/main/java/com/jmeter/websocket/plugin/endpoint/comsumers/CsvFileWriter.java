@@ -23,7 +23,7 @@ import static java.nio.file.Files.newByteChannel;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 
-public class CsvFileWriter implements WebsocketMessageProcessor {
+public class CsvFileWriter implements WebsocketMessageConsumer {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
     private static final Set<StandardOpenOption> OPEN_OPTIONS = ImmutableSet.of(APPEND, CREATE);
@@ -67,7 +67,6 @@ public class CsvFileWriter implements WebsocketMessageProcessor {
                                     action,
                                     message.getBytes().length,
                                     message
-
                             )
                             .concat(lineSeparator())
                             .getBytes()
@@ -75,11 +74,10 @@ public class CsvFileWriter implements WebsocketMessageProcessor {
             try {
                 byteChannel.write(wrap(data));
             } catch (IOException e) {
-                log.error("Exception thrown on write to byte channel: " + e);
+                log.error("Exception thrown on write to byte channel: ", e);
             }
-        } else {
-            log.info(message);
         }
+        log.info(message);
     }
 
     public void stop() {
@@ -101,8 +99,8 @@ public class CsvFileWriter implements WebsocketMessageProcessor {
                     return newByteChannel(file, OPEN_OPTIONS);
                 } catch (IOException e) {
                     log.error("Exception thrown on open byte channel: " + e);
-                    return null;
                 }
+                return null;
             }
         });
     }

@@ -20,7 +20,7 @@ public class WebsocketMessageSampler extends AbstractWebsocketSampler {
         sampleResult.setSampleLabel(getName());
         try {
             WebsocketClient websocketClient = getWebsocketClient();
-            checkNotNull(websocketClient, "WebsocketSessionManager should be added to test plan");
+            checkNotNull(websocketClient, "WebsocketSessionManager has to be added to test plan");
             String message = getMessage();
             sampleResult.setResponseMessage(message);
             websocketClient.sendMessage(uri(), message);

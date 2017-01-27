@@ -53,10 +53,7 @@ class WebsocketUpgradeListenerSpock extends Specification {
 
     def "Should extract '#statusReason' statusReason, '#responseCode' response code, #success response status and set it sample result"() {
         given:
-        UpgradeResponse upgradeResponse = new UpgradeResponse()
-        upgradeResponse.statusCode = responseCode
-        upgradeResponse.statusReason = statusReason
-        upgradeResponse.success = success
+        UpgradeResponse upgradeResponse = new UpgradeResponse(statusCode: responseCode, statusReason: statusReason, success: success)
         when:
         listener.onHandshakeResponse(upgradeResponse)
         then:
@@ -74,8 +71,7 @@ class WebsocketUpgradeListenerSpock extends Specification {
 
     def "Should extract #headers upgrade response headers to sample result response headers as '#result'"() {
         given:
-        UpgradeResponse upgradeResponse = new UpgradeResponse()
-        upgradeResponse.headers = headers
+        UpgradeResponse upgradeResponse = new UpgradeResponse(headers: headers)
         when:
         listener.onHandshakeResponse(upgradeResponse)
         then:

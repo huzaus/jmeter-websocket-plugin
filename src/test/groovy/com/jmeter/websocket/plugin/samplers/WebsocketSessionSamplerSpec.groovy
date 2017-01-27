@@ -27,12 +27,12 @@ class WebsocketSessionSamplerSpec extends Specification {
         then:
         sampler."getPropertyAs$type"(property) == value
         where:
-        field             | property          | type     | value
-        'serverNameOrIp'  | SERVER_NAME_OR_IP | 'String' | '127.0.0.1'
-        'portNumber'      | PORT_NUMBER       | 'String' | '8080'
-        'protocol'        | PROTOCOL          | 'String' | 'ws'
-        'connectTimeOut'  | CONNECT_TIME_OUT  | 'String' | '2000'
-        'path'            | PATH              | 'String' | '/websocket'
+        field            | property          | type     | value
+        'serverNameOrIp' | SERVER_NAME_OR_IP | 'String' | '127.0.0.1'
+        'portNumber'     | PORT_NUMBER       | 'String' | '8080'
+        'protocol'       | PROTOCOL          | 'String' | 'ws'
+        'connectTimeOut' | CONNECT_TIME_OUT  | 'String' | '2000'
+        'path'           | PATH              | 'String' | '/websocket'
     }
 
     def "Should not set #property property via addTestElement method when class type is not matched"() {
@@ -62,7 +62,6 @@ class WebsocketSessionSamplerSpec extends Specification {
         sampler."$property" == null
         where:
         property << ["cookieManager", "headerManager"]
-
     }
 
     def "Should return value when #property is set to #value"() {
@@ -106,7 +105,7 @@ class WebsocketSessionSamplerSpec extends Specification {
         and:
         def headers = sampler.headers()
         then:
-        [(name): [value]] == headers
+        headers == [(name): [value]]
         and:
         !headers.is(sampler.headers())
         and:

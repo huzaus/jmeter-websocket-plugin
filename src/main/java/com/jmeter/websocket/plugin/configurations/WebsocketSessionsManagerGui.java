@@ -12,8 +12,8 @@ import static java.awt.BorderLayout.NORTH;
 
 public class WebsocketSessionsManagerGui extends AbstractConfigGui {
 
-    private final FilePanel filePanel;
     private static final String[] EXTENSIONS = {".csv"};
+    private final FilePanel filePanel;
 
     public WebsocketSessionsManagerGui() {
         setLayout(new BorderLayout(0, 5));

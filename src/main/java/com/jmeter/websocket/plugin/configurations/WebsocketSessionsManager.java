@@ -55,7 +55,7 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
     @Override
     public void testStarted() {
         csvFileWriterSupplier = csvFileWriterSupplier(Paths.get(getFile()));
-        getWebsocketClient().registerWebsocketMessageConsumer(csvFileWriterSupplier.get());
+        getWebsocketClient().registerMessageConsumer(csvFileWriterSupplier.get());
         getWebsocketClient().start();
         log.info("Test started: " + this);
     }
@@ -69,7 +69,7 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
     public void testEnded() {
         getWebsocketClient().stop();
         csvFileWriterSupplier.get().stop();
-        getWebsocketClient().unregisterWebsocketMessageConsumer(csvFileWriterSupplier.get());
+        getWebsocketClient().unregisterMessageConsumer(csvFileWriterSupplier.get());
         log.info("Test ended: " + this);
     }
 

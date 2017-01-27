@@ -10,7 +10,7 @@ abstract class JmeterAbstractSpec extends Specification {
     def setupSpec() {
         String jmeterHome = System.properties.'jmeter.home'
         setJMeterHome(jmeterHome)
-        loadJMeterProperties(jmeterHome + '/libexec/bin/jmeter.properties')
+        loadJMeterProperties("$jmeterHome/libexec/bin/jmeter.properties")
         initLocale()
     }
 }

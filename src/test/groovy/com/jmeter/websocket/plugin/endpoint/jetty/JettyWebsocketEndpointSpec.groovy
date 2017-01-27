@@ -3,7 +3,7 @@ package com.jmeter.websocket.plugin.endpoint.jetty
 import com.google.common.base.Function
 import com.google.common.base.Supplier
 import com.jmeter.websocket.plugin.endpoint.SessionsManager
-import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageProcessor
+import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageConsumer
 import org.apache.jmeter.protocol.http.control.CookieManager
 import org.apache.jmeter.samplers.SampleResult
 import org.eclipse.jetty.websocket.api.RemoteEndpoint
@@ -30,15 +30,15 @@ class JettyWebsocketEndpointSpec extends Specification {
         thrown(NullPointerException)
     }
 
-    def "Should delegate message sending to remote endpoint and notify processors"() {
+    def "Should delegate message sending to remote endpoint and notify consumers"() {
         given:
         RemoteEndpoint remote = Mock()
         Session session = Stub(Session) {
             getRemote() >> remote
         }
         and:
-        WebsocketMessageProcessor processor = Mock()
-        endpoint.registerWebsocketMessageConsumer(processor)
+        WebsocketMessageConsumer consumer = Mock()
+        endpoint.registerMessageConsumer(consumer)
         and:
         String message = 'message'
         URI uri = URI.create('ws://localhost:8080/websocket')
@@ -50,7 +50,7 @@ class JettyWebsocketEndpointSpec extends Specification {
         then:
         1 * remote.sendString(message)
         and:
-        1 * processor.onMessageSend(_, message)
+        1 * consumer.onMessageSend(_, message)
     }
 
     def "Should throw IllegalArgumentException when session for uri is open on connect"() {

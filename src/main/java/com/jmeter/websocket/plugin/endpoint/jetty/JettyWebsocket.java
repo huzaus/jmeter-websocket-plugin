@@ -1,6 +1,6 @@
 package com.jmeter.websocket.plugin.endpoint.jetty;
 
-import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageProcessor;
+import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageConsumer;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 import org.eclipse.jetty.websocket.api.Session;
@@ -24,7 +24,7 @@ public class JettyWebsocket {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
 
-    private final Collection<WebsocketMessageProcessor> websocketMessageProcessors = new ArrayList<>();
+    private final Collection<WebsocketMessageConsumer> websocketMessageConsumers = new ArrayList<>();
 
     @OnWebSocketConnect
     public void onWebSocketConnect(Session session) {
@@ -46,8 +46,8 @@ public class JettyWebsocket {
                 " session: " + session +
                 " message: " + message);
         checkNotNull(session);
-        for (WebsocketMessageProcessor processor : websocketMessageProcessors) {
-            processor.onMessageReceive(toHexString(session.hashCode()), message);
+        for (WebsocketMessageConsumer consumer : websocketMessageConsumers) {
+            consumer.onMessageReceive(toHexString(session.hashCode()), message);
         }
     }
 
@@ -63,14 +63,14 @@ public class JettyWebsocket {
                 " frame:" + frame);
     }
 
-    public void registerWebsocketMessageConsumer(WebsocketMessageProcessor processor) {
-        websocketMessageProcessors.add(processor);
+    public void registerWebsocketMessageConsumer(WebsocketMessageConsumer consumer) {
+        websocketMessageConsumers.add(consumer);
     }
 
     @Override
     public String toString() {
         return toStringHelper(this)
-                .add("websocketMessageProcessors", websocketMessageProcessors)
+                .add("websocketMessageConsumers", websocketMessageConsumers)
                 .toString();
     }
 }

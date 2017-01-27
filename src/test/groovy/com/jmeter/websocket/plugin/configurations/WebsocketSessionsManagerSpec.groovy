@@ -18,7 +18,7 @@ class WebsocketSessionsManagerSpec extends Specification {
         client.is(manager.getWebsocketClient())
     }
 
-    def "Should return WebsocketClient with WebsocketMessageProcessor"() {
+    def "Should return WebsocketClient with WebsocketMessageConsumer"() {
         given:
         manager.setFile(Files.createTempFile("temp-file", ".tmp").toString())
         when:
@@ -26,6 +26,6 @@ class WebsocketSessionsManagerSpec extends Specification {
         and:
         WebsocketClient client = manager.getWebsocketClient()
         then:
-        client.websocketMessageProcessors.size() == 1
+        client.websocketMessageConsumers.size() == 1
     }
 }

@@ -15,13 +15,12 @@ class CookieManagerToWebSocketClientConverterSpec extends Specification {
         when:
         WebSocketClient client = converter.apply(null)
         then:
-        client.executor != null
-        and:
-        client.sslContextFactory.trustAll
-        and:
-        client.cookieStore.cookies.empty
-        and:
-        client.executor != null
+        with(client) {
+            executor != null
+            sslContextFactory.trustAll
+            cookieStore.cookies.empty
+            executor != null
+        }
     }
 
     def "Should create not empty cookies with [#name, #value, #domain, #path, #secure, #expires] value when cookieManager is set"() {
