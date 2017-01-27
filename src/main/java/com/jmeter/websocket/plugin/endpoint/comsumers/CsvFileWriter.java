@@ -31,14 +31,21 @@ public class CsvFileWriter implements WebsocketMessageConsumer {
     private static final String SEPARATOR = ",";
     private static final String SEND = "send";
     private static final String RECEIVE = "receive";
-
-    private Supplier<ByteChannel> byteChannelSupplier = byteChannelSupplier();
-
     private final Path file;
+    private Supplier<ByteChannel> byteChannelSupplier = byteChannelSupplier();
 
     public CsvFileWriter(Path file) {
         checkNotNull(file, "File should be set");
         this.file = file;
+    }
+
+    public static Supplier<CsvFileWriter> csvFileWriterSupplier(final Path file) {
+        return memoize(new Supplier<CsvFileWriter>() {
+            @Override
+            public CsvFileWriter get() {
+                return new CsvFileWriter(file);
+            }
+        });
     }
 
     @Override
@@ -101,15 +108,6 @@ public class CsvFileWriter implements WebsocketMessageConsumer {
                     log.error("Exception thrown on open byte channel: " + e);
                 }
                 return null;
-            }
-        });
-    }
-
-    public static Supplier<CsvFileWriter> csvFileWriterSupplier(final Path file) {
-        return memoize(new Supplier<CsvFileWriter>() {
-            @Override
-            public CsvFileWriter get() {
-                return new CsvFileWriter(file);
             }
         });
     }

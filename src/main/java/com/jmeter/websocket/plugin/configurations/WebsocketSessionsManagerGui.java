@@ -25,11 +25,6 @@ public class WebsocketSessionsManagerGui extends AbstractConfigGui {
     }
 
     @Override
-    public String getStaticLabel() {
-        return "Websocket Session Manager";
-    }
-
-    @Override
     public String getLabelResource() {
         return "websocket.session.manager.title";
     }
@@ -52,6 +47,11 @@ public class WebsocketSessionsManagerGui extends AbstractConfigGui {
     @Override
     public void configure(TestElement manager) {
         filePanel.setFilename(((WebsocketSessionsManager) manager).getFile());
+    }
+
+    @Override
+    public String getStaticLabel() {
+        return "Websocket Session Manager";
     }
 
     private Component makeFilePanel() {

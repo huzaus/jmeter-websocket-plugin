@@ -40,14 +40,25 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
     private static final Logger log = LoggingManager.getLoggerForClass();
 
     private static Supplier<WebSocketClient> webSocketClientSupplier = webSocketClientSupplier();
-
-    private Supplier<JettyWebsocket> jettyWebsocketSupplier = jettyWebsocketSupplier();
     private Function<CookieManager, CookieStore> cookieManagerToCookieStoreConverter = new CookieManagerToCookieStoreConverter();
     private Function<Map<String, List<String>>, ClientUpgradeRequest> headersToClientUpgradeRequestConverter = new HeadersToClientUpgradeRequestConverter();
     private Function<SampleResult, UpgradeListener> sampleResultToUpgradeListenerConverter = new SampleResultToUpgradeListenerConverter();
-
     private Collection<WebsocketMessageConsumer> websocketMessageConsumers = new ArrayList<>();
+    private Supplier<JettyWebsocket> jettyWebsocketSupplier = jettyWebsocketSupplier();
     private SessionsManager<Session> sessionsManager = new JettySessionManager();
+
+    private static Supplier<WebSocketClient> webSocketClientSupplier() {
+        return memoize(new Supplier<WebSocketClient>() {
+            @Override
+            public WebSocketClient get() {
+                return new WebSocketClient(sslContextFactory(), newCachedThreadPool());
+            }
+        });
+    }
+
+    private static SslContextFactory sslContextFactory() {
+        return new SslContextFactory(true);
+    }
 
     @Override
     public void connect(URI uri, CookieManager cookieManager, Map<String, List<String>> headers, SampleResult result, long timeOut) throws Exception {
@@ -114,7 +125,6 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
         }
     }
 
-
     @Override
     public String toString() {
         return toStringHelper(this)
@@ -135,18 +145,5 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
                 return jettyWebsocket;
             }
         };
-    }
-
-    private static Supplier<WebSocketClient> webSocketClientSupplier() {
-        return memoize(new Supplier<WebSocketClient>() {
-            @Override
-            public WebSocketClient get() {
-                return new WebSocketClient(sslContextFactory(), newCachedThreadPool());
-            }
-        });
-    }
-
-    private static SslContextFactory sslContextFactory() {
-        return new SslContextFactory(true);
     }
 }

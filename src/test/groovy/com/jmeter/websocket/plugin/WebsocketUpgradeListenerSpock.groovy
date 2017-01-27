@@ -10,78 +10,78 @@ import spock.lang.Unroll
 
 @Unroll
 class WebsocketUpgradeListenerSpock extends Specification {
-
+    
     @Subject
     JettyWebsocketUpgradeListener listener = new JettyWebsocketUpgradeListener(new SampleResult())
-
+    
     def "Should throw NullPointerException when result is null"() {
         when:
-        listener = new JettyWebsocketUpgradeListener(null)
+            listener = new JettyWebsocketUpgradeListener(null)
         then:
-        thrown(NullPointerException)
+            thrown(NullPointerException)
     }
-
+    
     def "Should extract #headers upgrade request headers to sample result request headers as '#result'"() {
         given:
-        UpgradeRequest upgradeRequest = new UpgradeRequest('wss://127.0.0.1/websocket')
-        upgradeRequest.headers = headers
+            UpgradeRequest upgradeRequest = new UpgradeRequest('wss://127.0.0.1/websocket')
+            upgradeRequest.headers = headers
         when:
-        listener.onHandshakeRequest(upgradeRequest)
+            listener.onHandshakeRequest(upgradeRequest)
         then:
-        listener.sampleResult.requestHeaders == result
+            listener.sampleResult.requestHeaders == result
         where:
-        headers                                               || result
-        [:]                                                   || ''
-        ['header': ['value']]                                 || 'header=[value]'
-        ['header': ['value']]                                 || 'header=[value]'
-        ['header1': ['value one'], 'header2': ['value two']]  || 'header1=[value one]\nheader2=[value two]'
-        ['multiple_value_header': ['value one', 'value two']] || 'multiple_value_header=[value one, value two]'
+            headers                                               || result
+            [:]                                                   || ''
+            ['header': ['value']]                                 || 'header=[value]'
+            ['header': ['value']]                                 || 'header=[value]'
+            ['header1': ['value one'], 'header2': ['value two']]  || 'header1=[value one]\nheader2=[value two]'
+            ['multiple_value_header': ['value one', 'value two']] || 'multiple_value_header=[value one, value two]'
     }
-
+    
     def "Should extract '#uri' uri upgrade request to sample result URL as '#url'"() {
         given:
-        UpgradeRequest upgradeRequest = new UpgradeRequest(uri)
+            UpgradeRequest upgradeRequest = new UpgradeRequest(uri)
         when:
-        listener.onHandshakeRequest(upgradeRequest)
+            listener.onHandshakeRequest(upgradeRequest)
         then:
-        url == listener.sampleResult.urlAsString
+            url == listener.sampleResult.urlAsString
         where:
-        uri                         || url
-        'ws://127.0.0.1/websocket'  || 'http://127.0.0.1/websocket'
-        'wss://127.0.0.1/websocket' || 'https://127.0.0.1/websocket'
+            uri                         || url
+            'ws://127.0.0.1/websocket'  || 'http://127.0.0.1/websocket'
+            'wss://127.0.0.1/websocket' || 'https://127.0.0.1/websocket'
     }
-
+    
     def "Should extract '#statusReason' statusReason, '#responseCode' response code, #success response status and set it sample result"() {
         given:
-        UpgradeResponse upgradeResponse = new UpgradeResponse(statusCode: responseCode, statusReason: statusReason, success: success)
+            UpgradeResponse upgradeResponse = new UpgradeResponse(statusCode: responseCode, statusReason: statusReason, success: success)
         when:
-        listener.onHandshakeResponse(upgradeResponse)
+            listener.onHandshakeResponse(upgradeResponse)
         then:
-        statusReason == listener.sampleResult.responseMessage
+            statusReason == listener.sampleResult.responseMessage
         and:
-        responseCode == listener.sampleResult.responseCode as int
+            responseCode == listener.sampleResult.responseCode as int
         and:
-        success == listener.sampleResult.successful
+            success == listener.sampleResult.successful
         where:
-        statusReason     | responseCode | success
-        ''               | 101          | true
-        'response body'  | 200          | true
-        'Page Not Found' | 404          | false
+            statusReason     | responseCode | success
+            ''               | 101          | true
+            'response body'  | 200          | true
+            'Page Not Found' | 404          | false
     }
-
+    
     def "Should extract #headers upgrade response headers to sample result response headers as '#result'"() {
         given:
-        UpgradeResponse upgradeResponse = new UpgradeResponse(headers: headers)
+            UpgradeResponse upgradeResponse = new UpgradeResponse(headers: headers)
         when:
-        listener.onHandshakeResponse(upgradeResponse)
+            listener.onHandshakeResponse(upgradeResponse)
         then:
-        listener.sampleResult.responseHeaders == result
+            listener.sampleResult.responseHeaders == result
         where:
-        headers                                               || result
-        [:]                                                   || ''
-        ['header': ['value']]                                 || 'header=[value]'
-        ['header': ['value']]                                 || 'header=[value]'
-        ['header1': ['value one'], 'header2': ['value two']]  || 'header1=[value one]\nheader2=[value two]'
-        ['multiple_value_header': ['value one', 'value two']] || 'multiple_value_header=[value one, value two]'
+            headers                                               || result
+            [:]                                                   || ''
+            ['header': ['value']]                                 || 'header=[value]'
+            ['header': ['value']]                                 || 'header=[value]'
+            ['header1': ['value one'], 'header2': ['value two']]  || 'header1=[value one]\nheader2=[value two]'
+            ['multiple_value_header': ['value one', 'value two']] || 'multiple_value_header=[value one, value two]'
     }
 }

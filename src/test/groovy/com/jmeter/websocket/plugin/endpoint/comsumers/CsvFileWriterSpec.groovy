@@ -12,122 +12,122 @@ import static java.nio.file.Files.createTempFile
 import static java.nio.file.Files.delete
 
 class CsvFileWriterSpec extends Specification {
-
+    
     Path file
     @Subject
     CsvFileWriter csvWriter
-
+    
     def setup() {
         file = createTempFile("temp-file-delete-on-close", ".tmp")
         csvWriter = new CsvFileWriter(file)
     }
-
+    
     def cleanup() {
         delete file
     }
-
+    
     def "Should throw null pointer exception when file is null"() {
         when:
-        new CsvFileWriter(null)
+            new CsvFileWriter(null)
         then:
-        thrown(NullPointerException)
+            thrown(NullPointerException)
     }
-
+    
     def "Should return the same CsvFileWriter"() {
         when:
-        Supplier supplier = csvFileWriterSupplier(csvWriter.file)
+            Supplier supplier = csvFileWriterSupplier(csvWriter.file)
         then:
-        supplier.get().is(supplier.get())
+            supplier.get().is(supplier.get())
     }
-
+    
     def "Should return the same byteChannel "() {
         when:
-        ByteChannel channel = csvWriter.byteChannel
+            ByteChannel channel = csvWriter.byteChannel
         then:
-        channel.is(csvWriter.byteChannel)
+            channel.is(csvWriter.byteChannel)
     }
-
+    
     def "Should write data to byteChannel on onMessageReceive"() {
         given:
-        ByteChannel byteChannel = Mock()
-        csvWriter.byteChannelSupplier = Stub(Supplier) {
-            get() >> byteChannel
-        }
+            ByteChannel byteChannel = Mock()
+            csvWriter.byteChannelSupplier = Stub(Supplier) {
+                get() >> byteChannel
+            }
         when:
-        csvWriter.onMessageReceive('101', 'Message')
+            csvWriter.onMessageReceive('101', 'Message')
         then:
-        1 * byteChannel.write(_)
+            1 * byteChannel.write(_)
     }
-
+    
     def "Should catch exception thrown by byteChannel on onMessageReceive"() {
         given:
-        ByteChannel byteChannel = Mock()
-        csvWriter.byteChannelSupplier = Stub(Supplier) {
-            get() >> byteChannel
-        }
+            ByteChannel byteChannel = Mock()
+            csvWriter.byteChannelSupplier = Stub(Supplier) {
+                get() >> byteChannel
+            }
         when:
-        csvWriter.onMessageReceive('101', 'Message')
+            csvWriter.onMessageReceive('101', 'Message')
         then:
-        1 * byteChannel.write(_) >> { throw new IOException() }
+            1 * byteChannel.write(_) >> { throw new IOException() }
         and:
-        noExceptionThrown()
+            noExceptionThrown()
     }
-
+    
     def "Should write data to byteChannel on onMessageSend"() {
         given:
-        ByteChannel byteChannel = Mock()
-        csvWriter.byteChannelSupplier = Stub(Supplier) {
-            get() >> byteChannel
-        }
+            ByteChannel byteChannel = Mock()
+            csvWriter.byteChannelSupplier = Stub(Supplier) {
+                get() >> byteChannel
+            }
         when:
-        csvWriter.onMessageSend('101', 'Message')
+            csvWriter.onMessageSend('101', 'Message')
         then:
-        1 * byteChannel.write(_)
+            1 * byteChannel.write(_)
     }
-
+    
     def "Should catch exception thrown by byteChannel on onMessageSend"() {
         given:
-        ByteChannel byteChannel = Mock()
-        csvWriter.byteChannelSupplier = Stub(Supplier) {
-            get() >> byteChannel
-        }
+            ByteChannel byteChannel = Mock()
+            csvWriter.byteChannelSupplier = Stub(Supplier) {
+                get() >> byteChannel
+            }
         when:
-        csvWriter.onMessageSend('101', 'Message')
+            csvWriter.onMessageSend('101', 'Message')
         then:
-        1 * byteChannel.write(_) >> { throw new IOException() }
+            1 * byteChannel.write(_) >> { throw new IOException() }
         and:
-        noExceptionThrown()
+            noExceptionThrown()
     }
-
-
+    
+    
     def "Should close byteChannel if it is open on stop "() {
         given:
-        ByteChannel byteChannel = Mock()
-        csvWriter.byteChannelSupplier = Stub(Supplier) {
-            get() >> byteChannel
-        }
+            ByteChannel byteChannel = Mock()
+            csvWriter.byteChannelSupplier = Stub(Supplier) {
+                get() >> byteChannel
+            }
         when:
-        csvWriter.stop()
+            csvWriter.stop()
         then:
-        1 * byteChannel.isOpen() >> true
+            1 * byteChannel.isOpen() >> true
         and:
-        1 * byteChannel.close()
+            1 * byteChannel.close()
     }
-
+    
     def "Should catch thrown by byteChannel on stop "() {
         given:
-        ByteChannel byteChannel = Mock()
-        csvWriter.byteChannelSupplier = Stub(Supplier) {
-            get() >> byteChannel
-        }
+            ByteChannel byteChannel = Mock()
+            csvWriter.byteChannelSupplier = Stub(Supplier) {
+                get() >> byteChannel
+            }
         when:
-        csvWriter.stop()
+            csvWriter.stop()
         then:
-        1 * byteChannel.isOpen() >> true
+            1 * byteChannel.isOpen() >> true
         and:
-        1 * byteChannel.close() >> { throw new IOException() }
+            1 * byteChannel.close() >> { throw new IOException() }
         and:
-        noExceptionThrown()
+            noExceptionThrown()
     }
-
+    
 }

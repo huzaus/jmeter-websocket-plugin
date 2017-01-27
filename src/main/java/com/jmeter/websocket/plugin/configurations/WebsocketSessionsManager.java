@@ -23,6 +23,15 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
     private static Supplier<CsvFileWriter> csvFileWriterSupplier;
     private static Supplier<WebsocketClient> websocketClientSupplier = websocketClientSupplier();
 
+    private static Supplier<WebsocketClient> websocketClientSupplier() {
+        return memoize(new Supplier<WebsocketClient>() {
+            @Override
+            public WebsocketClient get() {
+                return new JettyWebsocketEndpoint();
+            }
+        });
+    }
+
     public String getFile() {
         return getPropertyAsString(FILE, "");
     }
@@ -33,15 +42,6 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
 
     public WebsocketClient getWebsocketClient() {
         return websocketClientSupplier.get();
-    }
-
-    private static Supplier<WebsocketClient> websocketClientSupplier() {
-        return memoize(new Supplier<WebsocketClient>() {
-            @Override
-            public WebsocketClient get() {
-                return new JettyWebsocketEndpoint();
-            }
-        });
     }
 
     @Override

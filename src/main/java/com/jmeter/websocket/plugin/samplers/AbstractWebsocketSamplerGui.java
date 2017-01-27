@@ -16,13 +16,12 @@ import static java.awt.BorderLayout.CENTER;
 
 public abstract class AbstractWebsocketSamplerGui extends AbstractSamplerGui {
 
-    private final Modifier<AbstractWebsocketSamplerGui, AbstractWebsocketSampler> modifier = new AbstractWebsocketSamplerModifier();
-    private final Configurer<AbstractWebsocketSampler, AbstractWebsocketSamplerGui> configurer = new AbstractWebsocketSamplerConfigurer();
-
     protected final JLabeledTextField serverNameOrIp;
     protected final JLabeledTextField portNumber;
     protected final JLabeledTextField protocol;
     protected final JLabeledTextField path;
+    private final Modifier<AbstractWebsocketSamplerGui, AbstractWebsocketSampler> modifier = new AbstractWebsocketSamplerModifier();
+    private final Configurer<AbstractWebsocketSampler, AbstractWebsocketSamplerGui> configurer = new AbstractWebsocketSamplerConfigurer();
 
     protected AbstractWebsocketSamplerGui() {
         serverNameOrIp = new JLabeledTextField("Server Name or IP:", 10);

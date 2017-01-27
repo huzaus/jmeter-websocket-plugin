@@ -9,22 +9,22 @@ import spock.lang.Subject
 class SampleResultToUpgradeListenerConverterSpec extends Specification {
     @Subject
     SampleResultToUpgradeListenerConverter converter = new SampleResultToUpgradeListenerConverter()
-
+    
     def "Should return null when sample result is null"() {
         expect:
-        converter.apply(null) == null
+            converter.apply(null) == null
     }
-
+    
     def "Should return JettyWebsocketUpgradeListener when sample result is not null"() {
         given:
-        SampleResult sampleResult = new SampleResult()
+            SampleResult sampleResult = new SampleResult()
         when:
-        UpgradeListener listener = converter.apply(sampleResult)
+            UpgradeListener listener = converter.apply(sampleResult)
         then:
-        listener != null
+            listener != null
         and:
-        listener instanceof JettyWebsocketUpgradeListener
+            listener instanceof JettyWebsocketUpgradeListener
         and:
-        listener.sampleResult.is(sampleResult)
+            listener.sampleResult.is(sampleResult)
     }
 }

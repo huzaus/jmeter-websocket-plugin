@@ -26,6 +26,11 @@ public class JettyWebsocketUpgradeListener implements UpgradeListener {
 
     private final SampleResult sampleResult;
 
+    public JettyWebsocketUpgradeListener(SampleResult sampleResult) {
+        checkNotNull(sampleResult);
+        this.sampleResult = sampleResult;
+    }
+
     @Override
     public void onHandshakeRequest(UpgradeRequest request) {
         checkNotNull(request);
@@ -68,11 +73,6 @@ public class JettyWebsocketUpgradeListener implements UpgradeListener {
                         })
                         .orNull()
         );
-    }
-
-    public JettyWebsocketUpgradeListener(SampleResult sampleResult) {
-        checkNotNull(sampleResult);
-        this.sampleResult = sampleResult;
     }
 
     @Override

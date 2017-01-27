@@ -47,14 +47,14 @@ public class WebsocketSessionSamplerGui extends AbstractWebsocketSamplerGui {
     }
 
     @Override
-    public String getStaticLabel() {
-        return "Websocket Session Sampler";
-    }
-
-    @Override
     public void configure(TestElement sampler) {
         super.configure(sampler);
         configurer.configure((WebsocketSessionSampler) sampler, this);
+    }
+
+    @Override
+    public String getStaticLabel() {
+        return "Websocket Session Sampler";
     }
 
     private void init() {
