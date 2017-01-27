@@ -1,6 +1,6 @@
 package com.jmeter.websocket.plugin.elements.samplers.modifiers
 
-import com.jmeter.websocket.plugin.JmeterAbstractSpec
+import com.jmeter.websocket.plugin.JmeterAbstractGuiSpec
 import com.jmeter.websocket.plugin.elements.samplers.WebsocketMessageSampler
 import com.jmeter.websocket.plugin.elements.samplers.WebsocketMessageSamplerGui
 import com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler
@@ -9,7 +9,7 @@ import spock.lang.Subject
 import spock.lang.Unroll
 
 @Unroll
-class AbstractWebsocketSamplerModifierSpec extends JmeterAbstractSpec {
+class AbstractWebsocketSamplerModifierGuiSpec extends JmeterAbstractGuiSpec {
     
     @Subject
     AbstractWebsocketSamplerModifier modifier = new AbstractWebsocketSamplerModifier()
@@ -25,10 +25,7 @@ class AbstractWebsocketSamplerModifierSpec extends JmeterAbstractSpec {
             sampler."$field" == value
         where:
             component        | field            | value
-            'serverNameOrIp' | 'serverNameOrIp' | '127.0.0.1'
-            'portNumber'     | 'portNumber'     | '80'
-            'protocol'       | 'protocol'       | 'ws'
-            'path'           | 'path'           | '/websocket'
+            'sessionId' | 'sessionId' | 'user1Session'
     }
     
     def "Should set #field WebsocketMessageSampler field to '#value' value of #component WebsocketMessageSamplerGui component"() {
@@ -42,9 +39,6 @@ class AbstractWebsocketSamplerModifierSpec extends JmeterAbstractSpec {
             sampler."$field" == value
         where:
             component        | field            | value
-            'serverNameOrIp' | 'serverNameOrIp' | '127.0.0.1'
-            'portNumber'     | 'portNumber'     | '80'
-            'protocol'       | 'protocol'       | 'ws'
-            'path'           | 'path'           | '/websocket'
+            'sessionId' | 'sessionId' | 'user1Session'
     }
 }

@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class WebsocketMessageSampler extends AbstractWebsocketSampler {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
-    private static final String MESSAGE = "websocket.message";
+    public static final String MESSAGE = "websocket.message";
 
     @Override
     public SampleResult sample(Entry entry) {

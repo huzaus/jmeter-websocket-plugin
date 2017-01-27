@@ -20,6 +20,7 @@ public abstract class AbstractWebsocketSampler extends AbstractSampler {
     public static final String PROTOCOL = "protocol";
     public static final String COOKIE_MANAGER = "cookie_manager";
     public static final String HEADER_MANAGER = "header_manager";
+    public static final String SESSION_ID = "session_id";
 
     protected WebsocketSessionsManager getWebsocketSessionsManager() {
         return Optional.fromNullable(getProperty(WEBSOCKET_MANAGER).getObjectValue())
@@ -71,6 +72,14 @@ public abstract class AbstractWebsocketSampler extends AbstractSampler {
 
     public void setProtocol(String protocol) {
         setProperty(PROTOCOL, protocol, "");
+    }
+
+    public String getSessionId() {
+        return getPropertyAsString(SESSION_ID);
+    }
+
+    public void setSessionId(String sessionId) {
+        setProperty(SESSION_ID, sessionId, "");
     }
 
     public WebsocketClient getWebsocketClient() {

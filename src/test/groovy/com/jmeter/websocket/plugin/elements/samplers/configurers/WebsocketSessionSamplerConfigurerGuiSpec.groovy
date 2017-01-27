@@ -1,13 +1,13 @@
 package com.jmeter.websocket.plugin.elements.samplers.configurers
 
-import com.jmeter.websocket.plugin.JmeterAbstractSpec
+import com.jmeter.websocket.plugin.JmeterAbstractGuiSpec
 import com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler
 import com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSamplerGui
 import spock.lang.Subject
 import spock.lang.Unroll
 
 @Unroll
-class WebsocketSessionSamplerConfigurerSpec extends JmeterAbstractSpec {
+class WebsocketSessionSamplerConfigurerGuiSpec extends JmeterAbstractGuiSpec {
     
     @Subject
     WebsocketSessionSamplerConfigurer configurer = new WebsocketSessionSamplerConfigurer()
@@ -24,6 +24,10 @@ class WebsocketSessionSamplerConfigurerSpec extends JmeterAbstractSpec {
         where:
             component        | property         | value
             'connectTimeOut' | 'connectTimeOut' | '5000'
+            'serverNameOrIp' | 'serverNameOrIp' | '127.0.0.1'
+            'portNumber'     | 'portNumber'     | '80'
+            'protocol'       | 'protocol'       | 'ws'
+            'path'           | 'path'           | '/websocket'
     }
     
 }

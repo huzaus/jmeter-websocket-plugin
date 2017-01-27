@@ -8,6 +8,9 @@ public class WebsocketSessionSamplerConfigurer implements Configurer<WebsocketSe
     @Override
     public void configure(WebsocketSessionSampler sampler, WebsocketSessionSamplerGui samplerGui) {
         samplerGui.getConnectTimeOut().setText(sampler.getConnectTimeOut());
-        samplerGui.getSessionId().setText(sampler.getSessionId());
+        samplerGui.getServerNameOrIp().setText(sampler.getServerNameOrIp());
+        samplerGui.getPortNumber().setText(sampler.getPortNumber());
+        samplerGui.getProtocol().setText(sampler.getProtocol());
+        samplerGui.getPath().setText(sampler.getPath());
     }
 }

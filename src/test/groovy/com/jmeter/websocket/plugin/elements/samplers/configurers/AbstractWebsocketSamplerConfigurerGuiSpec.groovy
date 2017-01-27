@@ -1,6 +1,6 @@
 package com.jmeter.websocket.plugin.elements.samplers.configurers
 
-import com.jmeter.websocket.plugin.JmeterAbstractSpec
+import com.jmeter.websocket.plugin.JmeterAbstractGuiSpec
 import com.jmeter.websocket.plugin.elements.samplers.WebsocketMessageSampler
 import com.jmeter.websocket.plugin.elements.samplers.WebsocketMessageSamplerGui
 import com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler
@@ -9,7 +9,7 @@ import spock.lang.Subject
 import spock.lang.Unroll
 
 @Unroll
-class AbstractWebsocketSamplerConfigurerSpec extends JmeterAbstractSpec {
+class AbstractWebsocketSamplerConfigurerGuiSpec extends JmeterAbstractGuiSpec {
     
     @Subject
     AbstractWebsocketSamplerConfigurer configurer = new AbstractWebsocketSamplerConfigurer()
@@ -24,11 +24,8 @@ class AbstractWebsocketSamplerConfigurerSpec extends JmeterAbstractSpec {
         then:
             gui."$component".text == value
         where:
-            component        | property         | value
-            'serverNameOrIp' | 'serverNameOrIp' | '127.0.0.1'
-            'portNumber'     | 'portNumber'     | '80'
-            'protocol'       | 'protocol'       | 'ws'
-            'path'           | 'path'           | '/websocket'
+            component   | property    | value
+            'sessionId' | 'sessionId' | 'user1Session'
     }
     
     def "Should set #component WebsocketSessionSamplerGui component value to #value from #property WebsocketSessionSampler property"() {
@@ -41,10 +38,7 @@ class AbstractWebsocketSamplerConfigurerSpec extends JmeterAbstractSpec {
         then:
             gui."$component".text == value
         where:
-            component        | property         | value
-            'serverNameOrIp' | 'serverNameOrIp' | '127.0.0.1'
-            'portNumber'     | 'portNumber'     | '80'
-            'protocol'       | 'protocol'       | 'ws'
-            'path'           | 'path'           | '/websocket'
+            component   | property    | value
+            'sessionId' | 'sessionId' | 'user1Session'
     }
 }

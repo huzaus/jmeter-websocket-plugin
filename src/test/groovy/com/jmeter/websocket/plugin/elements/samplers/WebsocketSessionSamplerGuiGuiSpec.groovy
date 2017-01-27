@@ -1,19 +1,19 @@
 package com.jmeter.websocket.plugin.elements.samplers
 
-import com.jmeter.websocket.plugin.JmeterAbstractSpec
+import com.jmeter.websocket.plugin.JmeterAbstractGuiSpec
 import org.apache.jmeter.protocol.http.sampler.HTTPSampler
 import spock.lang.Subject
 import spock.lang.Unroll
 
 @Unroll
-class WebsocketSessionSamplerGuiSpec extends JmeterAbstractSpec {
+class WebsocketSessionSamplerGuiGuiSpec extends JmeterAbstractGuiSpec {
     
     @Subject
-    WebsocketSessionSamplerGui websocketMessageSamplerGui = new WebsocketSessionSamplerGui()
+    WebsocketSessionSamplerGui samplerGui = new WebsocketSessionSamplerGui()
     
     def "#component should be initialized in constructor with #label"() {
         expect:
-            websocketMessageSamplerGui."$component".mLabel.text == label
+            samplerGui."$component".mLabel.text == label
         where:
             component        || label
             'serverNameOrIp' || 'Server Name or IP:'
@@ -21,14 +21,12 @@ class WebsocketSessionSamplerGuiSpec extends JmeterAbstractSpec {
             'protocol'       || 'Protocol:'
             'connectTimeOut' || 'Timeout:'
             'path'           || 'Path:'
-            'sessionId'    || 'Session id:'
+            'sessionId'      || 'Session id:'
     }
     
     def "get#field should return #value"() {
-        when:
-            websocketMessageSamplerGui = new WebsocketSessionSamplerGui()
-        then:
-            websocketMessageSamplerGui."$field"
+        expect:
+            samplerGui."$field"
         where:
             field           || value
             'labelResource' || 'websocket.message.sampler.title'
@@ -38,9 +36,9 @@ class WebsocketSessionSamplerGuiSpec extends JmeterAbstractSpec {
     def "Should modify #property property with '#value' value from gui #component component"() {
         given:
             WebsocketSessionSampler sampler = new WebsocketSessionSampler()
-            websocketMessageSamplerGui."$component".text = value
+            samplerGui."$component".text = value
         when:
-            websocketMessageSamplerGui.modifyTestElement(sampler)
+            samplerGui.modifyTestElement(sampler)
         then:
             sampler."$property" == value
         where:
@@ -58,9 +56,9 @@ class WebsocketSessionSamplerGuiSpec extends JmeterAbstractSpec {
             WebsocketSessionSampler sampler = new WebsocketSessionSampler()
             sampler."$property" = value
         when:
-            websocketMessageSamplerGui.configure(sampler)
+            samplerGui.configure(sampler)
         then:
-            websocketMessageSamplerGui."$component".text == value
+            samplerGui."$component".text == value
         where:
             component        | property         | value
             'serverNameOrIp' | 'serverNameOrIp' | '127.0.0.1'
@@ -73,14 +71,14 @@ class WebsocketSessionSamplerGuiSpec extends JmeterAbstractSpec {
     
     def "Should throw ClassCastException when testElement is not WebsocketMessageSampler on configure"() {
         when:
-            websocketMessageSamplerGui.configure(new HTTPSampler())
+            samplerGui.configure(new HTTPSampler())
         then:
             thrown(ClassCastException)
     }
     
     def "Should throw ClassCastException when testElement is not WebsocketMessageSampler on modifyTestElement"() {
         when:
-            websocketMessageSamplerGui.modifyTestElement(new HTTPSampler())
+            samplerGui.modifyTestElement(new HTTPSampler())
         then:
             thrown(ClassCastException)
     }

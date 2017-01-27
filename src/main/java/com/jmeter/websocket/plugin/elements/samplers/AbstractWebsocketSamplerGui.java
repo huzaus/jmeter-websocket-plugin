@@ -16,6 +16,8 @@ import static java.awt.BorderLayout.CENTER;
 
 public abstract class AbstractWebsocketSamplerGui extends AbstractSamplerGui {
 
+    protected final JLabeledTextField sessionId;
+
     protected final JLabeledTextField serverNameOrIp;
     protected final JLabeledTextField portNumber;
     protected final JLabeledTextField protocol;
@@ -28,6 +30,8 @@ public abstract class AbstractWebsocketSamplerGui extends AbstractSamplerGui {
         portNumber = new JLabeledTextField("Port Number:", 5);
         protocol = new JLabeledTextField("Protocol:", 5);
         path = new JLabeledTextField("Path:", 30);
+        sessionId = new JLabeledTextField("Session id:", 10);
+
     }
 
     public JLabeledTextField getServerNameOrIp() {
@@ -46,6 +50,10 @@ public abstract class AbstractWebsocketSamplerGui extends AbstractSamplerGui {
         return path;
     }
 
+    public JLabeledTextField getSessionId() {
+        return sessionId;
+    }
+
     @Override
     public void modifyTestElement(TestElement sampler) {
         sampler.clear();
@@ -59,27 +67,9 @@ public abstract class AbstractWebsocketSamplerGui extends AbstractSamplerGui {
         configurer.configure((AbstractWebsocketSampler) sampler, this);
     }
 
-    protected JPanel makeProtocolPanel() {
+    protected JPanel makeSessionIdPanel() {
         JPanel panel = new JPanel(new BorderLayout(5, 0));
-        panel.add(protocol, CENTER);
-        return panel;
-    }
-
-    protected JPanel makeServerNameOrIpPanel() {
-        JPanel panel = new JPanel(new BorderLayout(5, 0));
-        panel.add(serverNameOrIp, CENTER);
-        return panel;
-    }
-
-    protected JPanel makePortPanel() {
-        JPanel panel = new JPanel(new BorderLayout(5, 0));
-        panel.add(portNumber, CENTER);
-        return panel;
-    }
-
-    protected Component makePathPanel() {
-        JPanel panel = new JPanel(new BorderLayout(5, 0));
-        panel.add(path, CENTER);
+        panel.add(sessionId, CENTER);
         return panel;
     }
 }

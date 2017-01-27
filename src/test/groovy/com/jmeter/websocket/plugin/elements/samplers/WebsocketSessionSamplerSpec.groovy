@@ -1,5 +1,6 @@
 package com.jmeter.websocket.plugin.elements.samplers
 
+import com.jmeter.websocket.plugin.elements.configurations.WebsocketSessionsManager
 import org.apache.jmeter.protocol.http.control.CookieManager
 import org.apache.jmeter.protocol.http.control.Header
 import org.apache.jmeter.protocol.http.control.HeaderManager
@@ -7,6 +8,8 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
+import static com.jmeter.websocket.plugin.elements.samplers.AbstractWebsocketSampler.SESSION_ID
+import static com.jmeter.websocket.plugin.elements.samplers.AbstractWebsocketSampler.WEBSOCKET_MANAGER
 import static com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler.CONNECT_TIME_OUT
 import static com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler.COOKIE_MANAGER
 import static com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler.HEADER_MANAGER
@@ -33,16 +36,18 @@ class WebsocketSessionSamplerSpec extends Specification {
             'protocol'       | PROTOCOL          | 'String' | 'ws'
             'connectTimeOut' | CONNECT_TIME_OUT  | 'String' | '2000'
             'path'           | PATH              | 'String' | '/websocket'
+            'sessionId'      | SESSION_ID        | 'String' | 'user1Session'
     }
     
     def "Should not set #property property via addTestElement method when class type is not matched"() {
         when:
-            sampler.addTestElement(manager)
+            sampler.addTestElement(element)
         then:
             sampler.getProperty(property).objectValue == null
         where:
-            property       | manager
+            property       | element
             COOKIE_MANAGER | new HeaderManager()
+            HEADER_MANAGER | new CookieManager()
             HEADER_MANAGER | new CookieManager()
     }
     
@@ -52,16 +57,17 @@ class WebsocketSessionSamplerSpec extends Specification {
         then:
             sampler.getProperty(property).objectValue == manager
         where:
-            property       | manager
-            COOKIE_MANAGER | new CookieManager()
-            HEADER_MANAGER | new HeaderManager()
+            property          | manager
+            COOKIE_MANAGER    | new CookieManager()
+            HEADER_MANAGER    | new HeaderManager()
+            WEBSOCKET_MANAGER | new WebsocketSessionsManager()
     }
     
     def "Should return null when #property is not set"() {
         expect:
             sampler."$property" == null
         where:
-            property << ["cookieManager", "headerManager"]
+            property << ["cookieManager", "headerManager", "websocketSessionsManager"]
     }
     
     def "Should return value when #property is set to #value"() {
@@ -70,11 +76,13 @@ class WebsocketSessionSamplerSpec extends Specification {
         then:
             sampler."$property" == value
         where:
-            property        | value
-            "cookieManager" | new CookieManager()
-            "cookieManager" | null
-            "headerManager" | new HeaderManager()
-            "headerManager" | null
+            property                   | value
+            "cookieManager"            | new CookieManager()
+            "cookieManager"            | null
+            "headerManager"            | new HeaderManager()
+            "headerManager"            | new HeaderManager()
+            "websocketSessionsManager" | new WebsocketSessionsManager()
+            "websocketSessionsManager" | null
     }
     
     def "Should create new uri equal to #uri"() {

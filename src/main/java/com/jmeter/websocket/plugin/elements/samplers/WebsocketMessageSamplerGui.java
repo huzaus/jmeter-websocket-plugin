@@ -1,6 +1,5 @@
 package com.jmeter.websocket.plugin.elements.samplers;
 
-import org.apache.jmeter.gui.util.HorizontalPanel;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jorphan.gui.JLabeledTextArea;
 
@@ -10,8 +9,6 @@ import javax.swing.JPanel;
 
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.NORTH;
-import static javax.swing.BorderFactory.createEtchedBorder;
-import static javax.swing.BorderFactory.createTitledBorder;
 
 public class WebsocketMessageSamplerGui extends AbstractWebsocketSamplerGui {
 
@@ -58,19 +55,9 @@ public class WebsocketMessageSamplerGui extends AbstractWebsocketSamplerGui {
 
     private JPanel makeWebsocketMessagePanel() {
         JPanel websocketPanel = new JPanel(new BorderLayout());
-        websocketPanel.add(makeWebsocketUriPanel(), NORTH);
+        websocketPanel.add(makeSessionIdPanel(), NORTH);
         websocketPanel.add(makeMessageBodyPanel(), CENTER);
         return websocketPanel;
-    }
-
-    private JPanel makeWebsocketUriPanel() {
-        HorizontalPanel websocketServerPanel = new HorizontalPanel();
-        websocketServerPanel.setBorder(createTitledBorder(createEtchedBorder(), "Websocket Server"));
-        websocketServerPanel.add(makeProtocolPanel());
-        websocketServerPanel.add(makeServerNameOrIpPanel());
-        websocketServerPanel.add(makePortPanel());
-        websocketServerPanel.add(makePathPanel());
-        return websocketServerPanel;
     }
 
     private Component makeMessageBodyPanel() {
@@ -78,5 +65,4 @@ public class WebsocketMessageSamplerGui extends AbstractWebsocketSamplerGui {
         panel.add(message, CENTER);
         return panel;
     }
-
 }

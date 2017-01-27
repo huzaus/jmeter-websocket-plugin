@@ -8,9 +8,6 @@ public class AbstractWebsocketSamplerConfigurer implements Configurer<AbstractWe
 
     @Override
     public void configure(AbstractWebsocketSampler sampler, AbstractWebsocketSamplerGui samplerGui) {
-        samplerGui.getServerNameOrIp().setText(sampler.getServerNameOrIp());
-        samplerGui.getPortNumber().setText(sampler.getPortNumber());
-        samplerGui.getProtocol().setText(sampler.getProtocol());
-        samplerGui.getPath().setText(sampler.getPath());
+        samplerGui.getSessionId().setText(sampler.getSessionId());
     }
 }
