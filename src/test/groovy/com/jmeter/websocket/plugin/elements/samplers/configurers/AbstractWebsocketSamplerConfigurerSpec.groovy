@@ -1,10 +1,10 @@
-package com.jmeter.websocket.plugin.configurers
+package com.jmeter.websocket.plugin.elements.samplers.configurers
 
 import com.jmeter.websocket.plugin.JmeterAbstractSpec
-import com.jmeter.websocket.plugin.samplers.WebsocketMessageSampler
-import com.jmeter.websocket.plugin.samplers.WebsocketMessageSamplerGui
-import com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler
-import com.jmeter.websocket.plugin.samplers.WebsocketSessionSamplerGui
+import com.jmeter.websocket.plugin.elements.samplers.WebsocketMessageSampler
+import com.jmeter.websocket.plugin.elements.samplers.WebsocketMessageSamplerGui
+import com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler
+import com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSamplerGui
 import spock.lang.Subject
 import spock.lang.Unroll
 

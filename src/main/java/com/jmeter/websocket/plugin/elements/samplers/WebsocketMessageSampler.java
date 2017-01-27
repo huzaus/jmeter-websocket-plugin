@@ -1,4 +1,4 @@
-package com.jmeter.websocket.plugin.samplers;
+package com.jmeter.websocket.plugin.elements.samplers;
 
 import com.jmeter.websocket.plugin.endpoint.WebsocketClient;
 import org.apache.jmeter.samplers.Entry;

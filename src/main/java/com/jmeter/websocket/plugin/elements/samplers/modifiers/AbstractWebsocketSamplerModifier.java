@@ -1,7 +1,8 @@
-package com.jmeter.websocket.plugin.modifiers;
+package com.jmeter.websocket.plugin.elements.samplers.modifiers;
 
-import com.jmeter.websocket.plugin.samplers.AbstractWebsocketSampler;
-import com.jmeter.websocket.plugin.samplers.AbstractWebsocketSamplerGui;
+import com.jmeter.websocket.plugin.elements.helpers.Modifier;
+import com.jmeter.websocket.plugin.elements.samplers.AbstractWebsocketSampler;
+import com.jmeter.websocket.plugin.elements.samplers.AbstractWebsocketSamplerGui;
 
 public class AbstractWebsocketSamplerModifier implements Modifier<AbstractWebsocketSamplerGui, AbstractWebsocketSampler> {
     @Override

@@ -1,4 +1,4 @@
-package com.jmeter.websocket.plugin.samplers
+package com.jmeter.websocket.plugin.elements.samplers
 
 import org.apache.jmeter.protocol.http.control.CookieManager
 import org.apache.jmeter.protocol.http.control.Header
@@ -7,13 +7,13 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
-import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.CONNECT_TIME_OUT
-import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.COOKIE_MANAGER
-import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.HEADER_MANAGER
-import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.PATH
-import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.PORT_NUMBER
-import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.PROTOCOL
-import static com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler.SERVER_NAME_OR_IP
+import static com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler.CONNECT_TIME_OUT
+import static com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler.COOKIE_MANAGER
+import static com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler.HEADER_MANAGER
+import static com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler.PATH
+import static com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler.PORT_NUMBER
+import static com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler.PROTOCOL
+import static com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler.SERVER_NAME_OR_IP
 
 @Unroll
 class WebsocketSessionSamplerSpec extends Specification {

@@ -1,4 +1,4 @@
-package com.jmeter.websocket.plugin.configurations;
+package com.jmeter.websocket.plugin.elements.configurations;
 
 import org.apache.jmeter.config.gui.AbstractConfigGui;
 import org.apache.jmeter.gui.util.FilePanel;

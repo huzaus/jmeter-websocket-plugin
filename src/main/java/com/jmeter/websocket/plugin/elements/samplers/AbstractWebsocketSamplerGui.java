@@ -1,9 +1,9 @@
-package com.jmeter.websocket.plugin.samplers;
+package com.jmeter.websocket.plugin.elements.samplers;
 
-import com.jmeter.websocket.plugin.configurers.AbstractWebsocketSamplerConfigurer;
-import com.jmeter.websocket.plugin.configurers.Configurer;
-import com.jmeter.websocket.plugin.modifiers.AbstractWebsocketSamplerModifier;
-import com.jmeter.websocket.plugin.modifiers.Modifier;
+import com.jmeter.websocket.plugin.elements.helpers.Configurer;
+import com.jmeter.websocket.plugin.elements.helpers.Modifier;
+import com.jmeter.websocket.plugin.elements.samplers.configurers.AbstractWebsocketSamplerConfigurer;
+import com.jmeter.websocket.plugin.elements.samplers.modifiers.AbstractWebsocketSamplerModifier;
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jorphan.gui.JLabeledTextField;

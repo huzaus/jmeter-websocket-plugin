@@ -1,4 +1,4 @@
-package com.jmeter.websocket.plugin.configurations;
+package com.jmeter.websocket.plugin.elements.configurations;
 
 import com.google.common.base.Supplier;
 import com.jmeter.websocket.plugin.endpoint.WebsocketClient;

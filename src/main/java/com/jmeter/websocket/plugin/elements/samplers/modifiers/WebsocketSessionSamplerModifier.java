@@ -1,7 +1,8 @@
-package com.jmeter.websocket.plugin.modifiers;
+package com.jmeter.websocket.plugin.elements.samplers.modifiers;
 
-import com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler;
-import com.jmeter.websocket.plugin.samplers.WebsocketSessionSamplerGui;
+import com.jmeter.websocket.plugin.elements.helpers.Modifier;
+import com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler;
+import com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSamplerGui;
 
 public class WebsocketSessionSamplerModifier implements Modifier<WebsocketSessionSamplerGui, WebsocketSessionSampler> {
 

@@ -1,4 +1,4 @@
-package com.jmeter.websocket.plugin.samplers;
+package com.jmeter.websocket.plugin.elements.samplers;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;

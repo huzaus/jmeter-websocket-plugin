@@ -1,4 +1,4 @@
-package com.jmeter.websocket.plugin.configurations
+package com.jmeter.websocket.plugin.elements.configurations
 
 import com.jmeter.websocket.plugin.endpoint.WebsocketClient
 import spock.lang.Specification

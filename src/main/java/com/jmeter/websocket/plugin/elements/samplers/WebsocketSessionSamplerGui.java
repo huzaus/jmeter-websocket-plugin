@@ -1,7 +1,7 @@
-package com.jmeter.websocket.plugin.samplers;
+package com.jmeter.websocket.plugin.elements.samplers;
 
-import com.jmeter.websocket.plugin.configurers.WebsocketSessionSamplerConfigurer;
-import com.jmeter.websocket.plugin.modifiers.WebsocketSessionSamplerModifier;
+import com.jmeter.websocket.plugin.elements.samplers.configurers.WebsocketSessionSamplerConfigurer;
+import com.jmeter.websocket.plugin.elements.samplers.modifiers.WebsocketSessionSamplerModifier;
 import org.apache.jmeter.gui.util.HorizontalPanel;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jorphan.gui.JLabeledTextField;

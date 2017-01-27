@@ -1,4 +1,4 @@
-package com.jmeter.websocket.plugin.samplers
+package com.jmeter.websocket.plugin.elements.samplers
 
 import com.jmeter.websocket.plugin.JmeterAbstractSpec
 import org.apache.jmeter.protocol.http.sampler.HTTPSampler

@@ -1,7 +1,8 @@
-package com.jmeter.websocket.plugin.configurers;
+package com.jmeter.websocket.plugin.elements.samplers.configurers;
 
-import com.jmeter.websocket.plugin.samplers.WebsocketSessionSampler;
-import com.jmeter.websocket.plugin.samplers.WebsocketSessionSamplerGui;
+import com.jmeter.websocket.plugin.elements.helpers.Configurer;
+import com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSampler;
+import com.jmeter.websocket.plugin.elements.samplers.WebsocketSessionSamplerGui;
 
 public class WebsocketSessionSamplerConfigurer implements Configurer<WebsocketSessionSampler, WebsocketSessionSamplerGui> {
     @Override
