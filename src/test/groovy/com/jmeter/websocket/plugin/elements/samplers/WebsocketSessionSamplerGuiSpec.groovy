@@ -21,6 +21,7 @@ class WebsocketSessionSamplerGuiSpec extends JmeterAbstractSpec {
             'protocol'       || 'Protocol:'
             'connectTimeOut' || 'Timeout:'
             'path'           || 'Path:'
+            'sessionId'    || 'Session id:'
     }
     
     def "get#field should return #value"() {
@@ -49,6 +50,7 @@ class WebsocketSessionSamplerGuiSpec extends JmeterAbstractSpec {
             'protocol'       | 'protocol'       | 'ws'
             'connectTimeOut' | 'connectTimeOut' | '2000'
             'path'           | 'path'           | 'websocket'
+            'sessionId'      | 'sessionId'      | 'user1Session'
     }
     
     def "Should configure gui #component component with '#value' value from #property sampler property"() {
@@ -66,6 +68,7 @@ class WebsocketSessionSamplerGuiSpec extends JmeterAbstractSpec {
             'protocol'       | 'protocol'       | 'ws'
             'connectTimeOut' | 'connectTimeOut' | '2000'
             'path'           | 'path'           | 'websocket'
+            'sessionId'      | 'sessionId'      | 'user1Session'
     }
     
     def "Should throw ClassCastException when testElement is not WebsocketMessageSampler on configure"() {

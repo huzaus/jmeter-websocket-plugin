@@ -3,6 +3,7 @@ package com.jmeter.websocket.plugin.elements.samplers;
 import com.jmeter.websocket.plugin.elements.samplers.configurers.WebsocketSessionSamplerConfigurer;
 import com.jmeter.websocket.plugin.elements.samplers.modifiers.WebsocketSessionSamplerModifier;
 import org.apache.jmeter.gui.util.HorizontalPanel;
+import org.apache.jmeter.gui.util.VerticalPanel;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jorphan.gui.JLabeledTextField;
 
@@ -17,11 +18,13 @@ import static javax.swing.BorderFactory.createTitledBorder;
 public class WebsocketSessionSamplerGui extends AbstractWebsocketSamplerGui {
 
     private final JLabeledTextField connectTimeOut;
+    private final JLabeledTextField sessionId;
     private final WebsocketSessionSamplerModifier modifier;
     private final WebsocketSessionSamplerConfigurer configurer;
 
     public WebsocketSessionSamplerGui() {
         connectTimeOut = new JLabeledTextField("Timeout:", 5);
+        sessionId = new JLabeledTextField("Session id:", 10);
         modifier = new WebsocketSessionSamplerModifier();
         configurer = new WebsocketSessionSamplerConfigurer();
         init();
@@ -61,7 +64,14 @@ public class WebsocketSessionSamplerGui extends AbstractWebsocketSamplerGui {
         setLayout(new BorderLayout(0, 5));
         setBorder(makeBorder());
         add(makeTitlePanel(), NORTH);
-        add(makeWebsocketPanel(), CENTER);
+        add(makeSamplerPanel(), CENTER);
+    }
+
+    private JPanel makeSamplerPanel() {
+        JPanel websocketPanel = new VerticalPanel();
+        websocketPanel.add(makeWebsocketPanel());
+        websocketPanel.add(makeSessionNamePanel());
+        return websocketPanel;
     }
 
     private JPanel makeWebsocketPanel() {
@@ -87,8 +97,17 @@ public class WebsocketSessionSamplerGui extends AbstractWebsocketSamplerGui {
         return panel;
     }
 
+    private JPanel makeSessionNamePanel() {
+        JPanel panel = new JPanel(new BorderLayout(5, 0));
+        panel.add(sessionId, CENTER);
+        return panel;
+    }
+
     public JLabeledTextField getConnectTimeOut() {
         return connectTimeOut;
     }
 
+    public JLabeledTextField getSessionId() {
+        return sessionId;
+    }
 }

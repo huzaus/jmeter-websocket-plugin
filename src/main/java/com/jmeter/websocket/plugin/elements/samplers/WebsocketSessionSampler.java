@@ -27,6 +27,7 @@ public class WebsocketSessionSampler extends AbstractWebsocketSampler {
     private static final Logger log = LoggingManager.getLoggerForClass();
 
     private static final String CONNECT_TIME_OUT = "connectTimeOut";
+    private static final String SESSION_ID = "session_id";
 
     public WebsocketSessionSampler() {
         setName("Websocket Message Sampler");
@@ -85,6 +86,14 @@ public class WebsocketSessionSampler extends AbstractWebsocketSampler {
 
     public void setConnectTimeOut(String connectTimeOut) {
         setProperty(CONNECT_TIME_OUT, connectTimeOut, "");
+    }
+
+    public String getSessionId() {
+        return getPropertyAsString(SESSION_ID);
+    }
+
+    public void setSessionId(String sessionId) {
+        setProperty(SESSION_ID, sessionId, "");
     }
 
     public Map<String, List<String>> headers() {
