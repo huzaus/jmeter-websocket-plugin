@@ -10,8 +10,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class WebsocketMessageSampler extends AbstractWebsocketSampler {
 
-    private static final Logger log = LoggingManager.getLoggerForClass();
     public static final String MESSAGE = "websocket.message";
+    private static final Logger log = LoggingManager.getLoggerForClass();
 
     @Override
     public SampleResult sample(Entry entry) {
@@ -23,7 +23,7 @@ public class WebsocketMessageSampler extends AbstractWebsocketSampler {
             checkNotNull(websocketClient, "WebsocketSessionManager has to be added to test plan");
             String message = getMessage();
             sampleResult.setResponseMessage(message);
-            websocketClient.sendMessage(uri(), message);
+            websocketClient.sendMessage(getSessionId(), message);
             sampleResult.setSuccessful(true);
         } catch (Exception e) {
             log.error("Error: ", e);

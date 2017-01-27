@@ -38,42 +38,6 @@ public abstract class AbstractWebsocketSampler extends AbstractSampler {
         setProperty(new TestElementProperty(WEBSOCKET_MANAGER, websocketSessionsManager));
     }
 
-    public String getPath() {
-        return getPropertyAsString(PATH);
-    }
-
-    public void setPath(String path) {
-        setProperty(PATH, path, "");
-    }
-
-    public URI uri() throws URISyntaxException {
-        return new URI(getProtocol(), null, getServerNameOrIp(), Integer.valueOf(getPortNumber()), getPath(), null, null);
-    }
-
-    public String getServerNameOrIp() {
-        return getPropertyAsString(SERVER_NAME_OR_IP);
-    }
-
-    public void setServerNameOrIp(String serverNameOrIp) {
-        setProperty(SERVER_NAME_OR_IP, serverNameOrIp, "");
-    }
-
-    public String getPortNumber() {
-        return getPropertyAsString(PORT_NUMBER);
-    }
-
-    public void setPortNumber(String portNumber) {
-        setProperty(PORT_NUMBER, portNumber, "");
-    }
-
-    public String getProtocol() {
-        return getPropertyAsString(PROTOCOL);
-    }
-
-    public void setProtocol(String protocol) {
-        setProperty(PROTOCOL, protocol, "");
-    }
-
     public String getSessionId() {
         return getPropertyAsString(SESSION_ID);
     }

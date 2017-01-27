@@ -45,7 +45,7 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
     private Function<SampleResult, UpgradeListener> sampleResultToUpgradeListenerConverter = new SampleResultToUpgradeListenerConverter();
     private Collection<WebsocketMessageConsumer> websocketMessageConsumers = new ArrayList<>();
     private Supplier<JettyWebsocket> jettyWebsocketSupplier = jettyWebsocketSupplier();
-    private SessionsManager<Session> sessionsManager = new JettySessionManager();
+    private SessionsManager<String, Session> sessionsManager = new JettySessionManager();
 
     private static Supplier<WebSocketClient> webSocketClientSupplier() {
         return memoize(new Supplier<WebSocketClient>() {
@@ -61,9 +61,11 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
     }
 
     @Override
-    public void connect(URI uri, CookieManager cookieManager, Map<String, List<String>> headers, SampleResult result, long timeOut) throws Exception {
-        checkArgument(!sessionsManager.hasOpenSession(uri), "Session is already open");
+    public void connect(URI uri, String sessionId, CookieManager cookieManager, Map<String, List<String>> headers, SampleResult result, long timeOut) throws
+            Exception {
+        checkArgument(!sessionsManager.hasOpenSession(sessionId), "Session is already open");
         log.info("Opening " + uri + " connection." +
+                " Session ID: " + sessionId +
                 " CookieManager: " + cookieManager +
                 " Headers: " + headers);
         WebSocketClient webSocketClient = webSocketClientSupplier.get();
@@ -76,15 +78,15 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
                             headersToClientUpgradeRequestConverter.apply(headers),
                             sampleResultToUpgradeListenerConverter.apply(result));
         }
-        sessionsManager.registerSession(uri, promise.get(timeOut, MILLISECONDS));
-        log.info("Connected to: " + uri + ".");
+        sessionsManager.registerSession(sessionId, promise.get(timeOut, MILLISECONDS));
+        log.info("Connected to: " + uri + " .");
     }
 
     @Override
-    public void sendMessage(URI uri, String message) throws IOException {
-        Session session = sessionsManager.getOpenSession(uri);
-        checkNotNull(session, "Session is not open for " + uri + ". Session: " + session);
-        log.info("sendMessage() message: " + message + " to " + uri + " using session:" + session);
+    public void sendMessage(String sessionId, String message) throws IOException {
+        Session session = sessionsManager.getOpenSession(sessionId);
+        checkNotNull(session, sessionId + " session is not open. Session: " + session);
+        log.info("sendMessage() message: " + message + " to " + sessionId + " using session:" + session);
         session.getRemote().sendString(message);
         for (WebsocketMessageConsumer consumer : websocketMessageConsumers) {
             consumer.onMessageSend(toHexString(session.hashCode()), message);
