@@ -11,20 +11,31 @@ repositories {
 }
 
 dependencies {
-
-    compile 'org.codehaus.groovy:groovy-all:2.4.7'
+    compile 'org.codehaus.groovy:groovy-all:2.4.8'
     compile 'org.eclipse.jetty.websocket:websocket-client:9.1.1.v20140108:hybrid'
     compile 'org.apache.jmeter:ApacheJMeter:3.1'
     compile 'org.apache.jmeter:ApacheJMeter_core:3.1'
     compile 'org.apache.jmeter:ApacheJMeter_http:3.1'
+    compile 'com.google.guava:guava:19.0'
 
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile 'cglib:cglib-nodep:3.2.4'
+    testCompile 'org.objenesis:objenesis:2.5'
+}
 
-    task copySample(type:Copy,dependsOn:[build]) {
-        copy {
-            from project.buildDir.getPath()+'/target/jmeter-websocket-samplers-1.0.jar'
-            into '/usr/local/Cellar/jmeter/3.1/libexec/lib/ext/'
-        }
+task copySample(type: Copy, dependsOn: [build]) {
+    from jar.archivePath
+    into jmeterHome + '/libexec/lib/ext/'
+    doLast {
+        println "[INFO] " + jar.archivePath + " copied to " + jmeterHome + '/libexec/lib/ext/'
     }
+}
 
+task openSampleMac(type: Exec, dependsOn: [copySample]) {
+    workingDir buildDir
+    commandLine jmeterHome + '/bin/jmeter', '-t', './resources/test/sample.jmx'
+}
+
+test {
+    systemProperty 'jmeter.home', jmeterHome
 }
