@@ -21,7 +21,7 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
     private static final Logger log = LoggingManager.getLoggerForClass();
 
     private static Supplier<CsvFileWriter> csvFileWriterSupplier;
-    private static Supplier<WebsocketClient> websocketClientSupplier = websocketClientSupplier();
+    private static final Supplier<WebsocketClient> websocketClientSupplier = websocketClientSupplier();
 
     private static Supplier<WebsocketClient> websocketClientSupplier() {
         return memoize(new Supplier<WebsocketClient>() {
