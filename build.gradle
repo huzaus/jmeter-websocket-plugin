@@ -38,4 +38,5 @@ task openSampleMac(type: Exec, dependsOn: [copySample]) {
 
 test {
     systemProperty 'jmeter.home', jmeterHome
+    systemProperty 'jmeter.properties', jmeterProperties
 }
