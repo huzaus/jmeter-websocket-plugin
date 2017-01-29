@@ -1,0 +1,19 @@
+## Customize the test machine
+machine:
+
+  timezone:
+    Europe/Warsaw # Set the timezone
+
+  # Add some environment variables
+  environment:
+    JMETER_HOME: $HOME/apache-jmeter-3.1
+
+## Customize dependencies
+dependencies:
+  pre:
+    - source jmeterSetup.sh
+    - source gradleSetup.sh
+test:
+  post:
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
