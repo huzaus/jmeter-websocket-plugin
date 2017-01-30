@@ -9,8 +9,9 @@ import static org.apache.jmeter.util.JMeterUtils.setJMeterHome
 abstract class JmeterAbstractGuiSpec extends Specification {
     def setupSpec() {
         String jmeterHome = System.properties.'jmeter.home'
+        String jmeterProperties = System.properties.'jmeter.properties'
         setJMeterHome(jmeterHome)
-        loadJMeterProperties("$jmeterHome/libexec/bin/jmeter.properties")
+        loadJMeterProperties(jmeterProperties)
         initLocale()
     }
 }
