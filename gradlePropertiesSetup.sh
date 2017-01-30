@@ -4,6 +4,7 @@ export GRADLE_PROPERTIES
 
 if [ ! -f "$GRADLE_PROPERTIES" ]; then
      echo "Creating Gradle Properties file..."
+     mkdir $HOME"/.gradle/"
      touch $GRADLE_PROPERTIES
 
      echo "Writing jmeterHome to gradle.properties..."
