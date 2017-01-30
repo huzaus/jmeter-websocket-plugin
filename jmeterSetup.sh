@@ -7,5 +7,3 @@ if [ ! -d "$JMETER_HOME" ]; then
     echo "Extracting jmeter..."
     tar -xf apache-jmeter-3.1.tgz # unpack jmeter
 fi
-
-
