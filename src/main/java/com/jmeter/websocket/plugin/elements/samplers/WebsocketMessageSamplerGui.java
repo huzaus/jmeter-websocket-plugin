@@ -15,10 +15,10 @@ public class WebsocketMessageSamplerGui extends AbstractWebsocketSamplerGui {
     private final JLabeledTextArea message;
 
     public WebsocketMessageSamplerGui() {
+        message = new JLabeledTextArea("Message:");
         setLayout(new BorderLayout(0, 5));
         setBorder(makeBorder());
         add(makeTitlePanel(), NORTH);
-        message = new JLabeledTextArea("Message:");
         add(makeWebsocketMessagePanel(), CENTER);
     }
 

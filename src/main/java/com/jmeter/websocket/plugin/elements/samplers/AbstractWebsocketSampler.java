@@ -8,9 +8,6 @@ import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jmeter.testelement.property.TestElementProperty;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 public abstract class AbstractWebsocketSampler extends AbstractSampler {
 
     public static final String WEBSOCKET_MANAGER = "websocket_manager";
