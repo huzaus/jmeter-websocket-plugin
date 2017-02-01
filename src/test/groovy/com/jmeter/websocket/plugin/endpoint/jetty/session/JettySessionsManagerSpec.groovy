@@ -1,4 +1,4 @@
-package com.jmeter.websocket.plugin.endpoint.jetty
+package com.jmeter.websocket.plugin.endpoint.jetty.session
 
 import org.eclipse.jetty.websocket.api.Session
 import spock.lang.Specification
@@ -6,10 +6,10 @@ import spock.lang.Subject
 import spock.lang.Unroll
 
 @Unroll
-class JettySessionManagerSpec extends Specification {
+class JettySessionsManagerSpec extends Specification {
     
     @Subject
-    JettySessionManager manager = new JettySessionManager()
+    JettySessionsManager manager = new JettySessionsManager()
     
     def "Should return false when zero session is registered on hasOpenSession"() {
         expect:

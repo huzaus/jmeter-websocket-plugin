@@ -1,6 +1,6 @@
-package com.jmeter.websocket.plugin.endpoint.jetty;
+package com.jmeter.websocket.plugin.endpoint.jetty.session;
 
-import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageConsumer;
+import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketIncomingMessageConsumer;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 import org.eclipse.jetty.websocket.api.Session;
@@ -19,15 +19,15 @@ import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @WebSocket(maxTextMessageSize = 128 * 1024)
-public class JettyWebsocket {
+public class JettySocket {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
 
     private final String sessionId;
 
-    private final Collection<WebsocketMessageConsumer> websocketMessageConsumers = new ArrayList<>();
+    private final Collection<WebsocketIncomingMessageConsumer> websocketIncomingMessageConsumer = new ArrayList<>();
 
-    public JettyWebsocket(String sessionId) {
+    public JettySocket(String sessionId) {
         this.sessionId = sessionId;
     }
 
@@ -51,7 +51,7 @@ public class JettyWebsocket {
                 " session: " + session +
                 " message: " + message);
         checkNotNull(session);
-        for (WebsocketMessageConsumer consumer : websocketMessageConsumers) {
+        for (WebsocketIncomingMessageConsumer consumer : websocketIncomingMessageConsumer) {
             consumer.onMessageReceive(sessionId, message);
         }
     }
@@ -68,14 +68,14 @@ public class JettyWebsocket {
                 " frame:" + frame);
     }
 
-    public void registerWebsocketMessageConsumer(WebsocketMessageConsumer consumer) {
-        websocketMessageConsumers.add(consumer);
+    public void registerWebsocketIncomingMessageConsumer(WebsocketIncomingMessageConsumer consumer) {
+        websocketIncomingMessageConsumer.add(consumer);
     }
 
     @Override
     public String toString() {
         return toStringHelper(this)
-                .add("websocketMessageConsumers", websocketMessageConsumers)
+                .add("websocketIncomingMessageConsumer", websocketIncomingMessageConsumer)
                 .toString();
     }
 }

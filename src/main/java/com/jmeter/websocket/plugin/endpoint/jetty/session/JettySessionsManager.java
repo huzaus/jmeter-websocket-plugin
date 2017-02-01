@@ -1,4 +1,4 @@
-package com.jmeter.websocket.plugin.endpoint.jetty;
+package com.jmeter.websocket.plugin.endpoint.jetty.session;
 
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.google.common.base.Optional.fromNullable;
 
-public class JettySessionManager implements SessionsManager<String, Session> {
+public class JettySessionsManager implements SessionsManager<String, Session> {
 
     private final ConcurrentHashMap<String, Session> sessions = new ConcurrentHashMap<>();
 
