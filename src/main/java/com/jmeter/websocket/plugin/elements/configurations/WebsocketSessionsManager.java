@@ -40,7 +40,7 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
         setProperty(FILE, filename);
     }
 
-    public WebsocketClient getWebsocketClient() {
+    public static WebsocketClient getWebsocketClient() {
         return websocketClientSupplier.get();
     }
 
