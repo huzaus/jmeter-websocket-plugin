@@ -17,14 +17,19 @@ import java.util.Collection;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.Integer.toHexString;
 
 @WebSocket(maxTextMessageSize = 128 * 1024)
 public class JettyWebsocket {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
 
+    private final String sessionId;
+
     private final Collection<WebsocketMessageConsumer> websocketMessageConsumers = new ArrayList<>();
+
+    public JettyWebsocket(String sessionId) {
+        this.sessionId = sessionId;
+    }
 
     @OnWebSocketConnect
     public void onWebSocketConnect(Session session) {
@@ -47,7 +52,7 @@ public class JettyWebsocket {
                 " message: " + message);
         checkNotNull(session);
         for (WebsocketMessageConsumer consumer : websocketMessageConsumers) {
-            consumer.onMessageReceive(toHexString(session.hashCode()), message);
+            consumer.onMessageReceive(sessionId, message);
         }
     }
 

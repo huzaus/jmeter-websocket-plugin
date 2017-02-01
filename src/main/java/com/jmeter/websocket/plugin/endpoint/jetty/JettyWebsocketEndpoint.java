@@ -44,7 +44,6 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
     private Function<Map<String, List<String>>, ClientUpgradeRequest> headersToClientUpgradeRequestConverter = new HeadersToClientUpgradeRequestConverter();
     private Function<SampleResult, UpgradeListener> sampleResultToUpgradeListenerConverter = new SampleResultToUpgradeListenerConverter();
     private Collection<WebsocketMessageConsumer> websocketMessageConsumers = new ArrayList<>();
-    private Supplier<JettyWebsocket> jettyWebsocketSupplier = jettyWebsocketSupplier();
     private SessionsManager<String, Session> sessionsManager = new JettySessionManager();
 
     private static Supplier<WebSocketClient> webSocketClientSupplier() {
@@ -73,7 +72,7 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
         synchronized (webSocketClient) {
             webSocketClient.setCookieStore(cookieManagerToCookieStoreConverter.apply(cookieManager));
             promise = webSocketClient
-                    .connect(jettyWebsocketSupplier.get(),
+                    .connect(jettyWebsocketSupplier(sessionId).get(),
                             uri,
                             headersToClientUpgradeRequestConverter.apply(headers),
                             sampleResultToUpgradeListenerConverter.apply(result));
@@ -136,11 +135,11 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
                 .toString();
     }
 
-    private Supplier<JettyWebsocket> jettyWebsocketSupplier() {
+    private Supplier<JettyWebsocket> jettyWebsocketSupplier(final String sessionId) {
         return new Supplier<JettyWebsocket>() {
             @Override
             public JettyWebsocket get() {
-                JettyWebsocket jettyWebsocket = new JettyWebsocket();
+                JettyWebsocket jettyWebsocket = new JettyWebsocket(sessionId);
                 for (WebsocketMessageConsumer consumer : websocketMessageConsumers) {
                     jettyWebsocket.registerWebsocketMessageConsumer(consumer);
                 }

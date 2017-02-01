@@ -11,7 +11,7 @@ import java.util.regex.PatternSyntaxException;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Suppliers.memoize;
 
-public class WebsocketMessageRegexExpectation implements WebsocketMessageConsumer {
+public class WebsocketMessageRegexExpectation implements WebsocketIncomingMessageConsumer {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
 
@@ -42,11 +42,6 @@ public class WebsocketMessageRegexExpectation implements WebsocketMessageConsume
                 }
             }
         }
-    }
-
-    @Override
-    public void onMessageSend(String sessionId, String message) {
-        //do nothing TODO: split WebsocketMessageConsumer interface
     }
 
     public Pattern getPattern() {
