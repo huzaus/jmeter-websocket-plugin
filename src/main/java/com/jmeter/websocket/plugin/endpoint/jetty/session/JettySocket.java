@@ -12,8 +12,8 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.extensions.Frame;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -25,7 +25,7 @@ public class JettySocket {
 
     private final String sessionId;
 
-    private final Collection<WebsocketIncomingMessageConsumer> websocketIncomingMessageConsumers = new ArrayList<>();
+    private final Collection<WebsocketIncomingMessageConsumer> websocketIncomingMessageConsumers = new CopyOnWriteArrayList<>();
 
     public JettySocket(String sessionId) {
         checkNotNull(sessionId);
@@ -75,7 +75,6 @@ public class JettySocket {
     public void unregisterWebsocketIncomingMessageConsumer(WebsocketIncomingMessageConsumer consumer) {
         websocketIncomingMessageConsumers.remove(consumer);
     }
-
 
     @Override
     public String toString() {

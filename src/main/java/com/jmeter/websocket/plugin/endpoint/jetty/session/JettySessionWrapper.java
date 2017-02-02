@@ -7,8 +7,8 @@ import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketOutgoingMessageCo
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -18,7 +18,7 @@ public class JettySessionWrapper implements WebsocketSession {
     private final JettySocket socketDelegate;
     private final String id;
 
-    private final Collection<WebsocketOutgoingMessageConsumer> websocketOutgoingMessageConsumers = new ArrayList<>();
+    private final Collection<WebsocketOutgoingMessageConsumer> websocketOutgoingMessageConsumers = new CopyOnWriteArrayList<>();
 
     public JettySessionWrapper(String sessionId, Session session, JettySocket socket) {
         checkNotNull(sessionId);
@@ -49,13 +49,13 @@ public class JettySessionWrapper implements WebsocketSession {
         socketDelegate.unregisterWebsocketIncomingMessageConsumer(consumer);
     }
 
+    public void registerWebsocketOutgoingMessageConsumer(WebsocketOutgoingMessageConsumer consumer) {
+        websocketOutgoingMessageConsumers.add(consumer);
+    }
+
     @Override
     public void unregisterWebsocketOutgoingMessageConsumer(WebsocketOutgoingMessageConsumer consumer) {
         websocketOutgoingMessageConsumers.remove(consumer);
-    }
-
-    public void registerWebsocketOutgoingMessageConsumer(WebsocketOutgoingMessageConsumer consumer) {
-        websocketOutgoingMessageConsumers.add(consumer);
     }
 
     @Override
