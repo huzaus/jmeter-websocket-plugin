@@ -40,7 +40,7 @@ public class WebsocketSessionSampler extends AbstractWebsocketSampler {
         sampleResult.setHTTPMethod("GET");
         sampleResult.setSampleLabel(getName());
         try {
-            WebsocketClient websocketClient = getWebsocketClient();
+            WebsocketClient<String> websocketClient = getWebsocketClient();
             checkNotNull(websocketClient, "WebsocketSessionManager should be added to test plan");
             websocketClient.connect(uri(), getSessionId(), getCookieManager(), headers(), sampleResult, Long.valueOf(getConnectTimeOut()));
         } catch (Exception e) {
