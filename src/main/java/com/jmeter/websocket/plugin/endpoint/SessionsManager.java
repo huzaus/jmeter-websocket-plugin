@@ -1,13 +1,15 @@
 package com.jmeter.websocket.plugin.endpoint;
 
 
-public interface SessionsManager<K, S> {
+import java.io.IOException;
+
+public interface SessionsManager<K> {
 
     boolean hasOpenSession(K key);
 
-    S getOpenSession(K key);
+    WebsocketSession getOpenSession(K key);
 
-    void registerSession(K key, S session);
+    void registerSession(K key, WebsocketSession session);
 
-    void closeSessions();
+    void closeSessions() throws IOException;
 }

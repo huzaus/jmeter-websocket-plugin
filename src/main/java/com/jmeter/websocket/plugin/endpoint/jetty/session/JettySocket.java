@@ -25,9 +25,10 @@ public class JettySocket {
 
     private final String sessionId;
 
-    private final Collection<WebsocketIncomingMessageConsumer> websocketIncomingMessageConsumer = new ArrayList<>();
+    private final Collection<WebsocketIncomingMessageConsumer> websocketIncomingMessageConsumers = new ArrayList<>();
 
     public JettySocket(String sessionId) {
+        checkNotNull(sessionId);
         this.sessionId = sessionId;
     }
 
@@ -50,8 +51,7 @@ public class JettySocket {
         log.debug("OnWebSocketMessage()" +
                 " session: " + session +
                 " message: " + message);
-        checkNotNull(session);
-        for (WebsocketIncomingMessageConsumer consumer : websocketIncomingMessageConsumer) {
+        for (WebsocketIncomingMessageConsumer consumer : websocketIncomingMessageConsumers) {
             consumer.onMessageReceive(sessionId, message);
         }
     }
@@ -69,13 +69,18 @@ public class JettySocket {
     }
 
     public void registerWebsocketIncomingMessageConsumer(WebsocketIncomingMessageConsumer consumer) {
-        websocketIncomingMessageConsumer.add(consumer);
+        websocketIncomingMessageConsumers.add(consumer);
     }
+
+    public void unregisterWebsocketIncomingMessageConsumer(WebsocketIncomingMessageConsumer consumer) {
+        websocketIncomingMessageConsumers.remove(consumer);
+    }
+
 
     @Override
     public String toString() {
         return toStringHelper(this)
-                .add("websocketIncomingMessageConsumer", websocketIncomingMessageConsumer)
+                .add("websocketIncomingMessageConsumer", websocketIncomingMessageConsumers)
                 .toString();
     }
 }
