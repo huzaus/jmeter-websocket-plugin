@@ -84,7 +84,7 @@ public class JettyWebsocketEndpoint implements WebsocketClient<String> {
                             headersToClientUpgradeRequestConverter.apply(headers),
                             sampleResultToUpgradeListenerConverter.apply(result));
         }
-        sessionsManager.registerSession(sessionId, new JettySessionWrapper(sessionId, promise.get(timeOut, MILLISECONDS), websocket));
+        sessionsManager.registerSession(sessionId, jettySessionWrapperSupplier(sessionId, promise.get(timeOut, MILLISECONDS), websocket).get());
         log.info("Connected to: " + uri + " .");
     }
 
@@ -153,6 +153,19 @@ public class JettyWebsocketEndpoint implements WebsocketClient<String> {
                     jettySocket.registerWebsocketIncomingMessageConsumer(consumer);
                 }
                 return jettySocket;
+            }
+        };
+    }
+
+    private Supplier<JettySessionWrapper> jettySessionWrapperSupplier(final String sessionId, final Session session, final JettySocket socket) {
+        return new Supplier<JettySessionWrapper>() {
+            @Override
+            public JettySessionWrapper get() {
+                JettySessionWrapper jettySessionWrapper = new JettySessionWrapper(sessionId, session, socket);
+                for (WebsocketMessageConsumer consumer : websocketMessageConsumers) {
+                    jettySessionWrapper.registerWebsocketOutgoingMessageConsumer(consumer);
+                }
+                return jettySessionWrapper;
             }
         };
     }
