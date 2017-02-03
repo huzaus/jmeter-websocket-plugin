@@ -29,9 +29,9 @@ public class WebsocketRegexAssertion extends AbstractTestElement implements PreP
 
     private static final Logger log = LoggingManager.getLoggerForClass();
 
-    private Expectation expectation;
+    private transient Expectation expectation;
 
-    private SessionsManager<String> sessionsManager = getWebsocketClient().getSessionsManager();
+    private transient SessionsManager<String> sessionsManager = getWebsocketClient().getSessionsManager();
 
     @Override
     public void process() {
@@ -67,7 +67,7 @@ public class WebsocketRegexAssertion extends AbstractTestElement implements PreP
             }
             return assertionResultFrom(getName(), expectationResult);
         } catch (Exception e) {
-            return assertionResultFrom(getName(), failure(e.getClass().getSimpleName() + ": " +e.getMessage()));
+            return assertionResultFrom(getName(), failure(e.getClass().getSimpleName() + ": " + e.getMessage()));
         }
     }
 
