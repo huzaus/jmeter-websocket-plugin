@@ -1,6 +1,7 @@
 package com.jmeter.websocket.plugin.endpoint.comsumers
 
 import com.google.common.base.Supplier
+import com.jmeter.websocket.plugin.elements.helpers.ExpectationResult
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
@@ -9,8 +10,8 @@ import java.util.concurrent.locks.Condition
 import java.util.concurrent.locks.Lock
 import java.util.regex.Pattern
 
-import static com.jmeter.websocket.plugin.endpoint.comsumers.ExpectationResult.SUCCESS
-import static com.jmeter.websocket.plugin.endpoint.comsumers.ExpectationResult.TIMEOUT
+import static com.jmeter.websocket.plugin.elements.helpers.ExpectationResult.SUCCESS
+import static com.jmeter.websocket.plugin.elements.helpers.ExpectationResult.TIMEOUT
 import static com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageRegexExpectation.lockSupplier
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 

@@ -2,6 +2,8 @@ package com.jmeter.websocket.plugin.endpoint.comsumers;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Supplier;
+import com.jmeter.websocket.plugin.elements.helpers.Expectation;
+import com.jmeter.websocket.plugin.elements.helpers.ExpectationResult;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
@@ -13,12 +15,12 @@ import java.util.regex.Pattern;
 import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Suppliers.memoize;
-import static com.jmeter.websocket.plugin.endpoint.comsumers.ExpectationResult.failure;
-import static com.jmeter.websocket.plugin.endpoint.comsumers.ExpectationResult.success;
-import static com.jmeter.websocket.plugin.endpoint.comsumers.ExpectationResult.timeoutFailure;
+import static com.jmeter.websocket.plugin.elements.helpers.ExpectationResult.failure;
+import static com.jmeter.websocket.plugin.elements.helpers.ExpectationResult.success;
+import static com.jmeter.websocket.plugin.elements.helpers.ExpectationResult.timeoutFailure;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-public class WebsocketMessageRegexExpectation implements WebsocketIncomingMessageConsumer {
+public class WebsocketMessageRegexExpectation implements WebsocketIncomingMessageConsumer, Expectation {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
     private static Supplier<Lock> lockSupplier = lockSupplier();
@@ -67,6 +69,7 @@ public class WebsocketMessageRegexExpectation implements WebsocketIncomingMessag
         }
     }
 
+    @Override
     public ExpectationResult getResult(final long timeout) {
         log.info("Getting result");
         return fromNullable(result)

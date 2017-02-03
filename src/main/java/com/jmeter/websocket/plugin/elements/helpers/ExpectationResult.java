@@ -1,4 +1,4 @@
-package com.jmeter.websocket.plugin.endpoint.comsumers;
+package com.jmeter.websocket.plugin.elements.helpers;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
