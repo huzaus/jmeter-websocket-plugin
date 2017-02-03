@@ -7,42 +7,33 @@ import static java.lang.System.currentTimeMillis;
 
 public class ExpectationResult {
 
-    private long endTime;
-    private boolean success;
-    private boolean finished;
-    private String reason;
+    public static final String SUCCESS = "success";
+    public static final String TIMEOUT = "timeout: ";
+    private final long endTime;
+    private final boolean success;
+    private final String reason;
 
-    public ExpectationResult() {
-        this(0, false, false);
-    }
-
-    public ExpectationResult(long endTime, boolean success, boolean finished) {
-        this(endTime, success, finished, null);
-    }
-
-    public ExpectationResult(long endTime, boolean success, boolean finished, String reason) {
+    public ExpectationResult(long endTime, boolean success, String reason) {
         this.endTime = endTime;
         this.success = success;
-        this.finished = finished;
         this.reason = reason;
     }
 
-    public void success() {
-        setFinished(true);
-        setSuccess(true);
-        setEndTime(currentTimeMillis());
+    public static ExpectationResult success() {
+        return new ExpectationResult(currentTimeMillis(), true, SUCCESS);
     }
 
-    public void failure(String reason) {
-        setFinished(true);
-        setSuccess(false);
-        setReason(reason);
-        setEndTime(currentTimeMillis());
+    public static ExpectationResult failure(String reason) {
+        return new ExpectationResult(currentTimeMillis(), false, reason);
+    }
+
+    public static ExpectationResult timeoutFailure(long timeout) {
+        return new ExpectationResult(currentTimeMillis(), false, TIMEOUT + timeout);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(endTime, success, reason);
+        return Objects.hashCode(getEndTime(), isSuccess(), getReason());
     }
 
     @Override
@@ -54,9 +45,9 @@ public class ExpectationResult {
             return false;
         }
         ExpectationResult that = (ExpectationResult) o;
-        return endTime == that.endTime &&
-                success == that.success &&
-                Objects.equal(reason, that.reason);
+        return getEndTime() == that.getEndTime() &&
+                isSuccess() == that.isSuccess() &&
+                Objects.equal(getReason(), that.getReason());
     }
 
     @Override
@@ -64,7 +55,6 @@ public class ExpectationResult {
         return MoreObjects.toStringHelper(this)
                 .add("endTime", endTime)
                 .add("success", success)
-                .add("finished", success)
                 .add("reason", reason)
                 .toString();
     }
@@ -73,31 +63,11 @@ public class ExpectationResult {
         return endTime;
     }
 
-    public void setEndTime(long endTime) {
-        this.endTime = endTime;
-    }
-
     public boolean isSuccess() {
         return success;
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
     public String getReason() {
         return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
-
-    public boolean isFinished() {
-        return finished;
-    }
-
-    public void setFinished(boolean finished) {
-        this.finished = finished;
     }
 }

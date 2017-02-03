@@ -5,84 +5,122 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
+import java.util.concurrent.locks.Condition
+import java.util.concurrent.locks.Lock
 import java.util.regex.Pattern
 
-import static java.lang.System.currentTimeMillis
+import static com.jmeter.websocket.plugin.endpoint.comsumers.ExpectationResult.SUCCESS
+import static com.jmeter.websocket.plugin.endpoint.comsumers.ExpectationResult.TIMEOUT
+import static com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageRegexExpectation.lockSupplier
+import static java.util.concurrent.TimeUnit.MILLISECONDS
 
-@Unroll
 class WebsocketMessageRegexExpectationSpec extends Specification {
-    
+
     @Subject
     WebsocketMessageRegexExpectation expectation
-    
-    def "Should throw NullPointerException when sessionId == '#sessionId' or pattern == '#pattern' on new"() {
+
+    def "Should throw NullPointerException when regex is null on new"() {
         when:
-            expectation = new WebsocketMessageRegexExpectation(sessionId, pattern)
+            expectation = new WebsocketMessageRegexExpectation(regex)
         then:
             thrown(NullPointerException)
         where:
-            sessionId      | pattern
-            null           | '.*'
-            'user1Session' | null
-        
+            regex = null
     }
-    
-    def "Should return not null the same pattern on getPattern()"() {
+
+    def "Should return not null and the same pattern on getPattern()"() {
         given:
-            expectation = new WebsocketMessageRegexExpectation('user1Session', '.*')
+            expectation = new WebsocketMessageRegexExpectation(regex)
         when:
             Pattern pattern = expectation.pattern
         then:
-            pattern != null
-        and:
             pattern.is(expectation.pattern)
+        where:
+            regex = '.*'
     }
-    
-    def "Should not check pattern match when result is finished on onMessageReceive"() {
+
+    def "Should return not null and new lock lockSupplier().get()"() {
         given:
-            expectation = new WebsocketMessageRegexExpectation('user1Session', '.*')
-            expectation.result = new ExpectationResult(endTime: currentTimeMillis(), success: false, finished: true)
-            Pattern pattern = GroovyMock(Pattern)
-            expectation.patternSupplier = Stub(Supplier) {
-                get() >> pattern
+            expectation = new WebsocketMessageRegexExpectation(regex)
+        when:
+            Lock lock = expectation.lockSupplier.get()
+        then:
+            !lock.is(expectation.lockSupplier.get())
+        where:
+            regex = '.*'
+    }
+
+    def "Should acquire lock, release lock and signal result resultCondition on onMessageReceive()"() {
+        given:
+            Condition condition = Mock()
+            Lock lock = Mock()
+            lockSupplier = Stub(Supplier) {
+                get() >> lock
             }
         when:
-            expectation.onMessageReceive('session', 'message')
+            expectation = new WebsocketMessageRegexExpectation(regex)
+        and:
+            expectation.onMessageReceive(sessionId, message)
         then:
-            0 * pattern._
+            1 * lock.newCondition() >> condition
+        and:
+            1 * lock.lock()
+        and:
+            1 * condition.signal()
+        and:
+            1 * lock.unlock()
+        cleanup: 'restore default supplier'
+            lockSupplier = lockSupplier()
+        where:
+            sessionId      | message   | regex
+            'user1Session' | 'message' | '.*'
     }
-    
-    def "Result should be success == '#expectedSuccess' and finished == '#expectedFinished' when '#pattern' pattern onMessageReceive('session', '#message')"() {
+
+    def "Should acquire lock, release lock and signal resultCondition on getResult()"() {
         given:
-            expectation = new WebsocketMessageRegexExpectation('user1Session', pattern)
+            Condition condition = Mock()
+            Lock lock = Mock()
+            lockSupplier = Stub(Supplier) {
+                get() >> lock
+            }
         when:
-            expectation.onMessageReceive('session', message)
+            expectation = new WebsocketMessageRegexExpectation(regex)
+        and:
+            expectation.getResult(timeout)
         then:
-            with(expectation.result) {
+            1 * lock.newCondition() >> condition
+        and:
+            1 * lock.lock()
+        and:
+            1 * condition.await(timeout, MILLISECONDS)
+        and:
+            1 * lock.unlock()
+        cleanup: 'restore default supplier'
+            lockSupplier = lockSupplier()
+        where:
+            timeout | regex
+            2000    | '.*'
+    }
+
+    @Unroll
+    def "Should return result with success = '#expectedSuccess' and reason = '#expectedReason' result when regex = '#regex' and incoming message = '#message' is incorrect on getResult()"() {
+        given:
+            expectation = new WebsocketMessageRegexExpectation(regex)
+        when: 'expectation notified about message'
+            expectation.onMessageReceive(sessionId, message)
+        and: 'expectation asked about result'
+            ExpectationResult result = expectation.getResult(timeout)
+        then:
+            with(result) {
                 success == expectedSuccess
-                finished == expectedFinished
-                finished ? endTime > 0 : endTime == 0
+                reason.contains expectedReason
             }
         where:
-            pattern      | message           || expectedSuccess | expectedFinished
-            '^message.*' | 'message1'        || true            | true
-            '^message.*' | 'another message' || false           | false
+            regex     | sessionId      | message   | timeout || expectedSuccess | expectedReason
+            '*.'      | 'user1Session' | 'message' | 2000    || false           | 'Dangling meta character \'*\' near index 0'
+            'Message' | 'user1Session' | 'message' | 10      || false           | TIMEOUT
+            'message' | 'user1Session' | 'message' | 2000    || true            | SUCCESS
     }
-    
-    def "Result should be success == 'false' and finished == 'true' when '#pattern' pattern is incorrect onMessageReceive('session', '#message')"() {
-        given:
-            expectation = new WebsocketMessageRegexExpectation('user1Session', pattern)
-        when:
-            expectation.onMessageReceive('session', message)
-        then:
-            with(expectation.result) {
-                !success
-                finished
-                !reason.isEmpty()
-                endTime > 0
-            }
-        where:
-            pattern | message
-            '{'     | 'message1'
-    }
+
+
 }
