@@ -53,10 +53,9 @@ public class WebsocketMessageRegexExpectation implements WebsocketIncomingMessag
                 " message=" + message);
         resultLock.lock();
         try {
-            log.info("Matching message: " + message);
             if (result == null) {
                 if (getPattern().matcher(message).matches()) {
-                    log.error("Matched message: " + message);
+                    log.info("Message was matched.");
                     result = success();
                 }
             }

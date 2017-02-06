@@ -18,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@WebSocket(maxTextMessageSize = 128 * 1024)
+@WebSocket
 public class JettySocket {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
@@ -35,21 +35,21 @@ public class JettySocket {
     @OnWebSocketConnect
     public void onWebSocketConnect(Session session) {
         log.info("onWebSocketConnect()" +
-                " session: " + session);
+                " session: " + sessionId);
     }
 
     @OnWebSocketClose
     public void onWebSocketClose(Session session, int closeCode, String closeReason) {
         log.info("onWebSocketClose()" +
-                " session: " + session +
                 " closeCode: " + closeCode +
-                " closeReason: " + closeReason);
+                " closeReason: " + closeReason +
+                " session: " + sessionId);
     }
 
     @OnWebSocketMessage
     public void onWebSocketMessage(Session session, String message) {
         log.debug("OnWebSocketMessage()" +
-                " session: " + session +
+                " session: " + sessionId +
                 " message: " + message);
         for (WebsocketIncomingMessageConsumer consumer : websocketIncomingMessageConsumers) {
             consumer.onMessageReceive(sessionId, message);
@@ -58,13 +58,13 @@ public class JettySocket {
 
     @OnWebSocketError
     public void onWebSocketError(Session session, Throwable cause) {
-        log.error("OnWebSocketError() session: " + session, cause);
+        log.error("OnWebSocketError() session: " + sessionId, cause);
     }
 
     @OnWebSocketFrame
     public void onWebSocketFrame(Session session, Frame frame) {
         log.debug("OnWebSocketFrame()" +
-                " session: " + session +
+                " session: " + sessionId +
                 " frame:" + frame);
     }
 
