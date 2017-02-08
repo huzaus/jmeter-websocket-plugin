@@ -26,7 +26,6 @@ class ExpectationUtilsSpec extends Specification {
                 !success
                 reason == predefinedReason
             }
-
         where:
             predefinedReason | timeout
             'timeout'        | 2000

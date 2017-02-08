@@ -10,17 +10,17 @@ import spock.lang.Unroll
 
 @Unroll
 class WebsocketUpgradeListenerSpock extends Specification {
-    
+
     @Subject
     JettyWebsocketUpgradeListener listener = new JettyWebsocketUpgradeListener(new SampleResult())
-    
+
     def "Should throw NullPointerException when result is null"() {
         when:
             listener = new JettyWebsocketUpgradeListener(null)
         then:
             thrown(NullPointerException)
     }
-    
+
     def "Should extract #headers upgrade request headers to sample result request headers as '#result'"() {
         given:
             UpgradeRequest upgradeRequest = new UpgradeRequest('wss://127.0.0.1/websocket')
@@ -37,7 +37,7 @@ class WebsocketUpgradeListenerSpock extends Specification {
             ['header1': ['value one'], 'header2': ['value two']]  || 'header1=[value one]\nheader2=[value two]'
             ['multiple_value_header': ['value one', 'value two']] || 'multiple_value_header=[value one, value two]'
     }
-    
+
     def "Should extract '#uri' uri upgrade request to sample result URL as '#url'"() {
         given:
             UpgradeRequest upgradeRequest = new UpgradeRequest(uri)
@@ -50,7 +50,7 @@ class WebsocketUpgradeListenerSpock extends Specification {
             'ws://127.0.0.1/websocket'  || 'http://127.0.0.1/websocket'
             'wss://127.0.0.1/websocket' || 'https://127.0.0.1/websocket'
     }
-    
+
     def "Should extract '#statusReason' statusReason, '#responseCode' response code, #success response status and set it sample result"() {
         given:
             UpgradeResponse upgradeResponse = new UpgradeResponse(statusCode: responseCode, statusReason: statusReason, success: success)
@@ -68,7 +68,7 @@ class WebsocketUpgradeListenerSpock extends Specification {
             'response body'  | 200          | true
             'Page Not Found' | 404          | false
     }
-    
+
     def "Should extract #headers upgrade response headers to sample result response headers as '#result'"() {
         given:
             UpgradeResponse upgradeResponse = new UpgradeResponse(headers: headers)

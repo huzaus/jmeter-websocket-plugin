@@ -18,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@WebSocket
+@WebSocket(maxTextMessageSize = 10 * 1024 * 1024)
 public class JettySocket {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
