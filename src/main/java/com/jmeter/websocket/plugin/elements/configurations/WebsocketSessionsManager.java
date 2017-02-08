@@ -19,17 +19,20 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
 
     private static final String FILE = "websocket.data.output.file";
     private static final Logger log = LoggingManager.getLoggerForClass();
-
+    private static final Supplier<WebsocketClient<String>> websocketClientSupplier = websocketClientSupplier();
     private static Supplier<CsvFileWriter> csvFileWriterSupplier;
-    private static final Supplier<WebsocketClient> websocketClientSupplier = websocketClientSupplier();
 
-    private static Supplier<WebsocketClient> websocketClientSupplier() {
-        return memoize(new Supplier<WebsocketClient>() {
+    private static Supplier<WebsocketClient<String>> websocketClientSupplier() {
+        return memoize(new Supplier<WebsocketClient<String>>() {
             @Override
-            public WebsocketClient get() {
+            public WebsocketClient<String> get() {
                 return new JettyWebsocketEndpoint();
             }
         });
+    }
+
+    public static WebsocketClient<String> getWebsocketClient() {
+        return websocketClientSupplier.get();
     }
 
     public String getFile() {
@@ -38,10 +41,6 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
 
     public void setFile(String filename) {
         setProperty(FILE, filename);
-    }
-
-    public WebsocketClient getWebsocketClient() {
-        return websocketClientSupplier.get();
     }
 
     @Override
@@ -55,7 +54,7 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
     @Override
     public void testStarted() {
         csvFileWriterSupplier = csvFileWriterSupplier(Paths.get(getFile()));
-        getWebsocketClient().registerMessageConsumer(csvFileWriterSupplier.get());
+        getWebsocketClient().registerStaticMessageConsumer(csvFileWriterSupplier.get());
         getWebsocketClient().start();
         log.info("Test started: " + this);
     }
@@ -69,7 +68,7 @@ public class WebsocketSessionsManager extends ConfigTestElement implements TestS
     public void testEnded() {
         getWebsocketClient().stop();
         csvFileWriterSupplier.get().stop();
-        getWebsocketClient().unregisterMessageConsumer(csvFileWriterSupplier.get());
+        getWebsocketClient().unregisterStaticMessageConsumer(csvFileWriterSupplier.get());
         log.info("Test ended: " + this);
     }
 

@@ -9,15 +9,17 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-public interface WebsocketClient {
+public interface WebsocketClient <K> {
 
-    void connect(URI uri, String sessionId, CookieManager cookieManager, Map<String, List<String>> headers, SampleResult result, long timeOut) throws Exception;
+    void connect(URI uri, K sessionId, CookieManager cookieManager, Map<String, List<String>> headers, SampleResult result, long timeOut) throws Exception;
 
-    void sendMessage(String sessionId, String message) throws IOException;
+    void sendMessage(K sessionId, String message) throws IOException;
 
-    void registerMessageConsumer(WebsocketMessageConsumer consumer);
+    SessionsManager<K> getSessionsManager();
 
-    void unregisterMessageConsumer(WebsocketMessageConsumer consumer);
+    void registerStaticMessageConsumer(WebsocketMessageConsumer consumer);
+
+    void unregisterStaticMessageConsumer(WebsocketMessageConsumer consumer);
 
     void start();
 

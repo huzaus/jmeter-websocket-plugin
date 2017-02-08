@@ -4,10 +4,14 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.jmeter.websocket.plugin.endpoint.SessionsManager;
 import com.jmeter.websocket.plugin.endpoint.WebsocketClient;
+import com.jmeter.websocket.plugin.endpoint.WebsocketSession;
 import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageConsumer;
 import com.jmeter.websocket.plugin.endpoint.jetty.converters.CookieManagerToCookieStoreConverter;
 import com.jmeter.websocket.plugin.endpoint.jetty.converters.HeadersToClientUpgradeRequestConverter;
 import com.jmeter.websocket.plugin.endpoint.jetty.converters.SampleResultToUpgradeListenerConverter;
+import com.jmeter.websocket.plugin.endpoint.jetty.session.JettySessionWrapper;
+import com.jmeter.websocket.plugin.endpoint.jetty.session.JettySessionsManager;
+import com.jmeter.websocket.plugin.endpoint.jetty.session.JettySocket;
 import org.apache.jmeter.protocol.http.control.CookieManager;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jorphan.logging.LoggingManager;
@@ -35,17 +39,18 @@ import static java.lang.Integer.toHexString;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-public class JettyWebsocketEndpoint implements WebsocketClient {
+public class JettyWebsocketEndpoint implements WebsocketClient<String> {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
 
     private static Supplier<WebSocketClient> webSocketClientSupplier = webSocketClientSupplier();
+
     private Function<CookieManager, CookieStore> cookieManagerToCookieStoreConverter = new CookieManagerToCookieStoreConverter();
     private Function<Map<String, List<String>>, ClientUpgradeRequest> headersToClientUpgradeRequestConverter = new HeadersToClientUpgradeRequestConverter();
     private Function<SampleResult, UpgradeListener> sampleResultToUpgradeListenerConverter = new SampleResultToUpgradeListenerConverter();
+
     private Collection<WebsocketMessageConsumer> websocketMessageConsumers = new ArrayList<>();
-    private Supplier<JettyWebsocket> jettyWebsocketSupplier = jettyWebsocketSupplier();
-    private SessionsManager<String, Session> sessionsManager = new JettySessionManager();
+    private SessionsManager<String> sessionsManager = new JettySessionsManager();
 
     private static Supplier<WebSocketClient> webSocketClientSupplier() {
         return memoize(new Supplier<WebSocketClient>() {
@@ -70,36 +75,39 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
                 " Headers: " + headers);
         WebSocketClient webSocketClient = webSocketClientSupplier.get();
         Future<Session> promise;
+        JettySocket websocket = jettyWebsocketSupplier(sessionId).get();
         synchronized (webSocketClient) {
             webSocketClient.setCookieStore(cookieManagerToCookieStoreConverter.apply(cookieManager));
             promise = webSocketClient
-                    .connect(jettyWebsocketSupplier.get(),
+                    .connect(websocket,
                             uri,
                             headersToClientUpgradeRequestConverter.apply(headers),
                             sampleResultToUpgradeListenerConverter.apply(result));
         }
-        sessionsManager.registerSession(sessionId, promise.get(timeOut, MILLISECONDS));
+        sessionsManager.registerSession(sessionId, jettySessionWrapperSupplier(sessionId, promise.get(timeOut, MILLISECONDS), websocket).get());
         log.info("Connected to: " + uri + " .");
     }
 
     @Override
     public void sendMessage(String sessionId, String message) throws IOException {
-        Session session = sessionsManager.getOpenSession(sessionId);
+        WebsocketSession session = sessionsManager.getOpenSession(sessionId);
         checkNotNull(session, sessionId + " session is not open. Session: " + session);
         log.info("sendMessage() message: " + message + " to " + sessionId + " using session:" + session);
-        session.getRemote().sendString(message);
-        for (WebsocketMessageConsumer consumer : websocketMessageConsumers) {
-            consumer.onMessageSend(toHexString(session.hashCode()), message);
-        }
+        session.sendMessage(message);
     }
 
     @Override
-    public void registerMessageConsumer(WebsocketMessageConsumer consumer) {
+    public SessionsManager<String> getSessionsManager() {
+        return sessionsManager;
+    }
+
+    @Override
+    public void registerStaticMessageConsumer(WebsocketMessageConsumer consumer) {
         websocketMessageConsumers.add(consumer);
     }
 
     @Override
-    public void unregisterMessageConsumer(WebsocketMessageConsumer consumer) {
+    public void unregisterStaticMessageConsumer(WebsocketMessageConsumer consumer) {
         websocketMessageConsumers.remove(consumer);
     }
 
@@ -136,15 +144,28 @@ public class JettyWebsocketEndpoint implements WebsocketClient {
                 .toString();
     }
 
-    private Supplier<JettyWebsocket> jettyWebsocketSupplier() {
-        return new Supplier<JettyWebsocket>() {
+    private Supplier<JettySocket> jettyWebsocketSupplier(final String sessionId) {
+        return new Supplier<JettySocket>() {
             @Override
-            public JettyWebsocket get() {
-                JettyWebsocket jettyWebsocket = new JettyWebsocket();
+            public JettySocket get() {
+                JettySocket jettySocket = new JettySocket(sessionId);
                 for (WebsocketMessageConsumer consumer : websocketMessageConsumers) {
-                    jettyWebsocket.registerWebsocketMessageConsumer(consumer);
+                    jettySocket.registerWebsocketIncomingMessageConsumer(consumer);
                 }
-                return jettyWebsocket;
+                return jettySocket;
+            }
+        };
+    }
+
+    private Supplier<JettySessionWrapper> jettySessionWrapperSupplier(final String sessionId, final Session session, final JettySocket socket) {
+        return new Supplier<JettySessionWrapper>() {
+            @Override
+            public JettySessionWrapper get() {
+                JettySessionWrapper jettySessionWrapper = new JettySessionWrapper(sessionId, session, socket);
+                for (WebsocketMessageConsumer consumer : websocketMessageConsumers) {
+                    jettySessionWrapper.registerWebsocketOutgoingMessageConsumer(consumer);
+                }
+                return jettySessionWrapper;
             }
         };
     }

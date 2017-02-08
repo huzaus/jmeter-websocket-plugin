@@ -1,6 +1,6 @@
-package com.jmeter.websocket.plugin.endpoint.jetty;
+package com.jmeter.websocket.plugin.endpoint.jetty.session;
 
-import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketMessageConsumer;
+import com.jmeter.websocket.plugin.endpoint.comsumers.WebsocketIncomingMessageConsumer;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 import org.eclipse.jetty.websocket.api.Session;
@@ -12,65 +12,74 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.extensions.Frame;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.Integer.toHexString;
 
-@WebSocket(maxTextMessageSize = 128 * 1024)
-public class JettyWebsocket {
+@WebSocket(maxTextMessageSize = 10 * 1024 * 1024)
+public class JettySocket {
 
     private static final Logger log = LoggingManager.getLoggerForClass();
 
-    private final Collection<WebsocketMessageConsumer> websocketMessageConsumers = new ArrayList<>();
+    private final String sessionId;
+
+    private final Collection<WebsocketIncomingMessageConsumer> websocketIncomingMessageConsumers = new CopyOnWriteArrayList<>();
+
+    public JettySocket(String sessionId) {
+        checkNotNull(sessionId);
+        this.sessionId = sessionId;
+    }
 
     @OnWebSocketConnect
     public void onWebSocketConnect(Session session) {
         log.info("onWebSocketConnect()" +
-                " session: " + session);
+                " session: " + sessionId);
     }
 
     @OnWebSocketClose
     public void onWebSocketClose(Session session, int closeCode, String closeReason) {
         log.info("onWebSocketClose()" +
-                " session: " + session +
                 " closeCode: " + closeCode +
-                " closeReason: " + closeReason);
+                " closeReason: " + closeReason +
+                " session: " + sessionId);
     }
 
     @OnWebSocketMessage
     public void onWebSocketMessage(Session session, String message) {
         log.debug("OnWebSocketMessage()" +
-                " session: " + session +
+                " session: " + sessionId +
                 " message: " + message);
-        checkNotNull(session);
-        for (WebsocketMessageConsumer consumer : websocketMessageConsumers) {
-            consumer.onMessageReceive(toHexString(session.hashCode()), message);
+        for (WebsocketIncomingMessageConsumer consumer : websocketIncomingMessageConsumers) {
+            consumer.onMessageReceive(sessionId, message);
         }
     }
 
     @OnWebSocketError
     public void onWebSocketError(Session session, Throwable cause) {
-        log.error("OnWebSocketError() session: " + session, cause);
+        log.error("OnWebSocketError() session: " + sessionId, cause);
     }
 
     @OnWebSocketFrame
     public void onWebSocketFrame(Session session, Frame frame) {
         log.debug("OnWebSocketFrame()" +
-                " session: " + session +
+                " session: " + sessionId +
                 " frame:" + frame);
     }
 
-    public void registerWebsocketMessageConsumer(WebsocketMessageConsumer consumer) {
-        websocketMessageConsumers.add(consumer);
+    public void registerWebsocketIncomingMessageConsumer(WebsocketIncomingMessageConsumer consumer) {
+        websocketIncomingMessageConsumers.add(consumer);
+    }
+
+    public void unregisterWebsocketIncomingMessageConsumer(WebsocketIncomingMessageConsumer consumer) {
+        websocketIncomingMessageConsumers.remove(consumer);
     }
 
     @Override
     public String toString() {
         return toStringHelper(this)
-                .add("websocketMessageConsumers", websocketMessageConsumers)
+                .add("websocketIncomingMessageConsumer", websocketIncomingMessageConsumers)
                 .toString();
     }
 }

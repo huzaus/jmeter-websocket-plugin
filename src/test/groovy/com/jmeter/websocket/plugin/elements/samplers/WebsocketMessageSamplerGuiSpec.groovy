@@ -6,22 +6,17 @@ import spock.lang.Subject
 import spock.lang.Unroll
 
 @Unroll
-class WebsocketSessionSamplerGuiGuiSpec extends JmeterAbstractGuiSpec {
-    
+class WebsocketMessageSamplerGuiSpec extends JmeterAbstractGuiSpec {
     @Subject
-    WebsocketSessionSamplerGui samplerGui = new WebsocketSessionSamplerGui()
+    WebsocketMessageSamplerGui samplerGui = new WebsocketMessageSamplerGui()
     
     def "#component should be initialized in constructor with #label"() {
         expect:
             samplerGui."$component".mLabel.text == label
         where:
-            component        || label
-            'serverNameOrIp' || 'Server Name or IP:'
-            'portNumber'     || 'Port Number:'
-            'protocol'       || 'Protocol:'
-            'connectTimeOut' || 'Timeout:'
-            'path'           || 'Path:'
-            'sessionId'      || 'Session id:'
+            component   || label
+            'sessionId' || 'Session id:'
+            'message'   || 'Message:'
     }
     
     def "get#field should return #value"() {
@@ -35,38 +30,30 @@ class WebsocketSessionSamplerGuiGuiSpec extends JmeterAbstractGuiSpec {
     
     def "Should modify #property property with '#value' value from gui #component component"() {
         given:
-            WebsocketSessionSampler sampler = new WebsocketSessionSampler()
+            WebsocketMessageSampler sampler = new WebsocketMessageSampler()
             samplerGui."$component".text = value
         when:
             samplerGui.modifyTestElement(sampler)
         then:
             sampler."$property" == value
         where:
-            component        | property         | value
-            'serverNameOrIp' | 'serverNameOrIp' | '127.0.0.1'
-            'portNumber'     | 'portNumber'     | '8080'
-            'protocol'       | 'protocol'       | 'ws'
-            'connectTimeOut' | 'connectTimeOut' | '2000'
-            'path'           | 'path'           | 'websocket'
-            'sessionId'      | 'sessionId'      | 'user1Session'
+            component   | property    | value
+            'message'   | 'message'   | 'Message'
+            'sessionId' | 'sessionId' | 'user1Session'
     }
     
     def "Should configure gui #component component with '#value' value from #property sampler property"() {
         given:
-            WebsocketSessionSampler sampler = new WebsocketSessionSampler()
+            WebsocketMessageSampler sampler = new WebsocketMessageSampler()
             sampler."$property" = value
         when:
             samplerGui.configure(sampler)
         then:
             samplerGui."$component".text == value
         where:
-            component        | property         | value
-            'serverNameOrIp' | 'serverNameOrIp' | '127.0.0.1'
-            'portNumber'     | 'portNumber'     | '8080'
-            'protocol'       | 'protocol'       | 'ws'
-            'connectTimeOut' | 'connectTimeOut' | '2000'
-            'path'           | 'path'           | 'websocket'
-            'sessionId'      | 'sessionId'      | 'user1Session'
+            component   | property    | value
+            'message'   | 'message'   | 'Message'
+            'sessionId' | 'sessionId' | 'user1Session'
     }
     
     def "Should throw ClassCastException when testElement is not WebsocketMessageSampler on configure"() {

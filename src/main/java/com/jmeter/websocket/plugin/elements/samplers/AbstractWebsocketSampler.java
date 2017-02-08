@@ -8,9 +8,6 @@ import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jmeter.testelement.property.TestElementProperty;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 public abstract class AbstractWebsocketSampler extends AbstractSampler {
 
     public static final String WEBSOCKET_MANAGER = "websocket_manager";
@@ -46,13 +43,13 @@ public abstract class AbstractWebsocketSampler extends AbstractSampler {
         setProperty(SESSION_ID, sessionId, "");
     }
 
-    public WebsocketClient getWebsocketClient() {
+    public WebsocketClient<String> getWebsocketClient() {
         return Optional.fromNullable(getWebsocketSessionsManager())
                 .transform(
-                        new Function<WebsocketSessionsManager, WebsocketClient>() {
+                        new Function<WebsocketSessionsManager, WebsocketClient<String>>() {
                             @Override
-                            public WebsocketClient apply(WebsocketSessionsManager manager) {
-                                return manager.getWebsocketClient();
+                            public WebsocketClient<String> apply(WebsocketSessionsManager manager) {
+                                return WebsocketSessionsManager.getWebsocketClient();
                             }
                         }
                 )
